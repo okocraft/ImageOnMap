@@ -49,15 +49,6 @@
     </properties>
 
     <build>
-        <resources>
-            <!-- include system scope jar -->
-            <resource>
-                <directory>${project.basedir}</directory>
-                <includes>
-                    <include>lib/*.jar</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -138,7 +129,7 @@
             <artifactId>quartzlib</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${basedir}/lib/quartzlib-0.0.1-SNAPSHOT.jar</systemPath>
+            <systemPath>${basedir}/src/main/resources/lib/quartzlib-0.0.1-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
