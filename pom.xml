@@ -73,10 +73,6 @@
                     </artifactSet>
                     <relocations>
                         <relocation>
-                            <pattern>fr.zcraft.quartzlib</pattern>
-                            <shadedPattern>fr.zcraft.imageonmap.quartzlib</shadedPattern>
-                        </relocation>
-                        <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>fr.moribus.imageonmap</shadedPattern>
                         </relocation>
@@ -135,6 +131,7 @@
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.13.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>fr.zcraft</groupId>
