@@ -55,7 +55,7 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
                     <artifactSet>
                         <includes>
                             <include>fr.zcraft:quartzlib</include>
@@ -63,6 +63,10 @@
                         </includes>
                     </artifactSet>
                     <relocations>
+                        <relocation>
+                            <pattern>fr.zcraft.quartzlib</pattern>
+                            <shadedPattern>fr.zcraft.imageonmap.quartzlib</shadedPattern>
+                        </relocation>
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>fr.moribus.imageonmap</shadedPattern>
@@ -109,6 +113,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>zdevelopers-quartzlib</id>
+            <url>https://maven.zcraft.fr/QuartzLib</url>
+        </repository>
 
         <!-- bStats -->
         <repository>
@@ -119,17 +127,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>fr.zcraft</groupId>
             <artifactId>quartzlib</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/src/main/resources/lib/quartzlib-0.0.1-SNAPSHOT.jar</systemPath>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
