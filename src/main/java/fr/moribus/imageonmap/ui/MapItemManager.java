@@ -45,7 +45,6 @@ import fr.moribus.imageonmap.map.SingleMap;
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.tools.PluginLogger;
-import fr.zcraft.quartzlib.tools.items.ItemStackBuilder;
 import fr.zcraft.quartzlib.tools.items.ItemUtils;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import java.util.ArrayDeque;
@@ -68,6 +67,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
@@ -164,19 +164,10 @@ public class MapItemManager implements Listener {
     }
 
     public static ItemStack createMapItem(int mapID, String text, boolean isMapPart, boolean goldTitle) {
-        ItemStack mapItem;
-        if (goldTitle) {
-            mapItem = new ItemStackBuilder(Material.FILLED_MAP)
-                    .title(ChatColor.GOLD, text)
-                    .hideAllAttributes()
-                    .item();
-        } else {
-            mapItem = new ItemStackBuilder(Material.FILLED_MAP)
-                    .title(text)
-                    .hideAllAttributes()
-                    .item();
-        }
-        final MapMeta meta = (MapMeta) mapItem.getItemMeta();
+        ItemStack mapItem = new ItemStack(Material.FILLED_MAP);
+        MapMeta meta = (MapMeta) mapItem.getItemMeta();
+        meta.setDisplayName((goldTitle ? ChatColor.GOLD : "") + text);
+        meta.addItemFlags(ItemFlag.values());
         meta.setMapId(mapID);
         meta.setColor(isMapPart ? Color.LIME : Color.GREEN);
         mapItem.setItemMeta(meta);
@@ -277,8 +268,7 @@ public class MapItemManager implements Listener {
             }
             // If the item has a display name, bot not one from an anvil by the player, we remove it
             // If it is not displayed on hover on the wall.
-            if (mapItem.hasItemMeta() && mapItem.getItemMeta().hasDisplayName()
-                    && mapItem.getItemMeta().getDisplayName().startsWith("§6")) {
+            if (mapItem.hasItemMeta() && mapItem.getItemMeta().hasDisplayName()) {
                 //runtask
                 //TODO utiliser run task.later pour essayer de regler le pb d'itemframe bas gauche sans carte
                 final ItemStack frameItem = mapItem.clone();
@@ -292,9 +282,10 @@ public class MapItemManager implements Listener {
                 }, 5L);
 
             } else {
+                final ItemStack frameItem = mapItem.clone();
                 frame.setRotation(Rotation.NONE);
                 RunTask.later(() -> {
-                    frame.setItem(mapItem);
+                    frame.setItem(frameItem);
                 }, 5L);
 
             }
@@ -329,11 +320,12 @@ public class MapItemManager implements Listener {
         if (!MapManager.managesMap(frame.getItem())) {
             return;
         }
-
-        frame.setItem(new ItemStackBuilder(item)
-                .title(getMapTitle(item))
-                .hideAllAttributes()
-                .item());
+        ItemStack mapItem = new ItemStack(Material.FILLED_MAP);
+        MapMeta meta = (MapMeta) mapItem.getItemMeta();
+        meta.setDisplayName(getMapTitle(item));
+        meta.addItemFlags(ItemFlag.values());
+        mapItem.setItemMeta(meta);
+        frame.setItem(mapItem);
 
     }
 

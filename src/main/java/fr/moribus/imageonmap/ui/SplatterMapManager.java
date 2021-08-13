@@ -36,19 +36,16 @@
 
 package fr.moribus.imageonmap.ui;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.moribus.imageonmap.image.MapInitEvent;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.map.PosterMap;
+import fr.zcraft.quartzlib.components.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.components.nbt.NBT;
-import fr.zcraft.quartzlib.components.nbt.NBTCompound;
-import fr.zcraft.quartzlib.components.nbt.NBTList;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.items.GlowEffect;
-import fr.zcraft.quartzlib.tools.items.ItemStackBuilder;
-import fr.zcraft.quartzlib.tools.reflection.NMSException;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import fr.zcraft.quartzlib.tools.text.MessageSender;
 import fr.zcraft.quartzlib.tools.world.FlatLocation;
@@ -62,6 +59,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 
@@ -72,34 +70,28 @@ public abstract class SplatterMapManager {
 
     public static ItemStack makeSplatterMap(PosterMap map) {
 
+        ItemStack splatter = new ItemStack(Material.FILLED_MAP);
+        MapMeta meta = (MapMeta) splatter.getItemMeta();
+        meta.setDisplayName(ChatColor.GOLD + map.getName() + ChatColor.DARK_GRAY + " - " + I.t("Splatter Map")
+                + ChatColor.DARK_GRAY + " - " + I.t("{0} × {1}", map.getColumnCount(), map.getRowCount()));
 
-        final ItemStack splatter = new ItemStackBuilder(Material.FILLED_MAP).title(ChatColor.GOLD, map.getName())
-                .title(ChatColor.DARK_GRAY, " - ").title(ChatColor.GRAY, I.t("Splatter Map"))
-                .title(ChatColor.DARK_GRAY, " - ")
-                .title(ChatColor.GRAY, I.t("{0} × {1}", map.getColumnCount(), map.getRowCount()))
-                .loreLine(ChatColor.GRAY, map.getId()).loreLine()
-                /// Title in a splatter map tooltip
-                .loreLine(ChatColor.BLUE, I.t("Item frames needed"))
-                /// Size of a map stored in a splatter map
-                .loreLine(ChatColor.GRAY,
-                        I.t("{0} × {1} (total {2} frames)", map.getColumnCount(), map.getRowCount(),
-                                map.getColumnCount() * map.getRowCount()))
-                .loreLine()
-                /// Title in a splatter map tooltip
-                .loreLine(ChatColor.BLUE, I.t("How to use this?"))
-                .longLore(
-                        ChatColor.GRAY
-                                +
-                                I.t("Place empty item frames on a wall, enough to host the whole map."
-                                        + " Then, right-click on the bottom-left frame with this map."),
-                        40)
-                .loreLine()
-                .longLore(ChatColor.GRAY
-                        + I.t("Shift-click one of the placed maps to remove the whole poster in one shot."), 40)
-                .hideAllAttributes()
-                .craftItem();
-
-        final MapMeta meta = (MapMeta) splatter.getItemMeta();
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY + map.getId());
+        lore.add("");
+        lore.add(ChatColor.BLUE + I.t("Item frames needed"));
+        lore.add(ChatColor.GRAY + I.t("{0} × {1} (total {2} frames)", map.getColumnCount(), map.getRowCount(),
+                map.getColumnCount() * map.getRowCount()));
+        lore.add("");
+        lore.add(ChatColor.BLUE + I.t("How to use this?"));
+        lore.addAll(GuiUtils
+                .generateLore(ChatColor.GRAY + I.t("Place empty item frames on a wall, enough to host the whole map."
+                        + " Then, right-click on the bottom-left frame with this map."), 40));
+        lore.add("");
+        lore.addAll(GuiUtils.generateLore(
+                ChatColor.GRAY + I.t("Shift-click one of the placed maps to remove the whole poster in one shot."),
+                40));
+        meta.setLore(lore);
+        meta.addItemFlags(ItemFlag.values());
         meta.setMapId(map.getMapIdAt(0));
         meta.setColor(Color.GREEN);
         splatter.setItemMeta(meta);
@@ -137,20 +129,7 @@ public abstract class SplatterMapManager {
      * @return True if the attribute was detected.
      */
     public static boolean hasSplatterAttributes(ItemStack itemStack) {
-        try {
-            final NBTCompound nbt = NBT.fromItemStack(itemStack);
-            if (!nbt.containsKey("Enchantments")) {
-                return false;
-            }
-            final Object enchantments = nbt.get("Enchantments");
-            if (!(enchantments instanceof NBTList)) {
-                return false;
-            }
-            return !((NBTList) enchantments).isEmpty();
-        } catch (NMSException e) {
-            PluginLogger.error("Unable to get Splatter Map attribute on item", e);
-            return false;
-        }
+        return itemStack.getEnchantments().isEmpty();
     }
 
     /**
@@ -240,8 +219,12 @@ public abstract class SplatterMapManager {
                 //Rotation management relative to player rotation the default position is North,
                 // when on ceiling we flipped the rotation
                 RunTask.later(() -> {
-                    frame.setItem(
-                            new ItemStackBuilder(Material.FILLED_MAP).nbt(ImmutableMap.of("map", id)).craftItem());
+                    ItemStack item = new ItemStack(Material.FILLED_MAP);
+                    MapMeta meta = (MapMeta) item.getItemMeta();
+                    meta.setMapId(id);
+                    item.setItemMeta(meta);
+
+                    frame.setItem(item);
                 }, 5L);
 
                 if (i == 0) {
@@ -301,8 +284,12 @@ public abstract class SplatterMapManager {
                 int id = poster.getMapIdAtReverseY(i);
 
                 RunTask.later(() -> {
-                    frame.setItem(
-                            new ItemStackBuilder(Material.FILLED_MAP).nbt(ImmutableMap.of("map", id)).craftItem());
+                    ItemStack item = new ItemStack(Material.FILLED_MAP);
+                    MapMeta meta = (MapMeta) item.getItemMeta();
+                    meta.setMapId(id);
+                    item.setItemMeta(meta);
+
+                    frame.setItem(item);
                 }, 5L);
 
 

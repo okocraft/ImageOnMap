@@ -46,12 +46,19 @@ import fr.moribus.imageonmap.ui.MapItemManager;
 import fr.moribus.imageonmap.ui.SplatterMapManager;
 import fr.zcraft.quartzlib.components.gui.ExplorerGui;
 import fr.zcraft.quartzlib.components.gui.Gui;
+import fr.zcraft.quartzlib.components.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.tools.items.ItemStackBuilder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
 
 
@@ -87,25 +94,22 @@ public class MapListGui extends ExplorerGui<ImageMap> {
             }
         }
 
-        ItemStackBuilder builder = new ItemStackBuilder(Material.FILLED_MAP)
-                /// Displayed title of a map on the list GUI
-                .title(I.tl(getPlayerLocale(), "{green}{bold}{0}", map.getName()))
-
-                .lore(mapDescription)
-                .loreLine()
-                /// Map ID displayed in the tooltip of a map on the list GUI
-                .lore(I.tl(getPlayerLocale(), "{gray}Map ID: {0}", map.getId()))
-                .loreLine();
-
+        ItemStack mapItem = new ItemStack(Material.FILLED_MAP);
+        MapMeta meta = (MapMeta) mapItem.getItemMeta();
+        
+        meta.setDisplayName(I.tl(getPlayerLocale(), "{green}{bold}{0}", map.getName()));
+        List<String> lore = new ArrayList<>(Arrays.asList(
+            mapDescription,
+            "",
+            I.tl(getPlayerLocale(), "{gray}Map ID: {0}", map.getId()),
+            ""
+        ));        
         if (Permissions.GET.grantedTo(getPlayer())) {
-            builder.lore(I.tl(getPlayerLocale(), "{gray}» {white}Left-click{gray} to get this map"));
+            lore.add(I.tl(getPlayerLocale(), "{gray}» {white}Left-click{gray} to get this map"));
         }
+        lore.add(I.tl(getPlayerLocale(), "{gray}» {white}Right-click{gray} for details and options"));
+        meta.setLore(lore);
 
-        builder.lore(I.tl(getPlayerLocale(), "{gray}» {white}Right-click{gray} for details and options"));
-
-        final ItemStack mapItem = builder.item();
-
-        final MapMeta meta = (MapMeta) mapItem.getItemMeta();
         meta.setColor(Color.GREEN);
         mapItem.setItemMeta(meta);
 
@@ -114,21 +118,28 @@ public class MapListGui extends ExplorerGui<ImageMap> {
 
     @Override
     protected ItemStack getEmptyViewItem() {
-        ItemStackBuilder builder = new ItemStackBuilder(Material.BARRIER);
+        ItemStack item = new ItemStack(Material.FILLED_MAP);
+        ItemMeta meta = item.getItemMeta();
         if (offplayer.getUniqueId().equals(getPlayer().getUniqueId())) {
+            meta.setDisplayName(I.tl(getPlayerLocale(), "{red}You don't have any map."));
 
-            builder.title(I.tl(getPlayerLocale(), "{red}You don't have any map."));
-
+            List<String> lore = new ArrayList<>();
             if (Permissions.NEW.grantedTo(getPlayer())) {
-                builder.longLore(I.tl(getPlayerLocale(),
-                        "{gray}Get started by creating a new one using {white}/tomap <URL> [resize]{gray}!"));
+                lore.addAll(GuiUtils.generateLore(I.tl(getPlayerLocale(),
+                        "{gray}Get started by creating a new one using {white}/tomap <URL> [resize]{gray}!")));
             } else {
-                builder.longLore(I.tl(getPlayerLocale(), "{gray}Unfortunately, you are not allowed to create one."));
+                lore.addAll(GuiUtils.generateLore(I.tl(getPlayerLocale(),
+                        "{gray}Unfortunately, you are not allowed to create one.")));
+            }
+            if (!lore.isEmpty()) {
+                meta.setLore(lore);
             }
         } else {
-            builder.title(I.tl(getPlayerLocale(), "{red}{0} doesn't have any map.", name));
+            meta.setDisplayName(I.tl(getPlayerLocale(), "{red}{0} doesn't have any map.", name));
         }
-        return builder.item();
+
+        item.setItemMeta(meta);
+        return item;
     }
 
     @Override
@@ -203,31 +214,31 @@ public class MapListGui extends ExplorerGui<ImageMap> {
         double percentageUsed =
                 mapPartLeft < 0 ? 0 : ((double) mapPartCount) / ((double) (mapPartCount + mapPartLeft)) * 100;
 
-        ItemStackBuilder statistics = new ItemStackBuilder(Material.ENCHANTED_BOOK)
-                .title(I.t(getPlayerLocale(), "{blue}Usage statistics"))
-                .loreLine()
-                .lore(I.tn(getPlayerLocale(), "{white}{0}{gray} image rendered", "{white}{0}{gray} images rendered",
-                        imagesCount))
-                .lore(I.tn(getPlayerLocale(), "{white}{0}{gray} Minecraft map used",
-                        "{white}{0}{gray} Minecraft maps used", mapPartCount));
+        ItemStack statistics = new ItemStack(Material.ENCHANTED_BOOK);
+        ItemMeta meta = statistics.getItemMeta();
+        meta.setDisplayName(I.t(getPlayerLocale(), "{blue}Usage statistics"));
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(I.tn(getPlayerLocale(),
+                "{white}{0}{gray} image rendered", "{white}{0}{gray} images rendered", imagesCount));
+        lore.add(I.tn(getPlayerLocale(), "{white}{0}{gray} Minecraft map used",
+                "{white}{0}{gray} Minecraft maps used", mapPartCount));
 
         if (mapPartLeft >= 0) {
-            statistics
-                    .lore("", I.t(getPlayerLocale(), "{blue}Minecraft maps limits"), "")
-                    .lore(mapGlobalLimit == 0
-                            ? I.t(getPlayerLocale(), "{gray}Server-wide limit: {white}unlimited")
-                            : I.t(getPlayerLocale(), "{gray}Server-wide limit: {white}{0}", mapGlobalLimit))
-                    .lore(mapPersonalLimit == 0
-                            ? I.t(getPlayerLocale(), "{gray}Per-player limit: {white}unlimited")
-                            : I.t(getPlayerLocale(), "{gray}Per-player limit: {white}{0}", mapPersonalLimit))
-                    .loreLine()
-                    .lore(I.t(getPlayerLocale(), "{white}{0} %{gray} of your quota used",
-                            (int) Math.rint(percentageUsed)))
-                    .lore(I.tn(getPlayerLocale(), "{white}{0}{gray} map left", "{white}{0}{gray} maps left",
-                            mapPartLeft));
+            lore.add("");
+            lore.add(I.t(getPlayerLocale(), "{blue}Minecraft maps limits"));
+            lore.add("");
+            lore.add(mapGlobalLimit == 0
+                    ? I.t(getPlayerLocale(), "{gray}Server-wide limit: {white}unlimited")
+                    : I.t(getPlayerLocale(), "{gray}Server-wide limit: {white}{0}", mapGlobalLimit));
+            lore.add("");
+            lore.add(I.t(getPlayerLocale(), "{white}{0} %{gray} of your quota used",
+                    (int) Math.rint(percentageUsed)));
+            lore.add(I.tn(getPlayerLocale(), "{white}{0}{gray} map left", "{white}{0}{gray} maps left",
+                    mapPartLeft));
         }
 
-        statistics.hideAllAttributes();
+        meta.addItemFlags(ItemFlag.values());
 
         action("", getSize() - 5, statistics);
     }

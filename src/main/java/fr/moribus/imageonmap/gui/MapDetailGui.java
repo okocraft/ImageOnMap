@@ -44,14 +44,20 @@ import fr.moribus.imageonmap.ui.MapItemManager;
 import fr.zcraft.quartzlib.components.gui.ExplorerGui;
 import fr.zcraft.quartzlib.components.gui.Gui;
 import fr.zcraft.quartzlib.components.gui.GuiAction;
+import fr.zcraft.quartzlib.components.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.gui.PromptGui;
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.tools.items.ItemStackBuilder;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 
 public class MapDetailGui extends ExplorerGui<Integer> {
@@ -70,16 +76,22 @@ public class MapDetailGui extends ExplorerGui<Integer> {
     protected ItemStack getViewItem(int x, int y) {
         final Material partMaterial = y % 2 == x % 2 ? Material.MAP : Material.PAPER;
 
-        final ItemStackBuilder builder = new ItemStackBuilder(partMaterial)
-                .title(I.t(getPlayerLocale(), "{green}Map part"))
-                .lore(I.t(getPlayerLocale(), "{gray}Row: {white}{0}", y + 1))
-                .lore(I.t(getPlayerLocale(), "{gray}Column: {white}{0}", x + 1));
+        ItemStack item = new ItemStack(partMaterial);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(I.t(getPlayerLocale(), "{green}Map part"));
+        List<String> lore = new ArrayList<>(Arrays.asList(
+            I.t(getPlayerLocale(), "{gray}Row: {white}{0}", y + 1),
+            I.t(getPlayerLocale(), "{gray}Column: {white}{0}", x + 1)
+        ));
 
         if (Permissions.GET.grantedTo(getPlayer())) {
-            builder.loreLine().lore(I.t(getPlayerLocale(), "{gray}» {white}Click{gray} to get only this part"));
+            lore.add("");
+            lore.add(I.t(getPlayerLocale(), "{gray}» {white}Click{gray} to get only this part"));
         }
 
-        return builder.item();
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 
     @Override
@@ -87,15 +99,21 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         final int index = ((PosterMap) map).getIndex(mapId);
         final Material partMaterial = index % 2 == 0 ? Material.MAP : Material.PAPER;
 
-        final ItemStackBuilder builder = new ItemStackBuilder(partMaterial)
-                .title(I.t(getPlayerLocale(), "{green}Map part"))
-                .lore(I.t(getPlayerLocale(), "{gray}Part: {white}{0}", index + 1));
+        ItemStack item = new ItemStack(partMaterial);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(I.t(getPlayerLocale(), "{green}Map part"));
+        List<String> lore = new ArrayList<>(Arrays.asList(
+            I.t(getPlayerLocale(), "{gray}Part: {white}{0}", index + 1)
+        ));
 
         if (Permissions.GET.grantedTo(getPlayer())) {
-            builder.loreLine().lore(I.t(getPlayerLocale(), "{gray}» {white}Click{gray} to get only this part"));
+            lore.add("");
+            lore.add(I.t(getPlayerLocale(), "{gray}» {white}Click{gray} to get only this part"));
         }
 
-        return builder.item();
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 
     @Override
@@ -164,22 +182,27 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         }
 
         if (canRename) {
-            action("rename", renameSlot, new ItemStackBuilder(Material.WRITABLE_BOOK)
-                    .title(I.t(getPlayerLocale(), "{blue}Rename this image"))
-                    .longLore(I.t(getPlayerLocale(),
-                            "{gray}Click here to rename this image; this is used for your own organization."))
-            );
+            ItemStack item = new ItemStack(Material.WRITABLE_BOOK);
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(I.t(getPlayerLocale(), "{blue}Rename this image"));
+            meta.setLore(GuiUtils.generateLore(I.t(getPlayerLocale(),
+            "{gray}Click here to rename this image; this is used for your own organization.")));
+            item.setItemMeta(meta);
+            action("rename", renameSlot, item);
         }
 
         if (canDelete) {
-            action("delete", deleteSlot, new ItemStackBuilder(Material.BARRIER)
-                    .title(I.t(getPlayerLocale(), "{red}Delete this image"))
-                    .longLore(I.t(getPlayerLocale(),
-                            "{gray}Deletes this map {white}forever{gray}. This action cannot be undone!"))
-                    .loreLine()
-                    .longLore(
-                            I.t(getPlayerLocale(), "{gray}You will be asked to confirm your choice if you click here."))
-            );
+            ItemStack item = new ItemStack(Material.BARRIER);
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(I.t(getPlayerLocale(), "{red}Delete this image"));
+            List<String> lore = GuiUtils.generateLore(I.t(getPlayerLocale(),
+                    "{gray}Deletes this map {white}forever{gray}. This action cannot be undone!"));
+            lore.add("");
+            lore.addAll(GuiUtils.generateLore(I.t(getPlayerLocale(),
+                    "{gray}You will be asked to confirm your choice if you click here.")));
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+            action("delete", deleteSlot, item);
         }
 
 
@@ -193,10 +216,12 @@ public class MapDetailGui extends ExplorerGui<Integer> {
             backSlot++;
         }
 
-        action("back", backSlot, new ItemStackBuilder(Material.EMERALD)
-                .title(I.t(getPlayerLocale(), "{green}« Back"))
-                .lore(I.t(getPlayerLocale(), "{gray}Go back to the list."))
-        );
+        ItemStack item = new ItemStack(Material.EMERALD);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(I.t(getPlayerLocale(), "{green}« Back"));
+        meta.setLore(new ArrayList<>(Arrays.asList(I.t(getPlayerLocale(), "{gray}Go back to the list."))));
+        item.setItemMeta(meta);
+        action("back", backSlot, item);
     }
 
 

@@ -43,13 +43,19 @@ import fr.moribus.imageonmap.map.MapManagerException;
 import fr.zcraft.quartzlib.components.gui.ActionGui;
 import fr.zcraft.quartzlib.components.gui.Gui;
 import fr.zcraft.quartzlib.components.gui.GuiAction;
+import fr.zcraft.quartzlib.components.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.tools.PluginLogger;
-import fr.zcraft.quartzlib.tools.items.ItemStackBuilder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 
 public class ConfirmDeleteMapGui extends ActionGui {
@@ -114,17 +120,20 @@ public class ConfirmDeleteMapGui extends ActionGui {
 
         /* ** Item representation of the image being deleted ** */
 
-        action("", 13, new ItemStackBuilder(Material.FILLED_MAP)
-                /// The title of the map deletion item
-                .title(I.t(getPlayerLocale(), "{red}You're about to destroy this map..."))
-                /// The end, in the lore, of a title starting with “You're about to destroy this map...”.
-                .lore(I.t(getPlayerLocale(), "{red}...{italic}forever{red}."))
-                .loreLine()
-                .lore(I.t(getPlayerLocale(), "{gray}Name: {white}{0}", mapToDelete.getName()))
-                .lore(I.t(getPlayerLocale(), "{gray}Map ID: {white}{0}", mapToDelete.getId()))
-                .lore(I.t(getPlayerLocale(), "{gray}Maps inside: {white}{0}", mapToDelete.getMapsIDs().length))
-                .hideAllAttributes()
-        );
+        ItemStack item = new ItemStack(Material.FILLED_MAP);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(I.t(getPlayerLocale(), "{red}You're about to destroy this map..."));
+        meta.setLore(new ArrayList<>(Arrays.asList(
+            I.t(getPlayerLocale(), "{red}...{italic}forever{red}."),
+            "",
+            I.t(getPlayerLocale(), "{gray}Name: {white}{0}", mapToDelete.getName()),
+            I.t(getPlayerLocale(), "{gray}Map ID: {white}{0}", mapToDelete.getId()),
+            I.t(getPlayerLocale(), "{gray}Maps inside: {white}{0}", mapToDelete.getMapsIDs().length)
+        )));
+        meta.addItemFlags(ItemFlag.values());
+        item.setItemMeta(meta);
+
+        action("", 13, item);
 
         /* ** Buttons ** */
 
@@ -148,11 +157,14 @@ public class ConfirmDeleteMapGui extends ActionGui {
     }
 
     private ItemStack createSubButton(Material color, String title, String[] messages) {
-        return new ItemStackBuilder(color)
-                .title(title)
-                .loreSeparator()
-                .longLore(ChatColor.GRAY + messages[random.nextInt(messages.length)])
-                .item();
+        ItemStack item = new ItemStack(color);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(title);
+        List<String> lore = GuiUtils.generateLore(ChatColor.GRAY + messages[random.nextInt(messages.length)]);
+        lore.add(0, "");
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 
     @GuiAction("cancel")
