@@ -49,13 +49,22 @@
     </properties>
 
     <build>
+        <resources>
+            <!-- include system scope jar -->
+            <resource>
+                <directory>${project.basedir}</directory>
+                <includes>
+                    <include>lib/*.jar</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                        <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
                     <artifactSet>
                         <includes>
                             <include>fr.zcraft:quartzlib</include>
@@ -113,10 +122,6 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-        <repository>
-            <id>zdevelopers-quartzlib</id>
-            <url>https://maven.zcraft.fr/QuartzLib</url>
-        </repository>
 
         <!-- bStats -->
         <repository>
@@ -134,7 +139,9 @@
         <dependency>
             <groupId>fr.zcraft</groupId>
             <artifactId>quartzlib</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/quartzlib-0.0.1-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
