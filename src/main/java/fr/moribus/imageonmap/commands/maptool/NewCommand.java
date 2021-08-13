@@ -48,9 +48,10 @@ import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.components.worker.WorkerCallback;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.text.ActionBar;
-import fr.zcraft.quartzlib.tools.text.MessageSender;
 import java.net.MalformedURLException;
 import java.net.URL;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -109,8 +110,8 @@ public class NewCommand extends IoMCommand {
                         @Override
                         public void finished(ImageMap result) {
                             ActionBar.removeMessage(player);
-                            MessageSender
-                                    .sendActionBarMessage(player, ChatColor.DARK_GREEN + I.t("Rendering finished!"));
+                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                                    TextComponent.fromLegacyText(ChatColor.DARK_GREEN + I.t("Rendering finished!")));
 
                             if (result.give(player)
                                     && (result instanceof PosterMap && !((PosterMap) result).hasColumnData())) {

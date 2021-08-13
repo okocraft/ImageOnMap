@@ -36,7 +36,6 @@
 
 package fr.moribus.imageonmap.commands.maptool;
 
-import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.commands.IoMCommand;
 import fr.moribus.imageonmap.image.ImageRendererExecutor;
@@ -49,10 +48,11 @@ import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.components.worker.WorkerCallback;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.text.ActionBar;
-import fr.zcraft.quartzlib.tools.text.MessageSender;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -188,8 +188,9 @@ public class UpdateCommand extends IoMCommand {
                                 public void finished(ImageMap result) {
                                     if (playerSender != null) {
                                         ActionBar.removeMessage(playerSender);
-                                        MessageSender.sendActionBarMessage(playerSender,
-                                                ChatColor.DARK_GREEN + I.t("The map was updated using the new image!"));
+                                        playerSender.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                                                TextComponent.fromLegacyText(ChatColor.DARK_GREEN
+                                                        + I.t("The map was updated using the new image!")));
                                     }
                                 }
 

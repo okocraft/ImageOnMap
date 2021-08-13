@@ -44,11 +44,12 @@ import fr.zcraft.quartzlib.components.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.tools.items.GlowEffect;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
-import fr.zcraft.quartzlib.tools.text.MessageSender;
 import fr.zcraft.quartzlib.tools.world.FlatLocation;
 import fr.zcraft.quartzlib.tools.world.WorldUtils;
 import java.util.ArrayList;
 import java.util.List;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -192,11 +193,9 @@ public abstract class SplatterMapManager {
             surface.loc2 = endLocation;
 
             if (!surface.isValid(player)) {
-                MessageSender.sendActionBarMessage(player,
-                        I.t("{ce}There is not enough space to place this map ({0} × {1}).",
-                                poster.getColumnCount(),
-                                poster.getRowCount()));
-
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                        TextComponent.fromLegacyText(I.t("{ce}There is not enough space to place this map ({0} × {1}).",
+                                poster.getColumnCount(), poster.getRowCount())));
 
                 return false;
             }
@@ -271,9 +270,9 @@ public abstract class SplatterMapManager {
             wall.loc2 = endLocation;
 
             if (!wall.isValid()) {
-                MessageSender.sendActionBarMessage(player,
-                        I.t("{ce}There is not enough space to place this map ({0} × {1}).", poster.getColumnCount(),
-                                poster.getRowCount()));
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                        TextComponent.fromLegacyText(I.t("{ce}There is not enough space to place this map ({0} × {1}).",
+                                poster.getColumnCount(), poster.getRowCount())));
                 return false;
             }
 
