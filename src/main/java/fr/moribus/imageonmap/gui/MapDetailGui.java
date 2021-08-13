@@ -48,11 +48,9 @@ import fr.zcraft.quartzlib.components.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.gui.PromptGui;
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -80,8 +78,8 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(I.t(getPlayerLocale(), "{green}Map part"));
         List<String> lore = new ArrayList<>(Arrays.asList(
-            I.t(getPlayerLocale(), "{gray}Row: {white}{0}", y + 1),
-            I.t(getPlayerLocale(), "{gray}Column: {white}{0}", x + 1)
+                I.t(getPlayerLocale(), "{gray}Row: {white}{0}", y + 1),
+                I.t(getPlayerLocale(), "{gray}Column: {white}{0}", x + 1)
         ));
 
         if (Permissions.GET.grantedTo(getPlayer())) {
@@ -103,7 +101,7 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(I.t(getPlayerLocale(), "{green}Map part"));
         List<String> lore = new ArrayList<>(Arrays.asList(
-            I.t(getPlayerLocale(), "{gray}Part: {white}{0}", index + 1)
+                I.t(getPlayerLocale(), "{gray}Part: {white}{0}", index + 1)
         ));
 
         if (Permissions.GET.grantedTo(getPlayer())) {
@@ -186,7 +184,7 @@ public class MapDetailGui extends ExplorerGui<Integer> {
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(I.t(getPlayerLocale(), "{blue}Rename this image"));
             meta.setLore(GuiUtils.generateLore(I.t(getPlayerLocale(),
-            "{gray}Click here to rename this image; this is used for your own organization.")));
+                    "{gray}Click here to rename this image; this is used for your own organization.")));
             item.setItemMeta(meta);
             action("rename", renameSlot, item);
         }

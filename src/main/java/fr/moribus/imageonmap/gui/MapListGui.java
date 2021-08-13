@@ -48,11 +48,9 @@ import fr.zcraft.quartzlib.components.gui.ExplorerGui;
 import fr.zcraft.quartzlib.components.gui.Gui;
 import fr.zcraft.quartzlib.components.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.i18n.I;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -96,14 +94,14 @@ public class MapListGui extends ExplorerGui<ImageMap> {
 
         ItemStack mapItem = new ItemStack(Material.FILLED_MAP);
         MapMeta meta = (MapMeta) mapItem.getItemMeta();
-        
+
         meta.setDisplayName(I.tl(getPlayerLocale(), "{green}{bold}{0}", map.getName()));
         List<String> lore = new ArrayList<>(Arrays.asList(
-            mapDescription,
-            "",
-            I.tl(getPlayerLocale(), "{gray}Map ID: {0}", map.getId()),
-            ""
-        ));        
+                mapDescription,
+                "",
+                I.tl(getPlayerLocale(), "{gray}Map ID: {0}", map.getId()),
+                ""
+        ));
         if (Permissions.GET.grantedTo(getPlayer())) {
             lore.add(I.tl(getPlayerLocale(), "{gray}» {white}Left-click{gray} to get this map"));
         }
@@ -191,7 +189,6 @@ public class MapListGui extends ExplorerGui<ImageMap> {
 
 
         /* ** Statistics ** */
-        int imagesCount = MapManager.getMapList(offplayer.getUniqueId()).size();
         int mapPartCount = MapManager.getMapPartCount(offplayer.getUniqueId());
 
         int mapGlobalLimit = PluginConfiguration.MAP_GLOBAL_LIMIT.get();
@@ -211,6 +208,7 @@ public class MapListGui extends ExplorerGui<ImageMap> {
             mapPartLeft = Math.min(mapPartGloballyLeft, mapPartPersonallyLeft);
         }
 
+        int imagesCount = MapManager.getMapList(offplayer.getUniqueId()).size();
         double percentageUsed =
                 mapPartLeft < 0 ? 0 : ((double) mapPartCount) / ((double) (mapPartCount + mapPartLeft)) * 100;
 

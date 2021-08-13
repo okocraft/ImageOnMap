@@ -46,7 +46,6 @@ import fr.zcraft.quartzlib.components.gui.GuiAction;
 import fr.zcraft.quartzlib.components.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.tools.PluginLogger;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -124,11 +123,11 @@ public class ConfirmDeleteMapGui extends ActionGui {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(I.t(getPlayerLocale(), "{red}You're about to destroy this map..."));
         meta.setLore(new ArrayList<>(Arrays.asList(
-            I.t(getPlayerLocale(), "{red}...{italic}forever{red}."),
-            "",
-            I.t(getPlayerLocale(), "{gray}Name: {white}{0}", mapToDelete.getName()),
-            I.t(getPlayerLocale(), "{gray}Map ID: {white}{0}", mapToDelete.getId()),
-            I.t(getPlayerLocale(), "{gray}Maps inside: {white}{0}", mapToDelete.getMapsIDs().length)
+                I.t(getPlayerLocale(), "{red}...{italic}forever{red}."),
+                "",
+                I.t(getPlayerLocale(), "{gray}Name: {white}{0}", mapToDelete.getName()),
+                I.t(getPlayerLocale(), "{gray}Map ID: {white}{0}", mapToDelete.getId()),
+                I.t(getPlayerLocale(), "{gray}Maps inside: {white}{0}", mapToDelete.getMapsIDs().length)
         )));
         meta.addItemFlags(ItemFlag.values());
         item.setItemMeta(meta);

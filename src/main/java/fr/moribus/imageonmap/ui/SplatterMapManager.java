@@ -36,9 +36,6 @@
 
 package fr.moribus.imageonmap.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fr.moribus.imageonmap.image.MapInitEvent;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
@@ -50,6 +47,8 @@ import fr.zcraft.quartzlib.tools.runners.RunTask;
 import fr.zcraft.quartzlib.tools.text.MessageSender;
 import fr.zcraft.quartzlib.tools.world.FlatLocation;
 import fr.zcraft.quartzlib.tools.world.WorldUtils;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
