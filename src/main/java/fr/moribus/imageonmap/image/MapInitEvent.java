@@ -43,7 +43,6 @@ import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -52,7 +51,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.server.MapInitializeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 
@@ -96,12 +95,8 @@ public class MapInitEvent implements Listener {
     }
 
     @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event) {
-        for (Entity entity : event.getChunk().getEntities()) {
-            if (entity instanceof ItemFrame) {
-                initMap(((ItemFrame) entity).getItem());
-            }
-        }
+    public void onMapInitialized(MapInitializeEvent event) {
+        initMap(event.getMap());
     }
 
     @EventHandler
