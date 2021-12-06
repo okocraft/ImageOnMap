@@ -141,10 +141,6 @@ public class MapItemManager implements Listener {
         return givenItemsCount;
     }
 
-    public static ItemStack createMapItem(SingleMap map) {
-        return createMapItem(map.getMapsIDs()[0], map.getName(), false);
-    }
-
     public static ItemStack createMapItem(SingleMap map, boolean goldTitle) {
         return createMapItem(map.getMapsIDs()[0], map.getName(), false, goldTitle);
     }
@@ -199,27 +195,6 @@ public class MapItemManager implements Listener {
 
     //
 
-    /**
-     * Returns the item to place to display the (col;row) part of the given poster.
-     *
-     * @param map The map to take the part from.
-     * @param x   The x coordinate of the part to display. Starts at 0.
-     * @param y   The y coordinate of the part to display. Starts at 0.
-     * @return The map.
-     * @throws ArrayIndexOutOfBoundsException If x;y is not inside the map.
-     */
-    public static ItemStack createSubMapItem(ImageMap map, int x, int y) {
-        if (map instanceof PosterMap && ((PosterMap) map).hasColumnData()) {
-            return MapItemManager.createMapItem((PosterMap) map, x, y);
-        } else {
-            if (x != 0 || y != 0) {
-                throw new ArrayIndexOutOfBoundsException(); // Coherence
-            }
-
-            return createMapItem(map.getMapsIDs()[0], map.getName(), false);
-        }
-    }
-
     public static int getCacheSize(Player player) {
         return getCache(player).size();
     }
@@ -251,7 +226,7 @@ public class MapItemManager implements Listener {
 
         frame.setItem(new ItemStack(Material.AIR));
         if (SplatterMapManager.hasSplatterAttributes(mapItem)) {
-            if (!SplatterMapManager.placeSplatterMap(frame, player, event)) {
+            if (!SplatterMapManager.placeSplatterMap(frame, player)) {
                 event.setCancelled(true); //In case of an error allow to cancel map placement
                 return;
             }

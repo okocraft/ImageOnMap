@@ -58,7 +58,6 @@ public class PosterOnASurface {
      * Return the list of map Frames associated with a specific map
      */
     public static ItemFrame[] getMatchingMapFrames(PosterMap map, FlatLocation location, int mapId, BlockFace bf) {
-        int mapIndex = map.getIndex(mapId);
         //int x = map.getColumnAt(mapIndex), y = map.getRowAt(mapIndex);
         int x = 0;
         int y = switch (bf) {
@@ -204,7 +203,4 @@ public class PosterOnASurface {
         return true;
     }
 
-    public void expand() {
-
-    }
 }

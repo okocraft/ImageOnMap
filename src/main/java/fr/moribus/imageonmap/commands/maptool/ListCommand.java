@@ -84,9 +84,6 @@ public class ListCommand extends IoMCommand {
                 info(sender, I.t("No map found."));
                 return;
             }
-            String message = I.tn("{white}{bold}{0} map found.",
-                    "{white}{bold}{0} maps found.",
-                    mapList.size());
 
             info(sender, I.tn("{white}{bold}{0} map found.", "{white}{bold}{0} maps found.", mapList.size()));
 

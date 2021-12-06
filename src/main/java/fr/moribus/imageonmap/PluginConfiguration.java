@@ -46,8 +46,6 @@ import java.util.Locale;
 public final class PluginConfiguration extends Configuration {
     public static final ConfigurationItem<Locale> LANG = item("lang", Locale.class);
 
-    public static ConfigurationItem<Boolean> COLLECT_DATA = item("collect-data", true);
-
     public static final ConfigurationItem<Boolean> CHECK_FOR_UPDATES = item("check-for-updates", true);
 
     public static final ConfigurationItem<Integer> MAP_GLOBAL_LIMIT = item("map-global-limit", 0, "Limit-map-by-server");

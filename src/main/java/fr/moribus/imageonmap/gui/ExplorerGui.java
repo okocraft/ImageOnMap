@@ -255,7 +255,7 @@ public abstract class ExplorerGui<T> extends ActionGui {
         if (mode.equals(Mode.READONLY)) {
             return;
         }
-        if (!onPutItem(event.getOldCursor())) {
+        if (!onPutItem()) {
             return;
         }
 
@@ -296,7 +296,7 @@ public abstract class ExplorerGui<T> extends ActionGui {
         if (mode.equals(Mode.READONLY)) {
             return;
         }
-        if (!onPutItem(event.getCursor())) {
+        if (!onPutItem()) {
             return;
         }
         event.getView().setCursor(new ItemStack(Material.AIR));
@@ -312,7 +312,7 @@ public abstract class ExplorerGui<T> extends ActionGui {
         if (mode.equals(Mode.READONLY)) {
             return;
         }
-        if (!onPutItem(event.getCurrentItem())) {
+        if (!onPutItem()) {
             return;
         }
         event.setCurrentItem(new ItemStack(Material.AIR));
@@ -533,7 +533,7 @@ public abstract class ExplorerGui<T> extends ActionGui {
             return;
         }
         if (isData2D) {
-            onRightClick(event.dataX, event.dataY);
+            onRightClick();
         } else {
             onRightClick(getData(event.posData));
         }
@@ -542,10 +542,8 @@ public abstract class ExplorerGui<T> extends ActionGui {
     /**
      * Triggered when the player right-clicks an item on the GUI.
      *
-     * @param x The X position of the right-clicked data.
-     * @param y The Y position of the right-clicked data.
      */
-    protected void onRightClick(int x, int y) {
+    protected void onRightClick() {
     }
 
     /**
@@ -562,10 +560,9 @@ public abstract class ExplorerGui<T> extends ActionGui {
      * <p> This will not place the item in the GUI, it's up to you to update the data and refresh
      * the GUI if you need so.</p>
      *
-     * @param item The {@link ItemStack} the player is trying to put.
      * @return {@code false} to cancel the placement; {@code true} to accept it.
      */
-    protected boolean onPutItem(ItemStack item) {
+    protected boolean onPutItem() {
         return true;
     }
 

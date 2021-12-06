@@ -44,9 +44,6 @@ import fr.moribus.imageonmap.map.PosterMap;
 import fr.moribus.imageonmap.map.SingleMap;
 import fr.moribus.imageonmap.ui.MapItemManager;
 import fr.moribus.imageonmap.ui.SplatterMapManager;
-import fr.moribus.imageonmap.gui.ExplorerGui;
-import fr.moribus.imageonmap.gui.Gui;
-import fr.moribus.imageonmap.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.i18n.I;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,11 +60,6 @@ import org.bukkit.inventory.meta.MapMeta;
 public class MapListGui extends ExplorerGui<ImageMap> {
     private final OfflinePlayer offplayer;
     private final String name;
-
-    public MapListGui(OfflinePlayer sender) {
-        this.offplayer = sender;
-        this.name = sender.getName();
-    }
 
     public MapListGui(OfflinePlayer p, String name) {
         this.offplayer = p;

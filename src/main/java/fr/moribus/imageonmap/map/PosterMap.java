@@ -157,7 +157,7 @@ public class PosterMap extends ImageMap {
     }
 
 
-    public int getMapIdAtReverseZ(int index, BlockFace orientation, BlockFace bf) {
+    public int getMapIdAtReverseZ(int index, BlockFace bf) {
         int x;
         int y;
 

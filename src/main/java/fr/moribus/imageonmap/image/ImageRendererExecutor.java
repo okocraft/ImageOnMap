@@ -176,7 +176,7 @@ public class ImageRendererExecutor extends Worker {
                 // Limits are in place and the player does NOT have rights to avoid them.
                 checkSizeLimit(playerUUID, image);
 
-                updateMap(scaling.resize(image, width * 128, height * 128), playerUUID, map.getMapsIDs());
+                updateMap(scaling.resize(image, width * 128, height * 128), map.getMapsIDs());
                 return map;
 
             }
@@ -184,7 +184,7 @@ public class ImageRendererExecutor extends Worker {
 
     }
 
-    private static void updateMap(final BufferedImage image, final UUID playerUUID, int[] mapsIDs) {
+    private static void updateMap(final BufferedImage image, int[] mapsIDs) {
 
         final PosterImage poster = new PosterImage(image);
         poster.splitImages();

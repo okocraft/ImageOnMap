@@ -81,62 +81,12 @@ public abstract class ActionGui extends InventoryGui {
      *
      * @param name      The identifier of the action.
      * @param slot      The slot the action will be placed on.
-     * @param material  The material used to represent the action.
-     * @param title     The title the item will show.
-     * @param loreLines The lore the item will show.
-     */
-    protected void action(String name, int slot, Material material, String title, String... loreLines) {
-        action(name, slot, new ItemStack(material), title, Arrays.asList(loreLines));
-    }
-
-    /**
-     * Creates a new action, represented by the given item.
-     * The item's metadata is changed to use the given title and lore.
-     *
-     * @param name      The identifier of the action.
-     * @param slot      The slot the action will be placed on.
-     * @param item      The item used to represent the action.
-     * @param title     The title the item will show.
-     * @param loreLines The lore the item will show.
-     */
-    protected void action(String name, int slot, ItemStack item, String title, String... loreLines) {
-        action(name, slot, item, title, Arrays.asList(loreLines));
-    }
-
-    /**
-     * Creates a new action, represented by the given item.
-     * The item's metadata is changed to use the given title and lore.
-     *
-     * @param name      The identifier of the action.
-     * @param slot      The slot the action will be placed on.
      * @param item      The item used to represent the action.
      * @param title     The title the item will show.
      * @param loreLines The lore the item will show.
      */
     protected void action(String name, int slot, ItemStack item, String title, List<String> loreLines) {
         action(name, slot, GuiUtils.makeItem(item, title, loreLines));
-    }
-
-    /**
-     * Creates a new action, represented by the given material.
-     *
-     * @param name     The identifier of the action.
-     * @param slot     The slot the action will be placed on.
-     * @param material The material used to represent the action.
-     */
-    protected void action(String name, int slot, Material material) {
-        action(name, slot, GuiUtils.makeItem(material));
-    }
-
-    /**
-     * Creates a new action, and adds it to the GUI.
-     *
-     * @param name The identifier of the action.
-     * @param slot The slot the action will be placed on.
-     * @param item The item used to represent the action.
-     */
-    protected void action(String name, int slot, ItemStackBuilder item) {
-        action(name, slot, item.item());
     }
 
     /**
@@ -219,11 +169,8 @@ public abstract class ActionGui extends InventoryGui {
     /**
      * Raised when an action without any event handler has been triggered.
      *
-     * @param name The name of the triggered action.
-     * @param slot The slot of the action.
-     * @param item The item of the action.
      */
-    protected void unknown_action(String name, int slot, ItemStack item) {
+    protected void unknown_action() {
     }
 
 
@@ -264,7 +211,7 @@ public abstract class ActionGui extends InventoryGui {
         }
 
         if (action.callback == null) {
-            unknown_action(action.name, action.slot, action.item);
+            unknown_action();
             return;
         }
 

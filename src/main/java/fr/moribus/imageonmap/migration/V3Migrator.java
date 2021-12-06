@@ -132,10 +132,6 @@ public class V3Migrator implements Runnable {
      * The map of all the usernames and their corresponding UUIDs
      */
     private Map<String, UUID> usersUUIDs;
-    /**
-     * Defines if the migration process is currently running
-     */
-    private boolean isRunning = false;
 
     public V3Migrator(ImageOnMap plugin) {
         this.plugin = plugin;
@@ -480,7 +476,6 @@ public class V3Migrator implements Runnable {
                     missingUsersList += user + ", ";
                 }
             }
-            missingUsersList = missingUsersList;
 
             plugin.getLogger().info(missingUsersList);
         }
@@ -593,22 +588,12 @@ public class V3Migrator implements Runnable {
         plugin.getLogger().info(I.t("Data that has not been migrated will be kept in the old data files."));
     }
 
-    public synchronized boolean isRunning() {
-        return isRunning;
-    }
-
-    private synchronized void setRunning(boolean running) {
-        this.isRunning = running;
-    }
-
     /**
      * Executes the full migration, and defines the running status of the migration
      */
     @Override
     public void run() {
-        setRunning(true);
         migrate();
-        setRunning(false);
     }
 
 }

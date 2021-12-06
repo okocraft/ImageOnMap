@@ -105,10 +105,6 @@ public class Renderer extends MapRenderer {
         image = null;
     }
 
-    public BufferedImage getImage() {
-        return image;
-    }
-
     public void setImage(BufferedImage image) {
         this.image = image;
     }

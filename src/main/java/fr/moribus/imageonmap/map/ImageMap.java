@@ -61,10 +61,6 @@ public abstract class ImageMap implements ConfigurationSerializable {
     private String id;
     private String name;
 
-    protected ImageMap(UUID userUUID, Type mapType) {
-        this(userUUID, mapType, null, null);
-    }
-
     protected ImageMap(UUID userUUID, Type mapType, String id, String name) {
         this.userUUID = userUUID;
         this.mapType = mapType;

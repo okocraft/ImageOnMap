@@ -71,17 +71,6 @@ public abstract class MapManager {
         }
     }
 
-    public static boolean managesMap(int mapID) {
-        synchronized (playerMaps) {
-            for (PlayerMapStore mapStore : playerMaps) {
-                if (mapStore.managesMap(mapID)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public static boolean managesMap(ItemStack item) {
         if (item == null) {
             return false;
@@ -154,13 +143,6 @@ public abstract class MapManager {
         ImageIOExecutor.deleteImage(map);
     }
 
-    public static void notifyModification(UUID playerUUID) {
-        getPlayerMapStore(playerUUID).notifyModification();
-        if (autosaveTask == null) {
-            Bukkit.getScheduler().runTaskLater(ImageOnMap.getPlugin(), new AutosaveRunnable(), SAVE_DELAY);
-        }
-    }
-
     public static String getNextAvailableMapID(String mapId, UUID playerUUID) {
         return getPlayerMapStore(playerUUID).getNextAvailableMapID(mapId);
     }
@@ -225,14 +207,6 @@ public abstract class MapManager {
         return getMap(getMapIdFromItemStack(item));
     }
 
-    public static void clear(Inventory inventory) {
-        for (int i = 0, c = inventory.getSize(); i < c; i++) {
-            if (managesMap(inventory.getItem(i))) {
-                inventory.setItem(i, new ItemStack(Material.AIR));
-            }
-        }
-    }
-
     public static void clear(Inventory inventory, ImageMap map) {
         for (int i = 0, c = inventory.getSize(); i < c; i++) {
             if (map.managesMap(inventory.getItem(i))) {
@@ -290,10 +264,6 @@ public abstract class MapManager {
         }
     }
 
-    public static void checkMapLimit(ImageMap map) throws MapManagerException {
-        checkMapLimit(map.getMapCount(), map.getUserUUID());
-    }
-
     public static void checkMapLimit(int newMapsCount, UUID userUUID) throws MapManagerException {
         int limit = PluginConfiguration.MAP_GLOBAL_LIMIT.get();
 
@@ -317,21 +287,6 @@ public abstract class MapManager {
             }
         }
         return mapCount;
-    }
-
-    /**
-     * Returns the total number of images rendered by ImageOnMap.
-     *
-     * @return The count.
-     */
-    public static int getImagesCount() {
-        int imagesCount = 0;
-        synchronized (playerMaps) {
-            for (PlayerMapStore tmpStore : playerMaps) {
-                imagesCount += tmpStore.getImagesCount();
-            }
-        }
-        return imagesCount;
     }
 
     /**
@@ -371,20 +326,5 @@ public abstract class MapManager {
             }
         }
         return null;
-    }
-
-    private static class AutosaveRunnable implements Runnable {
-        @Override
-        public void run() {
-            synchronized (playerMaps) {
-                for (PlayerMapStore toolStore : playerMaps) {
-                    if (toolStore.isModified()) {
-                        toolStore.save();
-                    }
-                }
-                autosaveTask = null;
-            }
-        }
-
     }
 }

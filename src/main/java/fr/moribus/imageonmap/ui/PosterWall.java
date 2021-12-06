@@ -158,8 +158,4 @@ public class PosterWall {
 
         return true;
     }
-
-    public void expand() {
-
-    }
 }

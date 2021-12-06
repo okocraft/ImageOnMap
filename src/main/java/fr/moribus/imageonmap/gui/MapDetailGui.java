@@ -222,7 +222,6 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         action("back", backSlot, item);
     }
 
-
     @GuiAction("rename")
     public void rename() {
         if (!Permissions.RENAME.grantedTo(getPlayer())) {

@@ -57,7 +57,6 @@ import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -173,7 +172,7 @@ public abstract class SplatterMapManager {
      * @param player     Player placing map
      * @return true if the map was correctly placed
      */
-    public static boolean placeSplatterMap(ItemFrame startFrame, Player player, PlayerInteractEntityEvent event) {
+    public static boolean placeSplatterMap(ItemFrame startFrame, Player player) {
         ImageMap map = MapManager.getMap(player.getInventory().getItemInMainHand());
 
         if (!(map instanceof PosterMap)) {
@@ -203,7 +202,7 @@ public abstract class SplatterMapManager {
             int i = 0;
             for (ItemFrame frame : surface.frames) {
                 BlockFace bf = WorldUtils.get4thOrientation(player.getLocation());
-                int id = poster.getMapIdAtReverseZ(i, bf, startFrame.getFacing());
+                int id = poster.getMapIdAtReverseZ(i, startFrame.getFacing());
                 Rotation rot = Rotation.NONE;
                 switch (frame.getFacing()) {
                     case UP:

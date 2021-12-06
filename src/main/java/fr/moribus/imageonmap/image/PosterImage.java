@@ -129,27 +129,12 @@ public class PosterImage {
         return newImage;
     }
 
-    /**
-     * @return the split images
-     */
-    public BufferedImage[] getImages() {
-        return cutImages;
-    }
-
     public BufferedImage getImageAt(int i) {
         return cutImages[i];
     }
 
     public BufferedImage getImage() {
         return originalImage;
-    }
-
-    public int getColumnAt(int i) {
-        return i % columns;
-    }
-
-    public int getLineAt(int i) {
-        return i / columns;
     }
 
     /**
@@ -173,19 +158,4 @@ public class PosterImage {
         return cutImagesCount;
     }
 
-    public int getRemainderX() {
-        return remainderX;
-    }
-
-    public void setRemainderX(int remainderX) {
-        this.remainderX = remainderX;
-    }
-
-    public int getRemainderY() {
-        return remainderY;
-    }
-
-    public void setRemainderY(int remainderY) {
-        this.remainderY = remainderY;
-    }
 }

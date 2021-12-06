@@ -39,8 +39,7 @@ package fr.moribus.imageonmap.commands;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.zcraft.quartzlib.components.commands.Command;
-import fr.zcraft.quartzlib.components.commands.CommandException;
-import fr.zcraft.quartzlib.components.i18n.I;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -61,34 +60,6 @@ public abstract class IoMCommand extends Command {
 
         consumer.accept(uuid);
 
-    }
-
-    protected ImageMap getMapFromArgs() throws CommandException {
-        return getMapFromArgs(playerSender(), 0, true);
-    }
-
-    protected ImageMap getMapFromArgs(Player player, int index, boolean expand) throws CommandException {
-        if (args.length <= index) {
-            throwInvalidArgument(I.t("You need to give a map name."));
-        }
-
-        ImageMap map;
-        String mapName = args[index];
-
-        if (expand) {
-            for (int i = index + 1, c = args.length; i < c; i++) {
-                mapName += " " + args[i];
-            }
-        }
-
-        mapName = mapName.trim();
-        map = MapManager.getMap(player.getUniqueId(), mapName);
-
-        if (map == null) {
-            error(I.t("This map does not exist."));
-        }
-
-        return map;
     }
 
     protected ArrayList<String> getArgs() {

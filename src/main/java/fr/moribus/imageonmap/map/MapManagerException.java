@@ -47,10 +47,6 @@ public class MapManagerException extends Exception {
         super(reason.getReasonString(arguments));
         this.reason = reason;
     }
-
-    public Reason getReason() {
-        return reason;
-    }
     
     public enum Reason {
         MAXIMUM_PLAYER_MAPS_EXCEEDED(I.t("You have too many maps (maximum : {0}).")),
