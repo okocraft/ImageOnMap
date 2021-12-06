@@ -133,17 +133,12 @@ public class ImageUtils {
         ;
 
         public BufferedImage resize(BufferedImage source, int destinationW, int destinationH) {
-            switch (this) {
-                case CONTAINED:
-                    return ImageUtils.resize(source, destinationW, destinationH, false);
-                case COVERED:
-                    return ImageUtils.resize(source, destinationW, destinationH, true);
-                case STRETCHED:
-                    return resizeStretched(source, destinationW, destinationH);
-                default:
-                    return source;
-
-            }
+            return switch (this) {
+                case CONTAINED -> ImageUtils.resize(source, destinationW, destinationH, false);
+                case COVERED -> ImageUtils.resize(source, destinationW, destinationH, true);
+                case STRETCHED -> resizeStretched(source, destinationW, destinationH);
+                default -> source;
+            };
         }
     }
 }

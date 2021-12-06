@@ -231,32 +231,30 @@ public abstract class SplatterMapManager {
                 }
 
                 switch (bf) {
-                    case NORTH:
+                    case NORTH -> {
                         if (frame.getFacing() == BlockFace.DOWN) {
                             rot = rot.rotateClockwise();
                             rot = rot.rotateClockwise();
                         }
                         frame.setRotation(rot);
-                        break;
-                    case EAST:
+                    }
+                    case EAST -> {
                         rot = rot.rotateClockwise();
                         frame.setRotation(rot);
-                        break;
-                    case SOUTH:
+                    }
+                    case SOUTH -> {
                         if (frame.getFacing() == BlockFace.UP) {
                             rot = rot.rotateClockwise();
                             rot = rot.rotateClockwise();
                         }
                         frame.setRotation(rot);
-                        break;
-                    case WEST:
+                    }
+                    case WEST -> {
                         rot = rot.rotateCounterClockwise();
                         frame.setRotation(rot);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + bf);
+                    }
+                    default -> throw new IllegalStateException("Unexpected value: " + bf);
                 }
-
 
                 MapInitEvent.initMap(id);
                 i++;
@@ -317,26 +315,14 @@ public abstract class SplatterMapManager {
             return null;
         }
         FlatLocation loc = new FlatLocation(startFrame.getLocation(), startFrame.getFacing());
-        ItemFrame[] matchingFrames = null;
-
-        switch (startFrame.getFacing()) {
-            case UP:
-            case DOWN:
-                matchingFrames = PosterOnASurface.getMatchingMapFrames(poster, loc,
-                        MapManager.getMapIdFromItemStack(startFrame.getItem()),
-                        WorldUtils.get4thOrientation(player.getLocation()));//startFrame.getFacing());
-                break;
-
-            case NORTH:
-            case SOUTH:
-            case EAST:
-            case WEST:
-                matchingFrames = PosterWall.getMatchingMapFrames(poster, loc,
-                        MapManager.getMapIdFromItemStack(startFrame.getItem()));
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + startFrame.getFacing());
-        }
+        ItemFrame[] matchingFrames = switch (startFrame.getFacing()) {
+            case UP, DOWN -> PosterOnASurface.getMatchingMapFrames(poster, loc,
+                    MapManager.getMapIdFromItemStack(startFrame.getItem()),
+                    WorldUtils.get4thOrientation(player.getLocation()));//startFrame.getFacing());
+            case NORTH, SOUTH, EAST, WEST -> PosterWall.getMatchingMapFrames(poster, loc,
+                    MapManager.getMapIdFromItemStack(startFrame.getItem()));
+            default -> throw new IllegalStateException("Unexpected value: " + startFrame.getFacing());
+        };
 
         if (matchingFrames == null) {
             return null;

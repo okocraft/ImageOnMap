@@ -98,14 +98,10 @@ public abstract class ImageMap implements ConfigurationSerializable {
             throw new InvalidConfigurationException(ex);
         }
 
-        switch (mapType) {
-            case SINGLE:
-                return new SingleMap(map, userUUID);
-            case POSTER:
-                return new PosterMap(map, userUUID);
-            default:
-                throw new IllegalArgumentException("Unhandled map type given");
-        }
+        return switch (mapType) {
+            case SINGLE -> new SingleMap(map, userUUID);
+            case POSTER -> new PosterMap(map, userUUID);
+        };
     }
 
     public static Integer[] getSize(UUID playerUUID, String id) {

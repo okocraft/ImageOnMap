@@ -61,19 +61,11 @@ public class PosterOnASurface {
         int mapIndex = map.getIndex(mapId);
         //int x = map.getColumnAt(mapIndex), y = map.getRowAt(mapIndex);
         int x = 0;
-        int y = 0;
-        switch (bf) {
-            case EAST:
-            case WEST:
-                y = map.getColumnCount() - 1;
-                break;
-            case NORTH:
-            case SOUTH:
-                y = map.getRowCount() - 1;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + bf);
-        }
+        int y = switch (bf) {
+            case EAST, WEST -> map.getColumnCount() - 1;
+            case NORTH, SOUTH -> map.getRowCount() - 1;
+            default -> throw new IllegalStateException("Unexpected value: " + bf);
+        };
         return getMatchingMapFrames(map, location.clone().addH(x, y, bf), bf).clone();
     }
 
@@ -85,20 +77,11 @@ public class PosterOnASurface {
         int x = 0;
         int y = 0;
         switch (bf) {
-            case EAST:
-            case WEST:
-                //X=map.getRowCount();
-                //Y=map.getColumnCount();
-                //break;
-            case NORTH:
-            case SOUTH:
-
+            case EAST, WEST, NORTH, SOUTH -> {
                 y = map.getRowCount();
                 x = map.getColumnCount();
-                break;
-
-            default:
-                throw new IllegalStateException("Unexpected value: " + bf);
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + bf);
         }
 
         for (int j = 0; j < y; ++j) {
@@ -110,35 +93,17 @@ public class PosterOnASurface {
                     frames[mapIndex] = frame;
                 }
                 switch (bf) {
-                    case EAST:
-                    case WEST:
-                        loc.addH(0, -1, bf);
-                        break;
-                    case NORTH:
-                    case SOUTH:
-                        loc.addH(1, 0, bf);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + bf);
+                    case EAST, WEST -> loc.addH(0, -1, bf);
+                    case NORTH, SOUTH -> loc.addH(1, 0, bf);
+                    default -> throw new IllegalStateException("Unexpected value: " + bf);
                 }
-
-
             }
 
             switch (bf) {
-                case EAST:
-                case WEST:
-                    loc.addH(1, map.getColumnCount(), bf);//test
-
-                    break;
-                case NORTH:
-                case SOUTH:
-                    loc.addH(-map.getColumnCount(), -1, bf);
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + bf);
+                case EAST, WEST -> loc.addH(1, map.getColumnCount(), bf);//test
+                case NORTH, SOUTH -> loc.addH(-map.getColumnCount(), -1, bf);
+                default -> throw new IllegalStateException("Unexpected value: " + bf);
             }
-
         }
 
         return frames;
@@ -223,33 +188,19 @@ public class PosterOnASurface {
                 frames[z * distX + x] = curFrame;
 
                 switch (bf) {
-                    case NORTH:
-                    case SOUTH:
-                        l.addH(0, 1, bf);
-                        break;
-                    case EAST:
-                    case WEST:
-                        l.addH(1, 0, bf);
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + bf);
+                    case NORTH, SOUTH -> l.addH(0, 1, bf);
+                    case EAST, WEST -> l.addH(1, 0, bf);
+                    default -> throw new IllegalStateException("Unexpected value: " + bf);
                 }
-
             }
 
             switch (bf) {
-                case NORTH:
-                case SOUTH:
-                    l.addH(1, -distZ, bf);
-                    break;
-                case EAST:
-                case WEST:
-                    l.addH(-distZ, 1, bf);
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + bf);
+                case NORTH, SOUTH -> l.addH(1, -distZ, bf);
+                case EAST, WEST -> l.addH(-distZ, 1, bf);
+                default -> throw new IllegalStateException("Unexpected value: " + bf);
             }
         }
+
         return true;
     }
 

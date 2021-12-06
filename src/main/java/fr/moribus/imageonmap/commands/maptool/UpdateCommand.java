@@ -140,19 +140,11 @@ public class UpdateCommand extends IoMCommand {
             }
         }
 
-        final ImageUtils.ScalingType scaling;
-
-        switch (resize) {
-
-            case "stretched":
-                scaling = ImageUtils.ScalingType.STRETCHED;
-                break;
-            case "covered":
-                scaling = ImageUtils.ScalingType.COVERED;
-                break;
-            default:
-                scaling = ImageUtils.ScalingType.CONTAINED;
-        }
+        final ImageUtils.ScalingType scaling = switch (resize) {
+            case "stretched" -> ImageUtils.ScalingType.STRETCHED;
+            case "covered" -> ImageUtils.ScalingType.COVERED;
+            default -> ImageUtils.ScalingType.CONTAINED;
+        };
 
         //TODO passer en static
         //ImageOnMap.getPlugin().getCommandWorker().offlineNameFetch(playerName, uuid -> {

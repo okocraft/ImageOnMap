@@ -158,22 +158,25 @@ public class PosterMap extends ImageMap {
 
 
     public int getMapIdAtReverseZ(int index, BlockFace orientation, BlockFace bf) {
-        int x = 0;
-        int y = 0;
+        int x;
+        int y;
+
         switch (bf) {
-            case UP:
+            case UP -> {
                 x = index % (columnCount);
                 y = index / (columnCount);
-                break;
-            case DOWN:
+            }
+            case DOWN -> {
                 x = (columnCount - 1) - index % (columnCount);
                 y = index / (columnCount);
-                break;
-            default:
+            }
+            default -> {
+                x = 0;
+                y = 0;
+            }
         }
 
         return getMapIdAt(x, rowCount - y - 1);
-
     }
 
 
