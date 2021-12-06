@@ -105,7 +105,7 @@ class WorkerCallbackManager implements Runnable {
         currentRunnableInfo.runCallback();
     }
 
-    private class WorkerRunnableInfo<T> {
+    private static class WorkerRunnableInfo<T> {
         private final WorkerCallback<T> callback;
         private T result;
         private Throwable runnableException;

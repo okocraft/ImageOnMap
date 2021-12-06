@@ -81,7 +81,7 @@ class WorkerMainThreadExecutor implements Runnable {
         currentFuture.runCallable();
     }
 
-    private class WorkerFuture<T> implements Future<T> {
+    private static class WorkerFuture<T> implements Future<T> {
         private final Callable<T> callable;
         private boolean isCancelled;
         private boolean isDone;
