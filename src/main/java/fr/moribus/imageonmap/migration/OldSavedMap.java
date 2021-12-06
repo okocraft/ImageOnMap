@@ -50,6 +50,7 @@ class OldSavedMap {
     private final String mapName;
     private final String userName;
 
+    @SuppressWarnings("unchecked")
     public OldSavedMap(Object rawData) throws InvalidConfigurationException {
         List<String> data;
         try {
