@@ -168,29 +168,15 @@ class WorkerMainThreadExecutor implements Runnable {
         private void waitForCompletion(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
             long millis = 0;
             switch (unit) {
-                case NANOSECONDS:
-                    millis = timeout / 10 ^ 6;
-                    break;
-                case MICROSECONDS:
-                    millis = timeout / 10 ^ 3;
-                    break;
-                case MILLISECONDS:
-                    millis = timeout;
-                    break;
-                case SECONDS:
-                    millis = timeout * 10 ^ 3;
-                    break;
-                case MINUTES:
-                    millis = timeout * 10 ^ 3 * 60;
-                    break;
-                case HOURS:
-                    millis = timeout * 10 ^ 3 * 3600;
-                    break;
-                case DAYS:
-                    millis = timeout * 10 ^ 3 * 3600 * 24;
-                    break;
-                default:
-                    break;
+                case NANOSECONDS -> millis = timeout / 10 ^ 6;
+                case MICROSECONDS -> millis = timeout / 10 ^ 3;
+                case MILLISECONDS -> millis = timeout;
+                case SECONDS -> millis = timeout * 10 ^ 3;
+                case MINUTES -> millis = timeout * 10 ^ 3 * 60;
+                case HOURS -> millis = timeout * 10 ^ 3 * 3600;
+                case DAYS -> millis = timeout * 10 ^ 3 * 3600 * 24;
+                default -> {
+                }
             }
             waitForCompletion(millis);
         }

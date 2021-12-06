@@ -443,14 +443,9 @@ public final class TextualBanners {
      * @return a background color.
      */
     private static DyeColor getBackgroundColorFor(DyeColor foregroundColor) {
-        switch (foregroundColor) {
-            case WHITE:
-            case YELLOW:
-            case PINK:
-                return DyeColor.BLACK;
-
-            default:
-                return DyeColor.WHITE;
-        }
+        return switch (foregroundColor) {
+            case WHITE, YELLOW, PINK -> DyeColor.BLACK;
+            default -> DyeColor.WHITE;
+        };
     }
 }

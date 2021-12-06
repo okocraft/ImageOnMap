@@ -142,26 +142,12 @@ public abstract class NBT {
 
         for (ItemFlag flag : itemFlags) {
             switch (flag) {
-                case HIDE_ENCHANTS:
-                    flags += 1;
-                    break;
-                case HIDE_ATTRIBUTES:
-                    flags += 1 << 1;
-                    break;
-                case HIDE_UNBREAKABLE:
-                    flags += 1 << 2;
-                    break;
-                case HIDE_DESTROYS:
-                    flags += 1 << 3;
-                    break;
-                case HIDE_PLACED_ON:
-                    flags += 1 << 4;
-                    break;
-                case HIDE_POTION_EFFECTS:
-                    flags += 1 << 5;
-                    break;
-                default:
-                    break;
+                case HIDE_ENCHANTS -> flags += 1;
+                case HIDE_ATTRIBUTES -> flags += 1 << 1;
+                case HIDE_UNBREAKABLE -> flags += 1 << 2;
+                case HIDE_DESTROYS -> flags += 1 << 3;
+                case HIDE_PLACED_ON -> flags += 1 << 4;
+                case HIDE_POTION_EFFECTS -> flags += 1 << 5;
             }
         }
 
@@ -353,14 +339,11 @@ public abstract class NBT {
         }
         NBTType type = NBTType.fromNmsNbtTag(nbtTag);
 
-        switch (type) {
-            case TAG_COMPOUND:
-                return new NBTCompound(nbtTag);
-            case TAG_LIST:
-                return new NBTList(nbtTag);
-            default:
-                return type.getData(nbtTag);
-        }
+        return switch (type) {
+            case TAG_COMPOUND -> new NBTCompound(nbtTag);
+            case TAG_LIST -> new NBTList(nbtTag);
+            default -> type.getData(nbtTag);
+        };
     }
 
 

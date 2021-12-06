@@ -138,13 +138,8 @@ public abstract class InventoryUtils {
         final ItemStack item = new ItemStack(Material.AIR);
 
         switch (hand) {
-            case MAIN_HAND:
-                player.getInventory().setItemInMainHand(item);
-                break;
-            case OFF_HAND:
-                player.getInventory().setItemInOffHand(item);
-                break;
-            default: break;
+            case MAIN_HAND -> player.getInventory().setItemInMainHand(item);
+            case OFF_HAND -> player.getInventory().setItemInOffHand(item);
         }
 
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 0.8f, 1);

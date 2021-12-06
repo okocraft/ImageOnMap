@@ -142,14 +142,11 @@ public class RawText extends RawTextPart<RawText> {
      * @throws IllegalArgumentException if {@link ChatColor#RESET RESET} is passed.
      */
     public static String toStyleName(ChatColor color) {
-        switch (color) {
-            case RESET:
-                throw new IllegalArgumentException("Control code 'RESET' is not a valid style");
-            case MAGIC:
-                return "obfuscated";
-            default:
-                return color.name().toLowerCase();
-        }
+        return switch (color) {
+            case RESET -> throw new IllegalArgumentException("Control code 'RESET' is not a valid style");
+            case MAGIC -> "obfuscated";
+            default -> color.name().toLowerCase();
+        };
     }
 
     /**

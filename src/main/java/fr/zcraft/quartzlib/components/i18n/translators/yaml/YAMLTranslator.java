@@ -120,17 +120,11 @@ public class YAMLTranslator extends Translator {
                 final String value = entry.getValue().toString();
 
                 switch (entry.getKey().toLowerCase()) {
-                    case "author":
-                        author = value;
-                        break;
-                    case "team":
-                        team = value;
-                        break;
-                    case "reports":
-                        reports = value;
-                        break;
-                    default:
-                        break;
+                    case "author" -> author = value;
+                    case "team" -> team = value;
+                    case "reports" -> reports = value;
+                    default -> {
+                    }
                 }
             }
         }

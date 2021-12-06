@@ -78,9 +78,9 @@ public class ObjectiveSender {
     private static Class<?> packetPlayOutScoreboardScoreClass;
     private static Class<?> chatComponentText;
 
-    private static final Object enumScoreboardHealthDisplay_INTEGER = null;
-    private static final Object enumScoreboardAction_CHANGE = null;
-    private static final Object enumScoreboardAction_REMOVE = null;
+    private static Object enumScoreboardHealthDisplay_INTEGER = null;
+    private static Object enumScoreboardAction_CHANGE = null;
+    private static Object enumScoreboardAction_REMOVE = null;
 
 
     static {
@@ -140,15 +140,8 @@ public class ObjectiveSender {
 
             for (Object enumConstant : enumScoreboardAction.getEnumConstants()) {
                 switch (((Enum<?>) enumConstant).name()) {
-                    case "CHANGE":
-                        enumScoreboardAction_CHANGE = enumConstant;
-                        break;
-
-                    case "REMOVE":
-                        enumScoreboardAction_REMOVE = enumConstant;
-                        break;
-                    default:
-                        break;
+                    case "CHANGE" -> enumScoreboardAction_CHANGE = enumConstant;
+                    case "REMOVE" -> enumScoreboardAction_REMOVE = enumConstant;
                 }
             }
 

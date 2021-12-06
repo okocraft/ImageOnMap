@@ -157,21 +157,12 @@ public abstract class Translator {
             return null;
         }
 
-        switch (fileNameParts[fileNameParts.length - 1].toLowerCase()) {
-            case "po":
-                return GettextPOTranslator.class;
-
-            case "yml":
-            case "yaml":
-                return YAMLTranslator.class;
-
-            case "properties":
-            case "class":
-                return PropertiesTranslator.class;
-
-            default:
-                return null;
-        }
+        return switch (fileNameParts[fileNameParts.length - 1].toLowerCase()) {
+            case "po" -> GettextPOTranslator.class;
+            case "yml", "yaml" -> YAMLTranslator.class;
+            case "properties", "class" -> PropertiesTranslator.class;
+            default -> null;
+        };
     }
 
     protected Reader getReader() {

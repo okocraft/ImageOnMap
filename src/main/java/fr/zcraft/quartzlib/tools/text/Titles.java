@@ -74,14 +74,10 @@ public final class Titles {
 
             for (Object enumConstant : enumTitleActionClass.getEnumConstants()) {
                 switch (((Enum) enumConstant).name()) {
-                    case "TITLE":
-                        enumTitleActionTitle = enumConstant;
-                        break;
-                    case "SUBTITLE":
-                        enumTitleActionSubtitle = enumConstant;
-                        break;
-                    default:
-                        break;
+                    case "TITLE" -> enumTitleActionTitle = enumConstant;
+                    case "SUBTITLE" -> enumTitleActionSubtitle = enumConstant;
+                    default -> {
+                    }
                 }
             }
         } catch (Exception e) {

@@ -251,24 +251,14 @@ public class POFile {
                 String value = metaParts[1].trim();
 
                 switch (metaParts[0].trim().toLowerCase()) {
-                    case "last-translator":
-                        lastTranslator = value;
-                        break;
-
-                    case "language-team":
-                        translationTeam = value;
-                        break;
-
-                    case "report-msgid-bugs-to":
-                        reportErrorsTo = value;
-                        break;
-
-                    case "plural-forms":
+                    case "last-translator" -> lastTranslator = value;
+                    case "language-team" -> translationTeam = value;
+                    case "report-msgid-bugs-to" -> reportErrorsTo = value;
+                    case "plural-forms" -> {
                         String[] parts = value.split(";", 2);
                         if (parts.length < 2) {
                             break;
                         }
-
                         try {
                             pluralCount = Integer.valueOf(parts[0].split("=")[1]);
                             pluralFormScript = parts[1];
@@ -285,9 +275,9 @@ public class POFile {
                         } catch (NumberFormatException | ArrayIndexOutOfBoundsException ignored) {
                             // Well, invalid.
                         }
-                        break;
-                    default:
-                        break;
+                    }
+                    default -> {
+                    }
                 }
             }
         }

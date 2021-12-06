@@ -342,15 +342,11 @@ public abstract class ItemUtils {
     }
 
     private static String getI18nPotionKey(ItemStack item) {
-        switch (item.getType()) {
-            case SPLASH_POTION:
-                return "splash_potion.effect.";
-            case LINGERING_POTION:
-                return "lingering_potion.effect.";
-            case POTION:
-            default:
-                return "potion.effect";
-        }
+        return switch (item.getType()) {
+            case SPLASH_POTION -> "splash_potion.effect.";
+            case LINGERING_POTION -> "lingering_potion.effect.";
+            default -> "potion.effect";
+        };
     }
 
     /**
@@ -378,55 +374,25 @@ public abstract class ItemUtils {
             return Optional.empty();
         }
 
-        switch (color) {
-            case BLACK:
-                return Optional.of(DyeColor.BLACK);
-
-            case BLUE:
-            case DARK_BLUE:
-                return Optional.of(DyeColor.BLUE);
-
-            case DARK_GREEN:
-                return Optional.of(DyeColor.GREEN);
-
-            case DARK_AQUA:
-                return Optional.of(DyeColor.CYAN);
-
-            case DARK_RED:
-                return Optional.of(DyeColor.RED);
-
-            case DARK_PURPLE:
-                return Optional.of(DyeColor.PURPLE);
-
-            case GOLD:
-            case YELLOW:
-                return Optional.of(DyeColor.YELLOW);
-
-            case GRAY:
-                return Optional.of(DyeColor.LIGHT_GRAY);
-
-            case DARK_GRAY:
-                return Optional.of(DyeColor.GRAY);
-
-            case GREEN:
-                return Optional.of(DyeColor.LIME);
-
-            case AQUA:
-                return Optional.of(DyeColor.LIGHT_BLUE);
-
-            case RED:
-                return Optional.of(DyeColor.ORANGE);
-
-            case LIGHT_PURPLE:
-                return Optional.of(DyeColor.PINK);
-
-            case WHITE:
-                return Optional.of(DyeColor.WHITE);
+        return switch (color) {
+            case BLACK -> Optional.of(DyeColor.BLACK);
+            case BLUE, DARK_BLUE -> Optional.of(DyeColor.BLUE);
+            case DARK_GREEN -> Optional.of(DyeColor.GREEN);
+            case DARK_AQUA -> Optional.of(DyeColor.CYAN);
+            case DARK_RED -> Optional.of(DyeColor.RED);
+            case DARK_PURPLE -> Optional.of(DyeColor.PURPLE);
+            case GOLD, YELLOW -> Optional.of(DyeColor.YELLOW);
+            case GRAY -> Optional.of(DyeColor.LIGHT_GRAY);
+            case DARK_GRAY -> Optional.of(DyeColor.GRAY);
+            case GREEN -> Optional.of(DyeColor.LIME);
+            case AQUA -> Optional.of(DyeColor.LIGHT_BLUE);
+            case RED -> Optional.of(DyeColor.ORANGE);
+            case LIGHT_PURPLE -> Optional.of(DyeColor.PINK);
+            case WHITE -> Optional.of(DyeColor.WHITE);
 
             // White, reset & formatting
-            default:
-                return Optional.empty();
-        }
+            default -> Optional.empty();
+        };
     }
 
     /**

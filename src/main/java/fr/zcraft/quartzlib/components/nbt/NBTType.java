@@ -92,15 +92,12 @@ enum NBTType {
     }
 
     public String getNmsTagFieldName() {
-        switch (this) {
-            case TAG_COMPOUND:
-                return "tags";//Modified in 1.17 from map to tags
+        return switch (this) {
+            case TAG_COMPOUND -> "tags";//Modified in 1.17 from map to tags
             //TODO add a version check here
-            case TAG_LIST:
-                return "list";
-            default:
-                return "data";
-        }
+            case TAG_LIST -> "list";
+            default -> "data";
+        };
     }
 
     public Class[] getJavaTypes() {
@@ -153,7 +150,7 @@ enum NBTType {
         try {
             final Object tag;
             switch (this) {
-                case TAG_COMPOUND:
+                case TAG_COMPOUND -> {
                     // PluginLogger.info("Tag_compound");
                     tag = Reflection.instantiate(getNmsClass());
                     if (value instanceof NBTCompound) {
@@ -161,9 +158,8 @@ enum NBTType {
                     } else {
                         new NBTCompound(tag).putAll((Map) value);
                     }
-                    break;
-
-                case TAG_LIST:
+                }
+                case TAG_LIST -> {
                     // PluginLogger.info("Tag_list");
                     tag = Reflection.instantiate(getNmsClass());
                     if (value instanceof NBTList) {
@@ -175,13 +171,13 @@ enum NBTType {
                     // If a NBTTagList is built from scratch, the NMS object is created lately
                     // and may not have the list's type registered at this point.
                     NBTList.guessAndWriteTypeToNbtTagList(tag);
-                    break;
-
-                default:
+                }
+                default -> {
                     // PluginLogger.info("default");
                     Constructor cons = Reflection.findConstructor(getNmsClass(), 1);
                     cons.setAccessible(true);
                     tag = cons.newInstance(value);
+                }
             }
 
             return tag;

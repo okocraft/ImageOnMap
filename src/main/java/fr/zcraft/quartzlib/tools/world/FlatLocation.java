@@ -119,16 +119,11 @@ public class FlatLocation extends Location {
     public static int flatBlockDistanceX(FlatLocation loc1, FlatLocation loc2) {
         checkSimilarLocations(loc1, loc2);
 
-        switch (loc1.getFacing()) {
-            case NORTH:
-            case SOUTH:
-                return Math.abs(loc1.getBlockX() - loc2.getBlockX());
-            case EAST:
-            case WEST:
-                return Math.abs(loc1.getBlockZ() - loc2.getBlockZ());
-            default:
-                throw new UnsupportedOperationException("Non-N/S/E/W orientations are not supported.");
-        }
+        return switch (loc1.getFacing()) {
+            case NORTH, SOUTH -> Math.abs(loc1.getBlockX() - loc2.getBlockX());
+            case EAST, WEST -> Math.abs(loc1.getBlockZ() - loc2.getBlockZ());
+            default -> throw new UnsupportedOperationException("Non-N/S/E/W orientations are not supported.");
+        };
     }
 
     /**
@@ -167,24 +162,22 @@ public class FlatLocation extends Location {
         loc.setY(Math.min(loc1.getY(), loc2.getY()));
 
         switch (loc1.getFacing()) {
-            case NORTH:
+            case NORTH -> {
                 loc.setX(Math.max(loc1.getX(), loc2.getX()));
                 loc.setZ(loc1.getZ());
-                break;
-            case SOUTH:
+            }
+            case SOUTH -> {
                 loc.setX(Math.min(loc1.getX(), loc2.getX()));
                 loc.setZ(loc1.getZ());
-                break;
-            case EAST:
+            }
+            case EAST -> {
                 loc.setZ(Math.max(loc1.getZ(), loc2.getZ()));
                 loc.setX(loc1.getX());
-                break;
-            case WEST:
+            }
+            case WEST -> {
                 loc.setZ(Math.min(loc1.getZ(), loc2.getZ()));
                 loc.setX(loc1.getX());
-                break;
-            default:
-                break;
+            }
         }
 
         return loc;
@@ -215,20 +208,10 @@ public class FlatLocation extends Location {
      */
     public FlatLocation addH(double x, double z, BlockFace bf) {
         switch (bf) {
-            case NORTH:
-                add(x, 0, -z);
-                break;
-            case EAST:
-                add(x, 0, z);
-                break;
-            case WEST:
-                add(-x, 0, -z);
-                break;
-            case SOUTH:
-                add(-x, 0, z);
-                break;
-            default:
-                break;
+            case NORTH -> add(x, 0, -z);
+            case EAST -> add(x, 0, z);
+            case WEST -> add(-x, 0, -z);
+            case SOUTH -> add(-x, 0, z);
         }
 
         return this;
@@ -243,20 +226,11 @@ public class FlatLocation extends Location {
      */
     public FlatLocation add(double x, double y) {
         switch (facing) {
-            case NORTH:
-                add(-x, y, 0);
-                break;
-            case SOUTH:
-                add(x, y, 0);
-                break;
-            case EAST:
-                add(0, y, -x);
-                break;
-            case WEST:
-                add(0, y, x);
-                break;
-            default:
-                throw new UnsupportedOperationException("addToLocation called with non-N/S/E/W orientation.");
+            case NORTH -> add(-x, y, 0);
+            case SOUTH -> add(x, y, 0);
+            case EAST -> add(0, y, -x);
+            case WEST -> add(0, y, x);
+            default -> throw new UnsupportedOperationException("addToLocation called with non-N/S/E/W orientation.");
         }
 
         return this;

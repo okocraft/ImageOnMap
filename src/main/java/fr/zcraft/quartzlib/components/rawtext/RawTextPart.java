@@ -201,23 +201,12 @@ public abstract class RawTextPart<T extends RawTextPart<T>> implements Iterable<
         }
 
         switch (style) {
-            case BOLD:
-                bold = true;
-                break;
-            case ITALIC:
-                italic = true;
-                break;
-            case STRIKETHROUGH:
-                strikethrough = true;
-                break;
-            case UNDERLINE:
-                underline = true;
-                break;
-            case MAGIC:
-                obfuscated = true;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid style: " + style.name());
+            case BOLD -> bold = true;
+            case ITALIC -> italic = true;
+            case STRIKETHROUGH -> strikethrough = true;
+            case UNDERLINE -> underline = true;
+            case MAGIC -> obfuscated = true;
+            default -> throw new IllegalArgumentException("Invalid style: " + style.name());
         }
 
         return (T) this;
