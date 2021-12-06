@@ -184,7 +184,7 @@ public class ImageRendererExecutor extends Worker {
 
     }
 
-    private static void updateMap(final BufferedImage image, final UUID playerUUID, int[] mapsIDs) throws Throwable {
+    private static void updateMap(final BufferedImage image, final UUID playerUUID, int[] mapsIDs) {
 
         final PosterImage poster = new PosterImage(image);
         poster.splitImages();
@@ -197,7 +197,7 @@ public class ImageRendererExecutor extends Worker {
 
         submitToMainThread(new Callable<Void>() {
             @Override
-            public Void call() throws Exception {
+            public Void call() {
                 Renderer.installRenderer(poster, mapsIDs);
                 return null;
             }
@@ -208,7 +208,7 @@ public class ImageRendererExecutor extends Worker {
         MapManager.checkMapLimit(1, playerUUID);
         final Future<Integer> futureMapID = submitToMainThread(new Callable<Integer>() {
             @Override
-            public Integer call() throws Exception {
+            public Integer call() {
                 return MapManager.getNewMapsIds(1)[0];
             }
         });
@@ -217,7 +217,7 @@ public class ImageRendererExecutor extends Worker {
         ImageIOExecutor.saveImage(mapID, image);
         submitToMainThread(new Callable<Void>() {
             @Override
-            public Void call() throws Exception {
+            public Void call() {
                 Renderer.installRenderer(image, mapID);
                 return null;
             }
@@ -231,7 +231,7 @@ public class ImageRendererExecutor extends Worker {
         MapManager.checkMapLimit(mapCount, playerUUID);
         final Future<int[]> futureMapsIds = submitToMainThread(new Callable<int[]>() {
             @Override
-            public int[] call() throws Exception {
+            public int[] call() {
                 return MapManager.getNewMapsIds(mapCount);
             }
         });
@@ -247,7 +247,7 @@ public class ImageRendererExecutor extends Worker {
 
         submitToMainThread(new Callable<Void>() {
             @Override
-            public Void call() throws Exception {
+            public Void call() {
                 Renderer.installRenderer(poster, mapsIDs);
                 return null;
             }

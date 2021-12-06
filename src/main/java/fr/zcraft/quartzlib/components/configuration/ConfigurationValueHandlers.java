@@ -145,7 +145,7 @@ public abstract class ConfigurationValueHandlers {
     /* ===== Value Handlers ===== */
 
     @ConfigurationValueHandler({Boolean.class, boolean.class})
-    public static boolean handleBoolValue(Object obj) throws ConfigurationParseException {
+    public static boolean handleBoolValue(Object obj) {
         return Boolean.parseBoolean(obj.toString());
     }
 

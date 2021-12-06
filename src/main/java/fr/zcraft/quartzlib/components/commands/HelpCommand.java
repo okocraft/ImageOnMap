@@ -64,7 +64,7 @@ public class HelpCommand extends Command {
         }
     }
 
-    private void groupHelp(int page) throws CommandException {
+    private void groupHelp(int page) {
         final List<Command> displayedCommands = new ArrayList<>();
 
         for (Command subCommands : commandGroup.getCommands()) {
@@ -101,16 +101,11 @@ public class HelpCommand extends Command {
         message += GuiUtils.generatePrefixedFixedLengthString("§6" + Commands.CHAT_PREFIX + " ",
                 "Usage: §r" + command.getUsageString()) + "\n";
 
-        try {
-            String help = getHelpText(command);
-            if (help.isEmpty()) {
-                message += "§c" + Commands.CHAT_PREFIX + " There is no help message for this command.";
-            } else {
-                message += help;
-            }
-        } catch (IOException ex) {
-            message += "§c" + Commands.CHAT_PREFIX + " Could not read help for this command.";
-            PluginLogger.warning("Could not read help for the command: " + command.getName(), ex);
+        String help = getHelpText(command);
+        if (help.isEmpty()) {
+            message += "§c" + Commands.CHAT_PREFIX + " There is no help message for this command.";
+        } else {
+            message += help;
         }
 
         sender.sendMessage(message);
@@ -141,7 +136,7 @@ public class HelpCommand extends Command {
 
 
     @Override
-    protected List<String> complete() throws CommandException {
+    protected List<String> complete() {
         if (args.length != 1) {
             return null;
         }

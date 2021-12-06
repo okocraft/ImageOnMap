@@ -92,13 +92,8 @@ public final class NMSNetwork {
      * @param playerHandle The player's handle, as returned by {@link #getPlayerHandle(Player)}.
      * @return The player's connection (reflection-retrieved object, instance of the
      *     net.minecraft.server.PlayerConnection class).
-     * @throws InvocationTargetException             if an exception is thrown while the connection
-     *                                               is retrieved.
-     * @throws IncompatibleMinecraftVersionException if an error occurs while loading the classes,
-     *                                               methods and fields needed to get the player's
-     *                                               connection.
      */
-    public static Object getPlayerConnection(Object playerHandle) throws InvocationTargetException {
+    public static Object getPlayerConnection(Object playerHandle) {
         try {
             if (!entityPlayerClass.isAssignableFrom(playerHandle.getClass())) {
                 throw new ClassCastException("Cannot retrieve a player connection from another class that "
