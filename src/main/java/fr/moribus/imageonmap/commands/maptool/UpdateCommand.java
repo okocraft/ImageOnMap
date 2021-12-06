@@ -165,7 +165,7 @@ public class UpdateCommand extends IoMCommand {
 
                 Integer[] size = {1, 1};
                 if (map.getType() == ImageMap.Type.POSTER) {
-                    size = map.getSize(map.getUserUUID(), map.getId());
+                    size = ImageMap.getSize(map.getUserUUID(), map.getId());
                 }
 
                 int width = size[0];
