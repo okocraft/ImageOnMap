@@ -76,13 +76,6 @@ public class SidebarObjective {
         this(null, displayName);
     }
 
-    /**
-     * Constructs a new sidebar objective with a random name and without display name.
-     */
-    public SidebarObjective() {
-        this(null);
-    }
-
 
     /**
      * Sets a score.

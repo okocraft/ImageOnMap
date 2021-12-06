@@ -34,9 +34,7 @@ import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.io.File;
 import java.io.IOException;
 import java.util.jar.JarFile;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
 
 /**
  * The base class of any plugin using QuartzLib.
@@ -48,10 +46,6 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 public abstract class QuartzPlugin extends JavaPlugin {
     protected QuartzPlugin() {
         super();
-    }
-
-    protected QuartzPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
-        super(loader, description, dataFolder, file);
     }
 
     @Override

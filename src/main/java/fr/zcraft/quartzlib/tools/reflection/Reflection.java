@@ -172,27 +172,6 @@ public final class Reflection {
         return field;
     }
 
-    /**
-     * Finds the first {@link Field} in the given class with the given type, makes it accessible,
-     * and returns it.
-     *
-     * @param klass The field's parent class.
-     * @param type  The field's class.
-     * @return The {@link Field}.
-     * @throws NoSuchFieldException if the class does not contains any field with this name.
-     */
-    public static Field getField(Class<?> klass, Class<?> type) throws NoSuchFieldException {
-        for (Field field : klass.getDeclaredFields()) {
-            if (typeIsAssignableFrom(field.getType(), type)) {
-                field.setAccessible(true);
-                return field;
-            }
-        }
-
-        throw new NoSuchFieldException(
-                "Class " + klass.getName() + " does not define any field of type " + type.getName());
-    }
-
 
     /**
      * Update the field with the given name in the given instance using the given value.
@@ -333,33 +312,8 @@ public final class Reflection {
         return method.invoke(instance, parameters);
     }
 
-    /**
-     * Returns if a given class has a method matching the given parameters.
-     *
-     * @param klass          The class.
-     * @param name           The name of the method to look for
-     * @param parameterTypes The parameter types to look for
-     * @return If the method exists in the given class, or not
-     */
-    public static boolean hasMethod(Class<?> klass, String name, Class<?>... parameterTypes) {
-        try {
-            try {
-                klass.getMethod(name, parameterTypes);
-            } catch (NoSuchMethodException ex) {
-                klass.getDeclaredMethod(name, parameterTypes);
-            }
-        } catch (NoSuchMethodException | SecurityException ex) {
-            return false;
-        }
-        return true;
-    }
-
     public static Method findMethod(Class<?> klass, String name, Type... parameterTypes) {
         return findMethod(klass, name, null, 0, parameterTypes);
-    }
-
-    public static Method findMethod(Class<?> klass, String name, int modifiers, Type... parameterTypes) {
-        return findMethod(klass, name, null, modifiers, parameterTypes);
     }
 
     /**
@@ -523,31 +477,6 @@ public final class Reflection {
     }
 
     /**
-     * Returns the first class in the call hierarchy that have a defined name
-     * (i.e. the first non-anonymous caller class), excluding the very first one.
-     * <p>In other words, return the named class that called the method this method
-     * is called from.</p>
-     *
-     * @return The caller class.
-     */
-    public static Class<?> getCallerClass() {
-        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-
-        for (int i = 3; i < stackTrace.length; i++) {
-            final Class<?> caller;
-            try {
-                caller = Class.forName(stackTrace[i].getClassName());
-            } catch (ClassNotFoundException ex) {
-                continue;
-            }
-
-            return caller;
-        }
-
-        return null;
-    }
-
-    /**
      * Returns the first class in the call stack with the specified type.
      *
      * @param baseType The type to lookup for.
@@ -627,7 +556,4 @@ public final class Reflection {
         return currentBest;
     }
 
-    public static Class<?> getClosestType(Class<?> reference, Class<?>... candidates) {
-        return getClosestType(reference, Arrays.asList(candidates));
-    }
 }

@@ -147,18 +147,6 @@ public abstract class QuartzLib {
     }
 
     /**
-     * Returns the currently loaded QuartzLib components.
-     * <p>This returns a copy of the components list</p>
-     *
-     * @return the loaded components.
-     * @throws IllegalStateException if QuartzLib was not properly initialized.
-     */
-    public static Set<QuartzComponent> getLoadedComponents() throws IllegalStateException {
-        checkInitialized();
-        return ImmutableSet.copyOf(loadedComponents);
-    }
-
-    /**
      * Check wherever QuartzLib is correctly initialized.
      *
      * @return {@code true} if initialized.

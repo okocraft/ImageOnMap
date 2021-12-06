@@ -81,11 +81,4 @@ public abstract class QuartzComponent {
         }
     }
 
-    /**
-     * Gets the plugin owning this component.
-     * @return The plugin owning this component.
-     */
-    protected Plugin getPlugin() {
-        return QuartzLib.getPlugin();
-    }
 }

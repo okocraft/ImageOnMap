@@ -31,9 +31,6 @@
 package fr.zcraft.quartzlib.components.rawtext;
 
 class RawTextSubPart extends RawTextPart<RawTextSubPart> {
-    public RawTextSubPart(String text) {
-        super(text);
-    }
 
     public RawTextSubPart(String text, RawTextPart parent) {
         super(text, parent);

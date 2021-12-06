@@ -308,19 +308,6 @@ public final class TextualBanners {
     }
 
     /**
-     * Returns a banner item stack which represents the following character, with a specified
-     * background and the specified color.
-     *
-     * @param c     The character to be printed
-     * @param color The font color
-     * @return A banner {@link ItemStack} with the corresponding character using a basic font system
-     * @throws IllegalArgumentException if the character isn't registered.
-     */
-    public static ItemStack getCharBanner(char c, DyeColor color) {
-        return getCharBanner(c, color, false);
-    }
-
-    /**
      * Returns a banner item stack which represents the following character, with the specified
      * color, and possibly a border.
      *
@@ -332,20 +319,6 @@ public final class TextualBanners {
      */
     public static ItemStack getCharBanner(char c, DyeColor color, boolean border) {
         return getCharBanner(c, getBackgroundColorFor(color), color, border);
-    }
-
-    /**
-     * Returns a banner item stack which represents the following character, with a specified
-     * background and the specified color. Throws IllegalArgumentException if the character isn't
-     * registered.
-     *
-     * @param c          The character to be printed
-     * @param background The background color
-     * @param color      The font color
-     * @return A banner {@link ItemStack} with the corresponding character using a basic font system
-     */
-    public static ItemStack getCharBanner(char c, DyeColor background, DyeColor color) {
-        return getCharBanner(c, background, color, false);
     }
 
     /**
@@ -383,18 +356,6 @@ public final class TextualBanners {
     }
 
     /**
-     * Returns a banner item stack which represents the following digit, with the specified color.
-     *
-     * @param i     The digit to be printed
-     * @param color The font color
-     * @return A banner {@link ItemStack} with the corresponding digit using a basic font system
-     * @throws IllegalArgumentException if the character isn't registered.
-     */
-    public static ItemStack getDigitBanner(int i, DyeColor color) {
-        return getDigitBanner(i, color, false);
-    }
-
-    /**
      * Returns a banner item stack which represents the following digit, with the specified color,
      * and possibly a border.
      *
@@ -406,20 +367,6 @@ public final class TextualBanners {
      */
     public static ItemStack getDigitBanner(int i, DyeColor color, boolean border) {
         return getDigitBanner(i, getBackgroundColorFor(color), color, border);
-    }
-
-    /**
-     * Returns a banner item stack which represents the following digit, with a specified background
-     * and the specified color.
-     *
-     * @param i          The digit to be printed
-     * @param background The background color
-     * @param color      The font color
-     * @return A banner {@link ItemStack} with the corresponding digit using a basic font system
-     * @throws IllegalArgumentException if the character isn't registered.
-     */
-    public static ItemStack getDigitBanner(int i, DyeColor background, DyeColor color) {
-        return getDigitBanner(i, background, color, false);
     }
 
     /**
@@ -441,38 +388,6 @@ public final class TextualBanners {
     }
 
     /**
-     * Copy the item's attributes to the banner block.
-     *
-     * @param item   The ItemStack to be copied
-     * @param banner The banner block to copy
-     * @throws IllegalArgumentException if the specified item is not a banner.
-     */
-    public static void editBanner(ItemStack item, Banner banner) {
-        if (!item.getType().toString().endsWith("BANNER")) {
-            throw new IllegalArgumentException("The specified ItemStack isn't a banner !");
-        }
-
-        final BannerMeta meta = (BannerMeta) item.getItemMeta();
-        banner.setBaseColor(meta.getBaseColor());
-        banner.setPatterns(meta.getPatterns());
-        banner.update();
-    }
-
-    /**
-     * Returns a list of item stacks which represents the following string, with the specified
-     * color.
-     *
-     * @param string The string
-     * @param color  The font color
-     * @return A list of banners {@link ItemStack} representing the corresponding string using a
-     *     basic font system.
-     * @throws IllegalArgumentException if a character in the string isn't registered.
-     */
-    public static List<ItemStack> getStringBanners(String string, DyeColor color) {
-        return getStringBanners(string, color, false);
-    }
-
-    /**
      * Returns a list of item stacks which represents the following string, with the specified
      * color, and possibly a border.
      *
@@ -485,21 +400,6 @@ public final class TextualBanners {
      */
     public static List<ItemStack> getStringBanners(String string, DyeColor color, boolean border) {
         return getStringBanners(string, getBackgroundColorFor(color), color, border);
-    }
-
-    /**
-     * Returns a list of item stacks which represents the following string, with a specified
-     * background and the specified color.
-     *
-     * @param string     The string
-     * @param background The background color
-     * @param color      The font color
-     * @return A list of banners {@link ItemStack} representing the corresponding string using a
-     *     basic font system.
-     * @throws IllegalArgumentException if a character in the string isn't registered.
-     */
-    public static List<ItemStack> getStringBanners(String string, DyeColor background, DyeColor color) {
-        return getStringBanners(string, background, color, false);
     }
 
     /**

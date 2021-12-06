@@ -30,16 +30,11 @@
 
 package fr.zcraft.quartzlib.components.scoreboard;
 
-import com.google.common.collect.ImmutableSet;
 import fr.zcraft.quartzlib.components.scoreboard.sender.ObjectiveSender;
 import fr.zcraft.quartzlib.components.scoreboard.sender.SidebarObjective;
-import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.exceptions.IncompatibleMinecraftVersionException;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.runners.RunAsyncTask;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -88,57 +83,8 @@ public abstract class Sidebar {
     private SidebarObjective globalObjective = null;
 
 
-    public Sidebar() {
-        sidebars.add(this);
-    }
-
-
 
     /* ** Methods to override ** */
-
-    /**
-     * Initializes the scoreboards API. Must be called before this library is used.
-     */
-    public static void init() {
-        updateLoggedInPlayers();
-        QuartzLib.registerEvents(new OnlinePlayersListener());
-    }
-
-    /**
-     * Clears the scoreboard API. Must be called when the plugin is disabled.
-     */
-    public static void exit() {
-        loggedInPlayers.clear();
-
-        for (Sidebar sidebar : sidebars) {
-            sidebar.runAutoRefresh(false);
-        }
-
-        try {
-            ObjectiveSender.clearForAll();
-        } catch (IncompatibleMinecraftVersionException e) {
-            PluginLogger.warning("Could not properly disable Sidebar", e);
-        }
-    }
-
-    /**
-     * Returns the current sidebars.
-     *
-     * @return The sidebars.
-     */
-    public static Set<Sidebar> getSidebars() {
-        return ImmutableSet.copyOf(sidebars);
-    }
-
-    /**
-     * Returns a set containing the currently logged-in players. This method can be used
-     * asynchronously.
-     *
-     * @return The logged-in players.
-     */
-    public static Set<Player> getOnlinePlayersAsync() {
-        return ImmutableSet.copyOf(loggedInPlayers.values());
-    }
 
 
 
@@ -205,73 +151,6 @@ public abstract class Sidebar {
     public void postRender() {
     }
 
-    /**
-     * Sets the asynchronous status of this scoreboard.
-     * <p> If {@code true}, the scoreboard will be updated asynchronously. Else, the update task will be
-     * executed from the Bukkit's main thread.</p>
-     * <p>WARNING — The async status is only guaranteed if the auto-refresh is used.</p>
-     *
-     * @param async {@code true} if async.
-     */
-    public void setAsync(final boolean async) {
-        this.async = async;
-    }
-
-    /**
-     * Sets the auto-refresh delay, in ticks. To disable, set to 0.
-     * <p>This will not launch or update the updater. Use {@link #runAutoRefresh(boolean)} to
-     * (re)launch it.</p>
-     *
-     * @param autoRefreshDelay The delay, in ticks.
-     */
-    public void setAutoRefreshDelay(final long autoRefreshDelay) {
-        this.autoRefreshDelay = autoRefreshDelay;
-    }
-
-    /**
-     * The score of the last line. The scores of the lines will be automatically calculated from
-     * this score to the max score needed.
-     * <p>If a score less than 1 is given, 1 is used.</p>
-     *
-     * @param lastLineScore The score of the bottom line.
-     */
-    public void setLastLineScore(final int lastLineScore) {
-        this.lastLineScore = Math.max(lastLineScore, 1);
-    }
-
-    /**
-     * Sets wherever, when the objective is built, the lines with the same value are automatically
-     * deduplicated by adding a space after.
-     * <p>If this is disabled, you'll still be able to insert blank lines with an empty string.</p>
-     * <p>Please note that enabling this option may have a cost in performances if your sidebar is
-     * updated for a lot of people and/or with high-cost calculations and/or very frequently.</p>
-     *
-     * @param automaticDeduplication {@code true} to enable.
-     */
-    public void setAutomaticDeduplication(boolean automaticDeduplication) {
-        this.automaticDeduplication = automaticDeduplication;
-    }
-
-    /**
-     * Sets the scoreboard content's mode of update: either a scoreboard per player or the same
-     * scoreboard from everyone.
-     *
-     * @param contentMode The mode.
-     */
-    public void setContentMode(final SidebarMode contentMode) {
-        this.contentMode = contentMode;
-    }
-
-    /**
-     * Sets the scoreboard title's mode of update: either a title per player or the same scoreboard
-     * from everyone.
-     *
-     * @param titleMode The mode.
-     */
-    public void setTitleMode(final SidebarMode titleMode) {
-        this.titleMode = titleMode;
-    }
-
 
 
     /* **  Per-line update API  ** */
@@ -283,15 +162,6 @@ public abstract class Sidebar {
      */
     public void addRecipient(final UUID id) {
         recipients.add(id);
-    }
-
-    /**
-     * Adds a recipient to this sidebar.
-     *
-     * @param player The recipient.
-     */
-    public void addRecipient(final Player player) {
-        addRecipient(player.getUniqueId());
     }
 
     /* **  Private API  ** */
@@ -310,15 +180,6 @@ public abstract class Sidebar {
         }
 
         ObjectiveSender.clear(id);
-    }
-
-    /**
-     * Removes a recipient from this sidebar.
-     *
-     * @param player The recipient.
-     */
-    public void removeRecipient(final Player player) {
-        removeRecipient(player.getUniqueId());
     }
 
     /**
@@ -425,107 +286,6 @@ public abstract class Sidebar {
                 refreshTask = RunTask.timer(this::refresh, 1, autoRefreshDelay);
             }
         }
-    }
-
-    /**
-     * Updates a single line of the scoreboard, replacing the old line by the new one.
-     * <p>This method is only useful if the {@link #getContent(Player)} method returns {@code null};
-     * else, this change will be overwritten by the newly-generated sidebar.</p>
-     * <p>Please note that this can hardly be used with scoreboards with identical lines, due to the
-     * auto-deduplication, if you use that feature. To handle this case, you can use the {@link
-     * #updateLine(Player, int, String)} method instead.</p>
-     * <p>If the old sidebar doesn't contains any line equal to {@code oldLine}, nothing is done.</p>
-     *
-     * @param player  The updated player; {@code null} if the content's mode is {@link
-     *                SidebarMode#GLOBAL global}.
-     * @param oldLine The replaced line.
-     * @param newLine The new line.
-     * @throws IllegalStateException    if there isn't any previously-constructed objective for that
-     *                                  player (or at all, if the content's mode is {@link
-     *                                  SidebarMode#GLOBAL global}).
-     * @throws IllegalArgumentException if {@code player} is {@code null} and the content's mode is
-     *                                  not {@link SidebarMode#GLOBAL global}.
-     * @see #setAutomaticDeduplication(boolean)
-     * @see #updateLine(Player, int, String)
-     */
-    public void updateLine(Player player, String oldLine, String newLine) {
-        if ((contentMode == SidebarMode.GLOBAL && (globalObjective == null || player == null))
-                || !objectives.containsKey(player.getUniqueId())) {
-            throw new IllegalArgumentException(
-                    "Cannot change the sidebar for that player because either the objective is not constructed"
-                            + "for this player or the player is null out of the GLOBAL content mode.");
-        }
-
-        // We need the old score.
-        SidebarObjective objective =
-                (contentMode == SidebarMode.GLOBAL) ? globalObjective : objectives.get(player.getUniqueId());
-        Integer score = objective.getScores().get(oldLine);
-
-        if (score == null) {
-            return;  // Nothing to update.
-        }
-
-        // Then we updates the line.
-        updateLine(objective, oldLine, newLine, score);
-    }
-
-    /**
-     * Updates a single line of the scoreboard, replacing the line at the given index in the list
-     * returned by {@link #getContent(Player)} with the new one.
-     * <p>This method is only useful if the {@link #getContent(Player)} method returns {@code null};
-     * else, this change will be overwritten by the newly-generated sidebar.</p>
-     * <p>If the old sidebar doesn't contains any line at the given index, nothing is done.</p>
-     *
-     * @param player    The updated player; {@code null} if the content's mode is {@link
-     *                  SidebarMode#GLOBAL global}.
-     * @param lineIndex The index of the replaced line in the list previously returned by the {@link
-     *                  #getContent(Player)} method.
-     * @param newLine   The new line.
-     * @throws IllegalStateException    if there isn't any previously-constructed objective for that
-     *                                  player (or at all, if the content's mode is {@link
-     *                                  SidebarMode#GLOBAL global}).
-     * @throws IllegalArgumentException if {@code player} is {@code null} and the content's mode is
-     *                                  not {@link SidebarMode#GLOBAL global}.
-     */
-    public void updateLine(Player player, int lineIndex, String newLine) {
-        if ((contentMode == SidebarMode.GLOBAL && (globalObjective == null || player == null))
-                || !objectives.containsKey(player.getUniqueId())) {
-            throw new IllegalArgumentException(
-                    "Cannot change the sidebar for that player because either the objective is not constructed"
-                            + "for this player or the player is null out of the GLOBAL content mode.");
-        }
-        // We need the old score.
-        SidebarObjective objective =
-                (contentMode == SidebarMode.GLOBAL) ? globalObjective : objectives.get(player.getUniqueId());
-        Integer biggestScore = -1;
-
-        for (Integer score : objective.getScores().values()) {
-            if (score > biggestScore) {
-                biggestScore = score;
-            }
-        }
-
-        if (lineIndex >= biggestScore) {
-            return;
-        }
-
-        Integer score = biggestScore - lineIndex;
-
-        // Then we need the old line at this score.
-        String oldLine = null;
-        for (Map.Entry<String, Integer> scoreEntry : new HashMap<>(objective.getScores()).entrySet()) {
-            if (scoreEntry.getValue().equals(score)) {
-                oldLine = scoreEntry.getKey();
-                break;
-            }
-        }
-
-        if (oldLine == null) {
-            return;
-        }
-
-        // Then we updates the line.
-        updateLine(objective, oldLine, newLine, score);
     }
 
     /**

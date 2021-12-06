@@ -30,13 +30,8 @@
 
 package fr.zcraft.quartzlib.components.i18n;
 
-import java.util.Locale;
-
 public class UnsupportedLocaleException extends IllegalArgumentException {
 
     private static final long serialVersionUID = -2746324692893193071L;
 
-    public UnsupportedLocaleException(Locale locale) {
-        super("Unsupported locale " + locale);
-    }
 }

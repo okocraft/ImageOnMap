@@ -39,14 +39,8 @@ package fr.zcraft.quartzlib.components.i18n.translators.gettext;
 
 import fr.zcraft.quartzlib.components.i18n.translators.Translation;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -88,27 +82,6 @@ public class POFile {
      */
     public POFile(Reader reader) {
         this.rawReader = new BufferedReader(reader);
-    }
-
-    /**
-     * Creates a new PO file parser.
-     * @param file The file this parser will have to parse.
-     * @throws FileNotFoundException if the file does not exist, is a directory rather than a
-     *                               regular file, or for some other reason cannot be opened for
-     *                               reading.
-     */
-    public POFile(File file) throws FileNotFoundException {
-        this(new BufferedReader(
-                new InputStreamReader(
-                        new FileInputStream(file), StandardCharsets.UTF_8)));
-    }
-
-    /**
-     * Creates a new PO file parser.
-     * @param raw The string this parser will have to parse.
-     */
-    public POFile(String raw) {
-        this(new StringReader(raw));
     }
 
 
@@ -353,22 +326,6 @@ public class POFile {
     }
 
     /**
-     * Gets the number of plural forms in this PO/language.
-     * @return The number of plural forms in this PO/language.
-     */
-    public Integer getPluralCount() {
-        return pluralCount;
-    }
-
-    /**
-     * Gets the script to execute to determine which translation has to be used for a given number.
-     * @return The script to execute to determine which translation has to be used for a given number.
-     */
-    public String getPluralFormScript() {
-        return pluralFormScript;
-    }
-
-    /**
      * For a given number, compute the plural index to use for the locale of this file.
      *
      * <p>Some plural scripts are very commons. For them, we hardcode native functions.
@@ -397,24 +354,14 @@ public class POFile {
      * Thrown if the file cannot be parsed.
      */
     public static class CannotParsePOException extends RuntimeException {
-        public CannotParsePOException(String message) {
-            super(message);
-        }
 
         public CannotParsePOException(String message, Integer line) {
             super(message + " [" + line + "]");
-        }
-
-        public CannotParsePOException(Throwable cause) {
-            super(cause);
         }
 
         public CannotParsePOException(String message, Throwable cause) {
             super(message, cause);
         }
 
-        public CannotParsePOException(String message, Integer line, Throwable cause) {
-            super(message + " [" + line + "]", cause);
-        }
     }
 }

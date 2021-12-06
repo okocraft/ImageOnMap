@@ -115,10 +115,6 @@ class WorkerCallbackManager implements Runnable {
             this.runnableException = null;
         }
 
-        public WorkerCallback getCallback() {
-            return callback;
-        }
-
         public void runCallback() {
             if (runnableCrashed()) {
                 callback.errored(runnableException);
@@ -129,10 +125,6 @@ class WorkerCallbackManager implements Runnable {
 
         public void setResult(T result) {
             this.result = result;
-        }
-
-        public Throwable getRunnableException() {
-            return runnableException;
         }
 
         public void setRunnableException(Throwable runnableException) {

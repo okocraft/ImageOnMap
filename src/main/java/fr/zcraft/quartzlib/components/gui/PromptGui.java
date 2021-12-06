@@ -92,10 +92,6 @@ public class PromptGui extends GuiBase {
         return fieldTileEntitySign != null;
     }
 
-    public static void prompt(Player owner, Callback<String> callback) {
-        prompt(owner, callback, "", null);
-    }
-
     public static void prompt(Player owner, Callback<String> callback, String contents, GuiBase parent) {
         Gui.open(owner, new PromptGui(callback, contents), parent);
     }
@@ -273,18 +269,6 @@ public class PromptGui extends GuiBase {
                 PluginLogger.error("Error while opening Sign prompt", e);
             }
         }, 3);
-    }
-
-    @Override
-    protected void onClose() {
-        // PluginLogger.info("onClose Prompt");
-        // PluginLogger.info("loc " + signLocation);
-        final Block block = signLocation.getWorld().getBlockAt(signLocation);
-        block.setType(Material.AIR);
-
-        signLocation.getWorld().getBlockAt(signLocation.clone().add(0, -1, 0)).setType(Material.AIR);
-
-        super.onClose();
     }
 
     private void validate(String[] lines) {

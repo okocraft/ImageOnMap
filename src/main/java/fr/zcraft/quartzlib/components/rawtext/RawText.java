@@ -106,39 +106,6 @@ public class RawText extends RawTextPart<RawText> {
     /**
      * Converts a Minecraft-formatted string (with formatters like §a) to a raw text component.
      *
-     * @param delimiter The formatters delimiter (vanilla Minecraft uses §)
-     * @param str       The string to convert.
-     * @return The RawText equivalent.
-     */
-    public static RawText fromFormattedString(char delimiter, String str) {
-        return fromFormattedString(new ChatColorParser(delimiter, str), null);
-    }
-
-    /**
-     * Converts a Minecraft-formatted string (with formatters like §a) to a raw text component.
-     *
-     * @param delimiter     The formatters delimiter (vanilla Minecraft uses §)
-     * @param str           The string to convert.
-     * @param baseComponent The converted component will be added to this component.
-     * @return The RawText equivalent.
-     */
-    public static RawText fromFormattedString(char delimiter, String str, RawText baseComponent) {
-        return fromFormattedString(new ChatColorParser(delimiter, str), baseComponent);
-    }
-
-    /**
-     * Converts a Minecraft-formatted string (with formatters like §a) to a raw text component.
-     *
-     * @param str The string to convert.
-     * @return The RawText equivalent.
-     */
-    public static RawText fromFormattedString(String str) {
-        return fromFormattedString(new ChatColorParser(str), null);
-    }
-
-    /**
-     * Converts a Minecraft-formatted string (with formatters like §a) to a raw text component.
-     *
      * @param str           The string to convert.
      * @param baseComponent The converted component will be added to this component.
      * @return The RawText equivalent.
