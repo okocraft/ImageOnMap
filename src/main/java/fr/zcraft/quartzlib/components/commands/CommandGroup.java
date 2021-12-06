@@ -77,9 +77,7 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
     public static String[] getCommandArgsFromGroupArgs(String[] args) {
         String[] commandArgs = new String[args.length - 1];
 
-        for (int i = 0; i < commandArgs.length; i++) {
-            commandArgs[i] = args[i + 1];
-        }
+        System.arraycopy(args, 1, commandArgs, 0, commandArgs.length);
 
         return commandArgs;
     }
