@@ -100,7 +100,7 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         ItemStack item = new ItemStack(partMaterial);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(I.t(getPlayerLocale(), "{green}Map part"));
-        List<String> lore = new ArrayList<>(Arrays.asList(
+        List<String> lore = new ArrayList<>(List.of(
                 I.t(getPlayerLocale(), "{gray}Part: {white}{0}", index + 1)
         ));
 
@@ -217,7 +217,7 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         ItemStack item = new ItemStack(Material.EMERALD);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(I.t(getPlayerLocale(), "{green}« Back"));
-        meta.setLore(new ArrayList<>(Arrays.asList(I.t(getPlayerLocale(), "{gray}Go back to the list."))));
+        meta.setLore(new ArrayList<>(List.of(I.t(getPlayerLocale(), "{gray}Go back to the list."))));
         item.setItemMeta(meta);
         action("back", backSlot, item);
     }
