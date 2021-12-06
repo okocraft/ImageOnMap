@@ -43,9 +43,6 @@ import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.io.File;
 import java.io.Reader;
 import java.util.Locale;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 
 /**

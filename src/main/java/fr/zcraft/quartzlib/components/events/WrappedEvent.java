@@ -30,7 +30,6 @@
 
 package fr.zcraft.quartzlib.components.events;
 
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
 /**

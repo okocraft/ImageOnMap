@@ -44,7 +44,7 @@ import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;
 import fr.moribus.imageonmap.gui.Gui;
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.tools.PluginLogger;
+
 import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

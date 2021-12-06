@@ -30,7 +30,6 @@
 
 package fr.zcraft.quartzlib.core;
 
-import com.google.common.collect.ImmutableSet;
 import fr.zcraft.quartzlib.components.events.FutureEvents;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.util.ArrayList;

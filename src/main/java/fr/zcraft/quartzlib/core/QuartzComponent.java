@@ -30,8 +30,6 @@
 
 package fr.zcraft.quartzlib.core;
 
-import org.bukkit.plugin.Plugin;
-
 /**
  * This abstract class represents a QuartzLib component that needs to be loaded
  * and/or unloaded.
