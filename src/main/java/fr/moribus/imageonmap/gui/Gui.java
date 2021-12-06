@@ -48,11 +48,6 @@ public final class Gui extends QuartzComponent {
     private static final HashMap<Player, GuiBase> openGuis = new HashMap<>();
 
     /**
-     * A map of all the currently registered GUIs listeners.
-     */
-    private static final HashMap<Class<? extends Listener>, Listener> guiListeners = new HashMap<>();
-
-    /**
      * Opens a GUI for a player.
      *
      * @param <T>    A GUI type.
@@ -141,12 +136,10 @@ public final class Gui extends QuartzComponent {
     @Override
     protected void onEnable() {
         openGuis.clear();
-        guiListeners.clear();
     }
 
     @Override
     protected void onDisable() {
         openGuis.clear();
-        guiListeners.clear();
     }
 }
