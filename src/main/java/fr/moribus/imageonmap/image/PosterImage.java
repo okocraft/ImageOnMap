@@ -47,7 +47,7 @@ public class PosterImage {
     private static final int WIDTH = 128;
     private static final int HEIGHT = 128;
 
-    private BufferedImage originalImage;
+    private final BufferedImage originalImage;
     private BufferedImage[] cutImages;
     private int lines;
     private int columns;

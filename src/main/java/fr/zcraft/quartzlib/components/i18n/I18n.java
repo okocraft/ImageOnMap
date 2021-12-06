@@ -72,15 +72,15 @@ public class I18n extends QuartzComponent {
     private static Locale primaryLocale = null;
     private static Locale fallbackLocale = null;
 
-    private static String i18nDirectory = "i18n";
+    private static final String i18nDirectory = "i18n";
     private static JarFile jarFile = null;
 
-    private static boolean userFriendlyFormatting = true;
-    private static String errorColor = ChatColor.RED.toString();
-    private static String noticeColor = ChatColor.WHITE.toString();
-    private static String successColor = ChatColor.GREEN.toString();
-    private static String statusColor = ChatColor.GRAY.toString();
-    private static String commandColor = ChatColor.GOLD.toString();
+    private static final boolean userFriendlyFormatting = true;
+    private static final String errorColor = ChatColor.RED.toString();
+    private static final String noticeColor = ChatColor.WHITE.toString();
+    private static final String successColor = ChatColor.GREEN.toString();
+    private static final String statusColor = ChatColor.GRAY.toString();
+    private static final String commandColor = ChatColor.GOLD.toString();
 
     private static boolean addCountToParameters = true;
     private static boolean playerLocaleWarning = false;

@@ -60,8 +60,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class MapDetailGui extends ExplorerGui<Integer> {
     private final ImageMap map;
-    private OfflinePlayer offplayer;
-    private String name;
+    private final OfflinePlayer offplayer;
+    private final String name;
 
     public MapDetailGui(ImageMap map, OfflinePlayer p, String name) {
         super();

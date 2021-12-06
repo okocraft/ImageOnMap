@@ -72,12 +72,12 @@ public abstract class Sidebar {
     private final Set<UUID> recipients = new CopyOnWriteArraySet<>();
     // Other cases
     private final Map<UUID, SidebarObjective> objectives = new ConcurrentHashMap<>();
-    private int lastLineScore = 1;
-    private SidebarMode contentMode = SidebarMode.GLOBAL;
-    private SidebarMode titleMode = SidebarMode.GLOBAL;
-    private boolean automaticDeduplication = true;
-    private boolean async = false;
-    private long autoRefreshDelay = 0;
+    private final int lastLineScore = 1;
+    private final SidebarMode contentMode = SidebarMode.GLOBAL;
+    private final SidebarMode titleMode = SidebarMode.GLOBAL;
+    private final boolean automaticDeduplication = true;
+    private final boolean async = false;
+    private final long autoRefreshDelay = 0;
     private BukkitTask refreshTask = null;
     // Only used if both titleMode and contentMode are global.
     private SidebarObjective globalObjective = null;

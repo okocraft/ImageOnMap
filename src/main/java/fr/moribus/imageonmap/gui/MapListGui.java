@@ -61,8 +61,8 @@ import org.bukkit.inventory.meta.MapMeta;
 
 
 public class MapListGui extends ExplorerGui<ImageMap> {
-    private OfflinePlayer offplayer;
-    private String name;
+    private final OfflinePlayer offplayer;
+    private final String name;
 
     public MapListGui(OfflinePlayer sender) {
         this.offplayer = sender;

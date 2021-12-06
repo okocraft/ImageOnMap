@@ -61,14 +61,14 @@ public abstract class ExplorerGui<T> extends ActionGui {
     private int viewHeight;
     private int viewWidth;
     private boolean keepHorizontalScrollingSpace = false;
-    private boolean keepVerticalScrollingSpace = false;
+    private final boolean keepVerticalScrollingSpace = false;
     private int currentPageX = 0;
     private int currentPageY = 0;
     private int dataHeight = 0;
     private int dataWidth = 0;
     private int pageCountX;
     private int pageCountY;
-    private Mode mode = Mode.CREATIVE;
+    private final Mode mode = Mode.CREATIVE;
 
     public ExplorerGui() {
         // Defined early to be able to use getSize() in the onUpdate method.
