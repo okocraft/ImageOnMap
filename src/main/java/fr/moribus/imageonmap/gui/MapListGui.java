@@ -235,7 +235,7 @@ public class MapListGui extends ExplorerGui<ImageMap> {
             lore.add(I.tn(getPlayerLocale(), "{white}{0}{gray} map left", "{white}{0}{gray} maps left",
                     mapPartLeft));
         }
-
+        meta.setLore(lore);
         meta.addItemFlags(ItemFlag.values());
 
         action("", getSize() - 5, statistics);
