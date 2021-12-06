@@ -38,7 +38,7 @@ import java.util.UUID;
  * This class represents an item attribute.
  */
 public class Attribute {
-    NBTCompound nbt;
+    final NBTCompound nbt;
 
     Attribute(NBTCompound nbt) {
         this.nbt = nbt;

@@ -43,7 +43,7 @@ import org.bukkit.entity.Player;
 
 public final class MessageSender {
     private static final String nmsVersion = Reflection.getBukkitPackageVersion();
-    private static boolean enabled = true;
+    private static final boolean enabled = true;
     private static Class<?> packetPlayOutChatClass;
     private static Class<?> chatSerializerClass;
     private static Class<?> iChatBaseComponentClass;

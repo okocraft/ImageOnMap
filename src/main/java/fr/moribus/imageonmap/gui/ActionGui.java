@@ -373,11 +373,11 @@ public abstract class ActionGui extends InventoryGui {
         /**
          * The name of the action.
          */
-        public String name;
+        public final String name;
         /**
          * The slot the action will be put in.
          */
-        public int slot;
+        public final int slot;
         /**
          * The item this action will be represented by.
          */
@@ -388,7 +388,7 @@ public abstract class ActionGui extends InventoryGui {
         /**
          * The callback this action will call when triggered.
          */
-        public Method callback;
+        public final Method callback;
 
         public Action(String name, int slot, ItemStack item, Method callback) {
             this.name = name;

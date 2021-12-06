@@ -78,9 +78,9 @@ public class ObjectiveSender {
     private static Class<?> packetPlayOutScoreboardScoreClass;
     private static Class<?> chatComponentText;
 
-    private static Object enumScoreboardHealthDisplay_INTEGER = null;
-    private static Object enumScoreboardAction_CHANGE = null;
-    private static Object enumScoreboardAction_REMOVE = null;
+    private static final Object enumScoreboardHealthDisplay_INTEGER = null;
+    private static final Object enumScoreboardAction_CHANGE = null;
+    private static final Object enumScoreboardAction_REMOVE = null;
 
 
     static {

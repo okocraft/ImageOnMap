@@ -47,7 +47,7 @@ import org.bukkit.entity.Player;
 public final class Titles {
     private static final Class<?> packetPlayOutTitleClass;
     private static final Class<?> iChatBaseComponentClass;
-    private static boolean enabled = true;
+    private static final boolean enabled = true;
     private static Class<?> chatSerializerClass;
     private static Class<?> enumTitleActionClass;
 

@@ -46,8 +46,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class ConfigurationItem<T> {
     private final Class<T> valueType;
     String fieldName;
-    T defaultValue;
-    String[] deprecatedNames;
+    final T defaultValue;
+    final String[] deprecatedNames;
     private ConfigurationItem<?> parent;
     private ConfigurationInstance instance;
 
