@@ -100,7 +100,7 @@ public abstract class GuiBase {
     }
 
     void registerClose() {
-        if (open == false) {
+        if (!open) {
             return;
         }
         open = false;
