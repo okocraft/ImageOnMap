@@ -51,6 +51,7 @@ class OldSavedPoster {
     private final String posterName;
     private final short[] mapsIds;
 
+    @SuppressWarnings("unchecked")
     public OldSavedPoster(Object rawData, String key) throws InvalidConfigurationException {
         posterName = key;
         List<String> data;

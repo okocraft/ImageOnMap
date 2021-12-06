@@ -55,9 +55,8 @@ public abstract class IoMCommand extends Command {
 
     protected void retrieveUUID(String arg, Consumer<UUID> consumer) {
         UUID uuid;
-        OfflinePlayer offlinePlayer;
-
-        offlinePlayer = Bukkit.getOfflinePlayer(arg);//If it is being removed we may have to use mojang services
+        @SuppressWarnings("deprecation")
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(arg);//If it is being removed we may have to use mojang services
         uuid = offlinePlayer.getUniqueId();
 
         consumer.accept(uuid);

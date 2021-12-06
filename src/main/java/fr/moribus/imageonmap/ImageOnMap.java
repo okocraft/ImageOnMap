@@ -59,13 +59,12 @@ import fr.zcraft.quartzlib.components.commands.Commands;
 import fr.zcraft.quartzlib.components.gui.Gui;
 import fr.zcraft.quartzlib.components.i18n.I18n;
 import fr.zcraft.quartzlib.core.QuartzPlugin;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.UpdateChecker;
 import java.io.File;
 import java.io.IOException;
-import org.bukkit.plugin.java.JavaPlugin;
+import java.util.logging.Level;
 
-public final class ImageOnMap extends JavaPlugin {
+public final class ImageOnMap extends QuartzPlugin {
     private static final String IMAGES_DIRECTORY_NAME = "images";
     private static final String MAPS_DIRECTORY_NAME = "maps";
     private static ImageOnMap plugin;
@@ -107,7 +106,7 @@ public final class ImageOnMap extends JavaPlugin {
             imagesDirectory = checkPluginDirectory(imagesDirectory, V3Migrator.getOldImagesDirectory(this));
             checkPluginDirectory(mapsDirectory);
         } catch (final IOException ex) {
-            getLogger().error("FATAL: " + ex.getMessage());
+            getLogger().log(Level.SEVERE, "FATAL: " + ex.getMessage());
             this.setEnabled(false);
             return;
         }

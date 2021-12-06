@@ -39,7 +39,6 @@ package fr.moribus.imageonmap.migration;
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.mojang.UUIDFetcher;
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,6 +55,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -217,11 +217,11 @@ public class V3Migrator implements Runnable {
         FileInputStream inputStream = new FileInputStream(file);
 
         byte[] data = new byte[1024];
-        int read = 0;
-
-        while ((read = inputStream.read(data)) != -1) {
+        while (inputStream.read(data) != -1) {
             instance.update(data);
         }
+
+        inputStream.close();
 
         byte[] hashBytes = instance.digest();
 
@@ -255,8 +255,8 @@ public class V3Migrator implements Runnable {
                 return;
             }
         } catch (Exception ex) {
-            plugin.getLogger().error(I.t("Error while preparing migration"));
-            plugin.getLogger().error(I.t("Aborting migration. No change has been made."), ex);
+            plugin.getLogger().log(Level.SEVERE, I.t("Error while preparing migration"));
+            plugin.getLogger().log(Level.SEVERE, I.t("Aborting migration. No change has been made."), ex);
             return;
         }
 
@@ -265,9 +265,9 @@ public class V3Migrator implements Runnable {
             saveChanges();
             cleanup();
         } catch (Exception ex) {
-            plugin.getLogger().error(I.t("Error while migrating"), ex);
-            plugin.getLogger().error(I.t("Aborting migration. Some changes may already have been made."));
-            plugin.getLogger().error(I.t(
+            plugin.getLogger().log(Level.SEVERE, I.t("Error while migrating"), ex);
+            plugin.getLogger().log(Level.SEVERE, I.t("Aborting migration. Some changes may already have been made."));
+            plugin.getLogger().log(Level.SEVERE, I.t(
                     "Before trying to migrate again, you must recover player files from the backups,"
                             + " and then move the backups away from the plugin directory to avoid overwriting them."));
         }
@@ -310,10 +310,10 @@ public class V3Migrator implements Runnable {
     private boolean checkForExistingBackups() {
         if ((backupsPrev3Directory.exists() && backupsPrev3Directory.list().length == 0)
                 || (backupsPostv3Directory.exists() && backupsPostv3Directory.list().length == 0)) {
-            plugin.getLogger().error(I.t("Backup directories already exists."));
-            plugin.getLogger().error(I.t("This means that a migration has already been done,"
+            plugin.getLogger().log(Level.SEVERE, I.t("Backup directories already exists."));
+            plugin.getLogger().log(Level.SEVERE, I.t("This means that a migration has already been done,"
                     + " or may not have ended well."));
-            plugin.getLogger().error(I.t(
+            plugin.getLogger().log(Level.SEVERE, I.t(
                     "To start a new migration,"
                             + " you must move away the backup directories so they are not overwritten."));
 
@@ -394,7 +394,7 @@ public class V3Migrator implements Runnable {
                         userNamesToFetch.add(oldPoster.getUserName());
                     }
                 } catch (InvalidConfigurationException ex) {
-                    plugin.getLogger().warning("Could not read poster data for key {0}", ex, key);
+                    plugin.getLogger().log(Level.WARNING, "Could not read poster data for key " + key, ex);
                 }
             }
         }
@@ -418,7 +418,7 @@ public class V3Migrator implements Runnable {
                         userNamesToFetch.add(oldMap.getUserName());
                     }
                 } catch (InvalidConfigurationException ex) {
-                    plugin.getLogger().warning("Could not read poster data for key '{0}'", ex, key);
+                    plugin.getLogger().log(Level.WARNING, "Could not read poster data for key '" + key + "'", ex);
                 }
             }
         }
@@ -437,10 +437,10 @@ public class V3Migrator implements Runnable {
         try {
             usersUUIDs = UUIDFetcher.fetch(new ArrayList<>(userNamesToFetch));
         } catch (IOException ex) {
-            plugin.getLogger().error(I.t("An error occurred while fetching the UUIDs from Mojang"), ex);
+            plugin.getLogger().log(Level.SEVERE, I.t("An error occurred while fetching the UUIDs from Mojang"), ex);
             throw ex;
         } catch (InterruptedException ex) {
-            plugin.getLogger().error(I.t("The migration worker has been interrupted"), ex);
+            plugin.getLogger().log(Level.SEVERE, I.t("The migration worker has been interrupted"), ex);
             throw ex;
         }
         plugin.getLogger().info(I.tn("Fetching done. {0} UUID have been retrieved.",
@@ -464,18 +464,18 @@ public class V3Migrator implements Runnable {
         try {
             UUIDFetcher.fetchRemaining(userNamesToFetch, usersUUIDs);
         } catch (IOException ex) {
-            plugin.getLogger().error(I.t("An error occurred while fetching the UUIDs from Mojang"));
+            plugin.getLogger().log(Level.SEVERE, I.t("An error occurred while fetching the UUIDs from Mojang"));
             throw ex;
         } catch (InterruptedException ex) {
-            plugin.getLogger().error(I.t("The migration worker has been interrupted"));
+            plugin.getLogger().log(Level.SEVERE, I.t("The migration worker has been interrupted"));
             throw ex;
         }
 
         if (usersUUIDs.size() != userNamesToFetch.size()) {
-            plugin.getLogger().warning(I.tn("Mojang did not find player data for {0} player",
+            plugin.getLogger().log(Level.WARNING, I.tn("Mojang did not find player data for {0} player",
                     "Mojang did not find player data for {0} players",
                     userNamesToFetch.size() - usersUUIDs.size()));
-            plugin.getLogger().warning(I.t("The following players do not exist or do not have paid accounts :"));
+            plugin.getLogger().log(Level.WARNING, I.t("The following players do not exist or do not have paid accounts :"));
 
             String missingUsersList = "";
 
@@ -537,12 +537,12 @@ public class V3Migrator implements Runnable {
         postersToMigrate.addAll(remainingPosters);
 
         if (!missingMapIds.isEmpty()) {
-            plugin.getLogger().warning(I.tn("{0} registered minecraft map is missing from the save.",
+            plugin.getLogger().log(Level.WARNING, I.tn("{0} registered minecraft map is missing from the save.",
                     "{0} registered minecraft maps are missing from the save.", missingMapIds.size()));
-            plugin.getLogger().warning(
+            plugin.getLogger().log(Level.WARNING, 
                     I.t("These maps will not be migrated,"
                             + " but this could mean the save has been altered or corrupted."));
-            plugin.getLogger().warning(I.t("The following maps are missing : {0} ",
+            plugin.getLogger().log(Level.WARNING, I.t("The following maps are missing : {0} ",
                     StringUtils.join(missingMapIds, ',')));
         }
     }
