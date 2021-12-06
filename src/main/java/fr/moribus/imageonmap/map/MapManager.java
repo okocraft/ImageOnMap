@@ -41,10 +41,12 @@ import fr.moribus.imageonmap.PluginConfiguration;
 import fr.moribus.imageonmap.image.ImageIOExecutor;
 import fr.moribus.imageonmap.image.PosterImage;
 import fr.moribus.imageonmap.map.MapManagerException.Reason;
-import fr.zcraft.quartzlib.tools.PluginLogger;
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -52,12 +54,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
-import org.bukkit.scheduler.BukkitTask;
 
 public abstract class MapManager {
-    private static final long SAVE_DELAY = 200;
-    private static final ArrayList<PlayerMapStore> playerMaps = new ArrayList<PlayerMapStore>();
-    private static BukkitTask autosaveTask;
+    private static final ArrayList<PlayerMapStore> playerMaps = new ArrayList<>();
 
     public static void init() {
         load();
@@ -66,9 +65,6 @@ public abstract class MapManager {
     public static void exit() {
         save();
         playerMaps.clear();
-        if (autosaveTask != null) {
-            autosaveTask.cancel();
-        }
     }
 
     public static boolean managesMap(ItemStack item) {
@@ -215,8 +211,8 @@ public abstract class MapManager {
         }
     }
 
-    private static UUID getUUIDFromFile(File file) {
-        String fileName = file.getName();
+    private static UUID getUUIDFromFile(Path file) {
+        String fileName = file.getFileName().toString();
         int fileExtPos = fileName.lastIndexOf('.');
         if (fileExtPos <= 0) {
             return null;
@@ -234,25 +230,15 @@ public abstract class MapManager {
         }
     }
 
-    //Silent load
-    public static void load() {
-        load(true);
-    }
-
     //Loading
-    public static void load(boolean verbose) {
-        int loadedFilesCount = 0;
-        for (File file : ImageOnMap.getPlugin().getMapsDirectory().listFiles()) {
-            UUID uuid = getUUIDFromFile(file);
-            if (uuid == null) {
-                continue;
-            }
-            getPlayerMapStore(uuid);
-            ++loadedFilesCount;
-        }
-
-        if (verbose) {
-            PluginLogger.info("Loaded {0} player map files.", loadedFilesCount);
+    public static void load() {
+        try {
+            Files.list(ImageOnMap.getPlugin().getMapsDirectory())
+                    .map(MapManager::getUUIDFromFile)
+                    .filter(Objects::nonNull)
+                    .forEach(MapManager::getPlayerMapStore);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

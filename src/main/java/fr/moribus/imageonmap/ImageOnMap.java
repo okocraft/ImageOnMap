@@ -47,65 +47,66 @@ import fr.moribus.imageonmap.commands.maptool.MigrateCommand;
 import fr.moribus.imageonmap.commands.maptool.NewCommand;
 import fr.moribus.imageonmap.commands.maptool.RenameCommand;
 import fr.moribus.imageonmap.commands.maptool.UpdateCommand;
+import fr.moribus.imageonmap.gui.Gui;
 import fr.moribus.imageonmap.image.ImageIOExecutor;
 import fr.moribus.imageonmap.image.ImageRendererExecutor;
 import fr.moribus.imageonmap.image.MapInitEvent;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.migration.MigratorExecutor;
-import fr.moribus.imageonmap.migration.V3Migrator;
 import fr.moribus.imageonmap.ui.MapItemManager;
 import fr.zcraft.quartzlib.components.commands.Commands;
-import fr.moribus.imageonmap.gui.Gui;
 import fr.zcraft.quartzlib.components.i18n.I18n;
 import fr.zcraft.quartzlib.core.QuartzPlugin;
 import fr.zcraft.quartzlib.tools.UpdateChecker;
-import java.io.File;
+
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Level;
 
 public final class ImageOnMap extends QuartzPlugin {
-    private static final String IMAGES_DIRECTORY_NAME = "images";
-    private static final String MAPS_DIRECTORY_NAME = "maps";
-    private static ImageOnMap plugin;
-    private final File mapsDirectory;
-    private File imagesDirectory;
+
+    private static ImageOnMap PLUGIN;
+
+    private final Path mapsDirectory;
+    private final Path imagesDirectory;
 
     public ImageOnMap() {
-        imagesDirectory = new File(this.getDataFolder(), IMAGES_DIRECTORY_NAME);
-        mapsDirectory = new File(this.getDataFolder(), MAPS_DIRECTORY_NAME);
-        plugin = this;
+        PLUGIN = this;
+
+        var folder = getDataFolder().toPath();
+        mapsDirectory = folder.resolve("maps");
+        imagesDirectory = folder.resolve("images");
     }
 
     public static ImageOnMap getPlugin() {
-        return plugin;
+        return PLUGIN;
     }
 
-    public File getImagesDirectory() {
+    public Path getImagesDirectory() {
         return imagesDirectory;
     }
 
-    public File getMapsDirectory() {
+    public Path getMapsDirectory() {
         return mapsDirectory;
     }
 
-    public File getImageFile(int mapID) {
-        return new File(imagesDirectory, "map" + mapID + ".png");
+    public Path getImageFile(int mapID) {
+        return imagesDirectory.resolve("map" + mapID + ".png");
     }
-
 
     @SuppressWarnings("unchecked")
     @Override
     public void onEnable() {
         // Creating the images and maps directories if necessary
         try {
-            imagesDirectory = checkPluginDirectory(imagesDirectory, V3Migrator.getOldImagesDirectory(this));
             checkPluginDirectory(mapsDirectory);
+            checkPluginDirectory(imagesDirectory);
         } catch (final IOException ex) {
             getLogger().log(Level.SEVERE, "FATAL: " + ex.getMessage());
             this.setEnabled(false);
             return;
         }
-
 
         saveDefaultConfig();
         loadComponents(I18n.class, Gui.class, Commands.class, PluginConfiguration.class, ImageIOExecutor.class,
@@ -151,18 +152,9 @@ public final class ImageOnMap extends QuartzPlugin {
         super.onDisable();
     }
 
-    private File checkPluginDirectory(File primaryFile, File... alternateFiles) throws IOException {
-        if (primaryFile.exists()) {
-            return primaryFile;
+    private void checkPluginDirectory(Path directory) throws IOException {
+        if (!Files.isDirectory(directory)) {
+            Files.createDirectories(directory);
         }
-        for (File file : alternateFiles) {
-            if (file.exists()) {
-                return file;
-            }
-        }
-        if (!primaryFile.mkdirs()) {
-            throw new IOException("Could not create '" + primaryFile.getName() + "' plugin directory.");
-        }
-        return primaryFile;
     }
 }

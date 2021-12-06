@@ -40,8 +40,9 @@ import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.PluginConfiguration;
 import fr.moribus.imageonmap.map.MapManagerException.Reason;
 import fr.zcraft.quartzlib.tools.PluginLogger;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,14 +55,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerMapStore implements ConfigurationSerializable {
     private final UUID playerUUID;
-    private final ArrayList<ImageMap> mapList = new ArrayList<ImageMap>();
-    private boolean modified = false;
+    private final ArrayList<ImageMap> mapList = new ArrayList<>();
     private int mapCount = 0;
     private FileConfiguration mapConfig = null;
-    private File mapsFile = null;
+    private Path mapsFile = null;
 
     public PlayerMapStore(UUID playerUUID) {
         this.playerUUID = playerUUID;
@@ -99,7 +100,6 @@ public class PlayerMapStore implements ConfigurationSerializable {
 
     public synchronized void insertMap(ImageMap map) {
         add_Map(map);
-        notifyModification();
     }
 
     private void add_Map(ImageMap map) {
@@ -109,7 +109,6 @@ public class PlayerMapStore implements ConfigurationSerializable {
 
     public synchronized void deleteMap(ImageMap map) throws MapManagerException {
         remove_Map(map);
-        notifyModification();
     }
 
     private void remove_Map(ImageMap map) throws MapManagerException {
@@ -143,7 +142,7 @@ public class PlayerMapStore implements ConfigurationSerializable {
     }
 
     public synchronized List<ImageMap> getMapList() {
-        return new ArrayList(mapList);
+        return new ArrayList<>(mapList);
     }
 
     public synchronized ImageMap[] getMaps() {
@@ -181,30 +180,18 @@ public class PlayerMapStore implements ConfigurationSerializable {
         return playerUUID;
     }
 
-    public synchronized boolean isModified() {
-        return modified;
-    }
-
-    public synchronized void notifyModification() {
-        this.modified = true;
-    }
-
     /* ****** Serializing ***** */
 
     public synchronized int getMapCount() {
         return this.mapCount;
     }
 
-    public synchronized int getImagesCount() {
-        return this.mapList.size();
-    }
-
     /* ****** Configuration Files management ***** */
 
     @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        ArrayList<Map> list = new ArrayList<Map>();
+    public @NotNull Map<String, Object> serialize() {
+        Map<String, Object> map = new HashMap<>();
+        List<Map<String, Object>> list = new ArrayList<>();
         synchronized (this) {
             for (ImageMap tmpMap : mapList) {
                 list.add(tmpMap.serialize());
@@ -252,12 +239,12 @@ public class PlayerMapStore implements ConfigurationSerializable {
 
     public void load() {
         if (mapsFile == null) {
-            mapsFile = new File(ImageOnMap.getPlugin().getMapsDirectory(), playerUUID.toString() + ".yml");
-            if (!mapsFile.exists()) {
+            mapsFile = ImageOnMap.getPlugin().getMapsDirectory().resolve(playerUUID.toString() + ".yml");
+            if (!Files.isRegularFile(mapsFile)) {
                 save();
             }
         }
-        mapConfig = YamlConfiguration.loadConfiguration(mapsFile);
+        mapConfig = YamlConfiguration.loadConfiguration(mapsFile.toFile());
         loadFromConfig(getToolConfig().getConfigurationSection("PlayerMapStore"));
     }
 
@@ -267,13 +254,10 @@ public class PlayerMapStore implements ConfigurationSerializable {
         }
         getToolConfig().set("PlayerMapStore", this.serialize());
         try {
-            getToolConfig().save(mapsFile);
+            getToolConfig().save(mapsFile.toFile());
 
         } catch (IOException ex) {
             PluginLogger.error("Could not save maps file for player '{0}'", ex, playerUUID.toString());
-        }
-        synchronized (this) {
-            modified = false;
         }
     }
 }

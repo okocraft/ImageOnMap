@@ -40,15 +40,10 @@ import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.tools.mojang.UUIDFetcher;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,22 +51,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 /**
  * This class represents and executes the ImageOnMap v3.x migration process
  */
 public class V3Migrator implements Runnable {
-    /**
-     * The name of the former images directory
-     */
-    private static final String OLD_IMAGES_DIRECTORY_NAME = "Image";
 
     /**
      * The name of the former file that contained all the maps definitions (including posters)
@@ -84,17 +74,6 @@ public class V3Migrator implements Runnable {
     private static final String OLD_POSTERS_FILE_NAME = "poster.yml";
 
     /**
-     * The name of the backup directory that will contain the pre-v3 files that
-     * were present before the migration started
-     */
-    private static final String BACKUPS_PREV3_DIRECTORY_NAME = "backups_pre-v3";
-
-    /**
-     * The name of the backup directory that will contain the post-v3 files that
-     * were present before the migration started
-     */
-    private static final String BACKUPS_POSTV3_DIRECTORY_NAME = "backups_post-v3";
-    /**
      * The plugin that is running the migration
      */
     private final ImageOnMap plugin;
@@ -102,12 +81,12 @@ public class V3Migrator implements Runnable {
      * The backup directory that will contain the pre-v3 files that
      * were present before the migration started
      */
-    private final File backupsPrev3Directory;
+    private final Path backupsPrev3Directory;
     /**
      * The backup directory that will contain the post-v3 files that
      * were present before the migration started
      */
-    private final File backupsPostv3Directory;
+    private final Path backupsPostv3Directory;
     /**
      * The list of all the posters to migrate
      */
@@ -123,11 +102,11 @@ public class V3Migrator implements Runnable {
     /**
      * The former file that contained all the posters definitions
      */
-    private File oldPostersFile;
+    private Path oldPostersFile;
     /**
      * The former file that contained all the maps definitions (including posters)
      */
-    private File oldMapsFile;
+    private Path oldMapsFile;
     /**
      * The map of all the usernames and their corresponding UUIDs
      */
@@ -136,27 +115,17 @@ public class V3Migrator implements Runnable {
     public V3Migrator(ImageOnMap plugin) {
         this.plugin = plugin;
 
-        File dataFolder = plugin.getDataFolder();
+        Path dataFolder = plugin.getDataFolder().toPath();
 
-        oldPostersFile = new File(dataFolder, OLD_POSTERS_FILE_NAME);
-        oldMapsFile = new File(dataFolder, OLD_MAPS_FILE_NAME);
+        oldPostersFile = dataFolder.resolve("poster.yml");
+        oldMapsFile = dataFolder.resolve("map.yml");
 
-        backupsPrev3Directory = new File(dataFolder, BACKUPS_PREV3_DIRECTORY_NAME);
-        backupsPostv3Directory = new File(dataFolder, BACKUPS_POSTV3_DIRECTORY_NAME);
+        backupsPrev3Directory = dataFolder.resolve("backups_pre-v3");
+        backupsPostv3Directory = dataFolder.resolve("backups_post-v3");
 
         postersToMigrate = new ArrayDeque<>();
         mapsToMigrate = new ArrayDeque<>();
         userNamesToFetch = new HashSet<>();
-    }
-
-    /**
-     * Returns the former images directory of a given plugin
-     *
-     * @param plugin The plugin.
-     * @return the corresponding 'Image' directory
-     */
-    public static File getOldImagesDirectory(Plugin plugin) {
-        return new File(plugin.getDataFolder(), OLD_IMAGES_DIRECTORY_NAME);
     }
 
     /**
@@ -167,68 +136,13 @@ public class V3Migrator implements Runnable {
      * @param destinationFile The destination file
      * @throws IOException If the copy failed, if the integrity check failed, or if the destination file already exists
      */
-    private static void verifiedBackupCopy(File sourceFile, File destinationFile) throws IOException {
-        if (destinationFile.exists()) {
+    private static void verifiedBackupCopy(Path sourceFile, Path destinationFile) throws IOException {
+        if (Files.isRegularFile(destinationFile)) {
             throw new IOException(
-                    "Backup copy failed : destination file (" + destinationFile.getName() + ") already exists.");
+                    "Backup copy failed : destination file (" + destinationFile + ") already exists.");
         }
 
-        long sourceSize = sourceFile.length();
-        String sourceCheckSum = fileCheckSum(sourceFile, "SHA1");
-
-        Path sourcePath = Paths.get(sourceFile.getAbsolutePath());
-        Path destinationPath = Paths.get(destinationFile.getAbsolutePath());
-        Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-
-        long destinationSize = destinationFile.length();
-        String destinationCheckSum = fileCheckSum(destinationFile, "SHA1");
-
-        if (sourceSize != destinationSize || !sourceCheckSum.equals(destinationCheckSum)) {
-            throw new IOException("Backup copy failed : source and destination files ("
-                    + sourceFile.getName()
-                    + ") differ after copy.");
-        }
-
-    }
-
-    /* ****** Actions ***** */
-
-    /**
-     * Calculates the checksum of a given file
-     *
-     * @param file          The file to calculate the checksum of
-     * @param algorithmName The name of the algorithm to use
-     * @return The resulting checksum in hexadecimal format
-     * @throws IOException
-     **/
-    private static String fileCheckSum(File file, String algorithmName) throws IOException {
-        MessageDigest instance;
-        try {
-            instance = MessageDigest.getInstance(algorithmName);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new IOException(
-                    "Could not check file integrity because of NoSuchAlgorithmException : " + ex.getMessage());
-        }
-
-        FileInputStream inputStream = new FileInputStream(file);
-
-        byte[] data = new byte[1024];
-        while (inputStream.read(data) != -1) {
-            instance.update(data);
-        }
-
-        inputStream.close();
-
-        byte[] hashBytes = instance.digest();
-
-        StringBuilder buffer = new StringBuilder();
-        char hexChar;
-        for (int i = 0; i < hashBytes.length; i++) {
-            hexChar = Integer.toHexString((hashBytes[i] & 0xff) + 0x100).charAt(0);
-            buffer.append(hexChar);
-        }
-
-        return buffer.toString();
+        Files.copy(sourceFile, destinationFile, StandardCopyOption.REPLACE_EXISTING);
     }
 
     /**
@@ -277,13 +191,13 @@ public class V3Migrator implements Runnable {
     private boolean spotFilesToMigrate() {
         plugin.getLogger().info(I.t("Looking for configuration files to migrate..."));
 
-        if (!oldPostersFile.exists()) {
+        if (!Files.isRegularFile(oldPostersFile)) {
             oldPostersFile = null;
         } else {
             plugin.getLogger().info(I.t("Detected former posters file {0}", OLD_POSTERS_FILE_NAME));
         }
 
-        if (!oldMapsFile.exists()) {
+        if (!Files.isRegularFile(oldMapsFile)) {
             oldMapsFile = null;
         } else {
             plugin.getLogger().info(I.t("Detected former maps file {0}", OLD_MAPS_FILE_NAME));
@@ -303,9 +217,10 @@ public class V3Migrator implements Runnable {
      *
      * @return true if a non-empty backup directory exists, false otherwise
      */
+    @SuppressWarnings("ConstantConditions")
     private boolean checkForExistingBackups() {
-        if ((backupsPrev3Directory.exists() && backupsPrev3Directory.list().length == 0)
-                || (backupsPostv3Directory.exists() && backupsPostv3Directory.list().length == 0)) {
+        if ((Files.isDirectory(backupsPrev3Directory) && backupsPrev3Directory.toFile().list().length == 0)
+                || (Files.isDirectory(backupsPostv3Directory) && backupsPrev3Directory.toFile().list().length == 0)) {
             plugin.getLogger().log(Level.SEVERE, I.t("Backup directories already exists."));
             plugin.getLogger().log(Level.SEVERE, I.t("This means that a migration has already been done,"
                     + " or may not have ended well."));
@@ -314,8 +229,9 @@ public class V3Migrator implements Runnable {
                             + " you must move away the backup directories so they are not overwritten."));
 
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -326,28 +242,32 @@ public class V3Migrator implements Runnable {
     private void backupMapData() throws IOException {
         plugin.getLogger().info(I.t("Backing up map data before migrating..."));
 
-        if (!backupsPrev3Directory.exists()) {
-            backupsPrev3Directory.mkdirs();
-        }
-        if (!backupsPostv3Directory.exists()) {
-            backupsPostv3Directory.mkdirs();
+        if (!Files.isDirectory(backupsPrev3Directory)) {
+            Files.createDirectories(backupsPrev3Directory);
         }
 
-        if (oldMapsFile != null && oldMapsFile.exists()) {
-            File oldMapsFileBackup = new File(backupsPrev3Directory, oldMapsFile.getName());
+        if (!Files.isDirectory(backupsPostv3Directory)) {
+            Files.createDirectories(backupsPostv3Directory);
+        }
+
+        if (oldMapsFile != null && Files.isRegularFile(oldMapsFile)) {
+            Path oldMapsFileBackup = backupsPrev3Directory.resolve(oldMapsFile);
             verifiedBackupCopy(oldMapsFile, oldMapsFileBackup);
         }
 
-        if (oldPostersFile != null && oldPostersFile.exists()) {
-            File oldPostersFileBackup = new File(backupsPrev3Directory, oldPostersFile.getName());
+        if (oldPostersFile != null && Files.isRegularFile(oldPostersFile)) {
+            Path oldPostersFileBackup = backupsPrev3Directory.resolve(oldPostersFile);
             verifiedBackupCopy(oldPostersFile, oldPostersFileBackup);
         }
 
-        File backupFile;
-        for (File mapFile : plugin.getMapsDirectory().listFiles()) {
-            backupFile = new File(backupsPostv3Directory, mapFile.getName());
-            verifiedBackupCopy(mapFile, backupFile);
-        }
+        Files.list(plugin.getMapsDirectory()).forEach(mapFile -> {
+            var backupFile = backupsPostv3Directory.resolve(mapFile);
+            try {
+                verifiedBackupCopy(mapFile, backupFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         plugin.getLogger().info(I.t("Backup complete."));
     }
@@ -376,7 +296,7 @@ public class V3Migrator implements Runnable {
      */
     private boolean loadOldFiles() {
         if (oldPostersFile != null) {
-            FileConfiguration oldPosters = YamlConfiguration.loadConfiguration(oldPostersFile);
+            FileConfiguration oldPosters = YamlConfiguration.loadConfiguration(oldPostersFile.toFile());
 
             OldSavedPoster oldPoster;
             for (String key : oldPosters.getKeys(false)) {
@@ -394,7 +314,7 @@ public class V3Migrator implements Runnable {
         }
 
         if (oldMapsFile != null) {
-            FileConfiguration oldMaps = YamlConfiguration.loadConfiguration(oldMapsFile);
+            FileConfiguration oldMaps = YamlConfiguration.loadConfiguration(oldMapsFile.toFile());
             OldSavedMap oldMap;
 
             for (String key : oldMaps.getKeys(false)) {
@@ -551,7 +471,7 @@ public class V3Migrator implements Runnable {
         if (oldMapsFile != null) {
             if (mapsToMigrate.isEmpty()) {
                 plugin.getLogger().info(I.t("Deleting old map data file..."));
-                oldMapsFile.delete();
+                Files.delete(oldMapsFile);
             } else {
                 plugin.getLogger().info(I.tn("{0} map could not be migrated.", "{0} maps could not be migrated.",
                         mapsToMigrate.size()));
@@ -562,7 +482,7 @@ public class V3Migrator implements Runnable {
                     map.serialize(mapConfig);
                 }
 
-                mapConfig.save(oldMapsFile);
+                mapConfig.save(oldMapsFile.toFile());
             }
         }
 
@@ -570,7 +490,7 @@ public class V3Migrator implements Runnable {
         if (oldPostersFile != null) {
             if (postersToMigrate.isEmpty()) {
                 plugin.getLogger().info(I.t("Deleting old poster data file..."));
-                oldPostersFile.delete();
+                Files.delete(oldPostersFile);
             } else {
                 plugin.getLogger().info(I.tn("{0} poster could not be migrated.", "{0} posters could not be migrated.",
                         postersToMigrate.size()));
@@ -581,7 +501,7 @@ public class V3Migrator implements Runnable {
                     poster.serialize(posterConfig);
                 }
 
-                posterConfig.save(oldPostersFile);
+                posterConfig.save(oldPostersFile.toFile());
             }
         }
 

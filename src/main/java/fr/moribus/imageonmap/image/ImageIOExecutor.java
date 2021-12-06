@@ -42,19 +42,18 @@ import fr.zcraft.quartzlib.components.worker.Worker;
 import fr.zcraft.quartzlib.components.worker.WorkerAttributes;
 import fr.zcraft.quartzlib.components.worker.WorkerRunnable;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.imageio.ImageIO;
 
 
 @WorkerAttributes(name = "Image IO")
 public class ImageIOExecutor extends Worker {
-    public static void loadImage(final File file, final Renderer mapRenderer) {
-
+    public static void loadImage(final Path file, final Renderer mapRenderer) {
         submitQuery(new WorkerRunnable<Void>() {
             @Override
             public Void run() throws Exception {
-                BufferedImage image = ImageIO.read(file);
+                BufferedImage image = ImageIO.read(file.toFile());
                 mapRenderer.setImage(image);
                 image.flush();//Safe to free
                 return null;
@@ -62,11 +61,11 @@ public class ImageIOExecutor extends Worker {
         });
     }
 
-    public static void saveImage(final File file, final BufferedImage image) {
+    public static void saveImage(final Path file, final BufferedImage image) {
         submitQuery(new WorkerRunnable<Void>() {
             @Override
             public Void run() throws Throwable {
-                ImageIO.write(image, "png", file);
+                ImageIO.write(image, "png", file.toFile());
                 return null;
             }
         });
@@ -86,16 +85,17 @@ public class ImageIOExecutor extends Worker {
 
     public static void deleteImage(ImageMap map) {
         int[] mapsIDs = map.getMapsIDs();
-        for (int i = 0, c = mapsIDs.length; i < c; i++) {
-            deleteImage(ImageOnMap.getPlugin().getImageFile(mapsIDs[i]));
+
+        for (int mapsID : mapsIDs) {
+            deleteImage(ImageOnMap.getPlugin().getImageFile(mapsID));
         }
     }
 
-    public static void deleteImage(final File file) {
+    public static void deleteImage(Path file) {
         submitQuery(new WorkerRunnable<Void>() {
             @Override
             public Void run() throws Throwable {
-                Files.delete(file.toPath());
+                Files.delete(file);
                 return null;
             }
         });

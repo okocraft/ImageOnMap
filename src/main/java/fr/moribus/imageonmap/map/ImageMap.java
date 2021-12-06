@@ -39,17 +39,18 @@ package fr.moribus.imageonmap.map;
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.ui.MapItemManager;
 import fr.zcraft.quartzlib.components.i18n.I;
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public abstract class ImageMap implements ConfigurationSerializable {
     public static final int WIDTH = 128;
@@ -82,8 +83,8 @@ public abstract class ImageMap implements ConfigurationSerializable {
 
     }
 
-    public static File getFullImageFile(int mapIDstart, int mapIDend) {
-        return new File(ImageOnMap.getPlugin().getImagesDirectory(), "_" + mapIDstart + "-" + mapIDend + ".png");
+    public static Path getFullImageFile(int mapIDstart, int mapIDend) {
+        return ImageOnMap.getPlugin().getImagesDirectory().resolve("_" + mapIDstart + "-" + mapIDend + ".png");
     }
 
     public static ImageMap fromConfig(Map<String, Object> map, UUID userUUID) throws InvalidConfigurationException {
@@ -115,7 +116,7 @@ public abstract class ImageMap implements ConfigurationSerializable {
 
         for (Map<String, Object> tmpMap : list) {
             if (tmpMap.get("id").equals(id)) {
-                return new Integer[] {(Integer) tmpMap.get("columns"), (Integer) tmpMap.get("rows")};
+                return new Integer[]{(Integer) tmpMap.get("columns"), (Integer) tmpMap.get("rows")};
             }
         }
         return null;
@@ -168,7 +169,7 @@ public abstract class ImageMap implements ConfigurationSerializable {
 
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("id", getId());
         map.put("type", mapType.toString());
         map.put("name", getName());

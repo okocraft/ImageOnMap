@@ -237,8 +237,6 @@ public class ImageRendererExecutor extends Worker {
         });
         poster.splitImages();
         final int[] mapsIDs = futureMapsIds.get();
-        ImageIOExecutor.saveImage(mapsIDs, poster);
-
 
         ImageIOExecutor.saveImage(mapsIDs, poster);
         if (PluginConfiguration.SAVE_FULL_IMAGE.get()) {

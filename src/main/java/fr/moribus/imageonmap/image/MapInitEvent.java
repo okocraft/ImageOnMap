@@ -39,7 +39,9 @@ package fr.moribus.imageonmap.image;
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.zcraft.quartzlib.core.QuartzLib;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -88,8 +90,8 @@ public class MapInitEvent implements Listener {
             return;
         }
 
-        File imageFile = ImageOnMap.getPlugin().getImageFile(map.getId());
-        if (imageFile.isFile()) {
+        Path imageFile = ImageOnMap.getPlugin().getImageFile(map.getId());
+        if (!Files.isRegularFile(imageFile)) {
             ImageIOExecutor.loadImage(imageFile, Renderer.installRenderer(map));
         }
     }

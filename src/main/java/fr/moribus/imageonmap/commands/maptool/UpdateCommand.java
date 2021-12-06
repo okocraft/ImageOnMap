@@ -161,7 +161,7 @@ public class UpdateCommand extends IoMCommand {
             try {
                 url1 = new URL(url);
                 //TODO replace by a check of the load status.(if not loaded load the mapmanager)
-                MapManager.load(false);//we don't want to spam the console each time we reload the mapManager
+                MapManager.load();//we don't want to spam the console each time we reload the mapManager
 
                 Integer[] size = {1, 1};
                 if (map.getType() == ImageMap.Type.POSTER) {

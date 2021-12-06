@@ -40,12 +40,9 @@ import fr.zcraft.quartzlib.components.i18n.I;
 import java.text.MessageFormat;
 
 public class MapManagerException extends Exception {
-    private final Reason reason;
-
 
     public MapManagerException(Reason reason, Object... arguments) {
         super(reason.getReasonString(arguments));
-        this.reason = reason;
     }
     
     public enum Reason {
