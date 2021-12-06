@@ -64,8 +64,9 @@ import fr.zcraft.quartzlib.tools.UpdateChecker;
 import java.io.File;
 import java.io.IOException;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public final class ImageOnMap extends QuartzPlugin {
+public final class ImageOnMap extends JavaPlugin {
     private static final String IMAGES_DIRECTORY_NAME = "images";
     private static final String MAPS_DIRECTORY_NAME = "maps";
     private static ImageOnMap plugin;
@@ -107,7 +108,7 @@ public final class ImageOnMap extends QuartzPlugin {
             imagesDirectory = checkPluginDirectory(imagesDirectory, V3Migrator.getOldImagesDirectory(this));
             checkPluginDirectory(mapsDirectory);
         } catch (final IOException ex) {
-            PluginLogger.error("FATAL: " + ex.getMessage());
+            getLogger().error("FATAL: " + ex.getMessage());
             this.setEnabled(false);
             return;
         }
@@ -153,7 +154,14 @@ public final class ImageOnMap extends QuartzPlugin {
             metrics.addCustomChart(new Metrics.SingleLineChart("rendered-images", MapManager::getImagesCount));
             metrics.addCustomChart(new Metrics.SingleLineChart("used-minecraft-maps", MapManager::getMapCount));
         } else {
-            PluginLogger.warning("Collect data disabled");
+            getLogger().warning("Collect data disabled");
+        }
+
+        Number a = null;
+        
+
+        if (a instanceof Integer b) {
+
         }
     }
 

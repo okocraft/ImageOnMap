@@ -255,8 +255,8 @@ public class V3Migrator implements Runnable {
                 return;
             }
         } catch (Exception ex) {
-            PluginLogger.error(I.t("Error while preparing migration"));
-            PluginLogger.error(I.t("Aborting migration. No change has been made."), ex);
+            plugin.getLogger().error(I.t("Error while preparing migration"));
+            plugin.getLogger().error(I.t("Aborting migration. No change has been made."), ex);
             return;
         }
 
@@ -265,9 +265,9 @@ public class V3Migrator implements Runnable {
             saveChanges();
             cleanup();
         } catch (Exception ex) {
-            PluginLogger.error(I.t("Error while migrating"), ex);
-            PluginLogger.error(I.t("Aborting migration. Some changes may already have been made."));
-            PluginLogger.error(I.t(
+            plugin.getLogger().error(I.t("Error while migrating"), ex);
+            plugin.getLogger().error(I.t("Aborting migration. Some changes may already have been made."));
+            plugin.getLogger().error(I.t(
                     "Before trying to migrate again, you must recover player files from the backups,"
                             + " and then move the backups away from the plugin directory to avoid overwriting them."));
         }
@@ -279,25 +279,25 @@ public class V3Migrator implements Runnable {
      * @return true if any former map or poster file exists, false otherwise
      */
     private boolean spotFilesToMigrate() {
-        PluginLogger.info(I.t("Looking for configuration files to migrate..."));
+        plugin.getLogger().info(I.t("Looking for configuration files to migrate..."));
 
         if (!oldPostersFile.exists()) {
             oldPostersFile = null;
         } else {
-            PluginLogger.info(I.t("Detected former posters file {0}", OLD_POSTERS_FILE_NAME));
+            plugin.getLogger().info(I.t("Detected former posters file {0}", OLD_POSTERS_FILE_NAME));
         }
 
         if (!oldMapsFile.exists()) {
             oldMapsFile = null;
         } else {
-            PluginLogger.info(I.t("Detected former maps file {0}", OLD_MAPS_FILE_NAME));
+            plugin.getLogger().info(I.t("Detected former maps file {0}", OLD_MAPS_FILE_NAME));
         }
 
         if (oldPostersFile == null && oldMapsFile == null) {
-            PluginLogger.info(I.t("There is nothing to migrate. Stopping."));
+            plugin.getLogger().info(I.t("There is nothing to migrate. Stopping."));
             return false;
         } else {
-            PluginLogger.info(I.t("Done."));
+            plugin.getLogger().info(I.t("Done."));
             return true;
         }
     }
@@ -310,10 +310,10 @@ public class V3Migrator implements Runnable {
     private boolean checkForExistingBackups() {
         if ((backupsPrev3Directory.exists() && backupsPrev3Directory.list().length == 0)
                 || (backupsPostv3Directory.exists() && backupsPostv3Directory.list().length == 0)) {
-            PluginLogger.error(I.t("Backup directories already exists."));
-            PluginLogger.error(I.t("This means that a migration has already been done,"
+            plugin.getLogger().error(I.t("Backup directories already exists."));
+            plugin.getLogger().error(I.t("This means that a migration has already been done,"
                     + " or may not have ended well."));
-            PluginLogger.error(I.t(
+            plugin.getLogger().error(I.t(
                     "To start a new migration,"
                             + " you must move away the backup directories so they are not overwritten."));
 
@@ -328,7 +328,7 @@ public class V3Migrator implements Runnable {
      * @throws IOException
      **/
     private void backupMapData() throws IOException {
-        PluginLogger.info(I.t("Backing up map data before migrating..."));
+        plugin.getLogger().info(I.t("Backing up map data before migrating..."));
 
         if (!backupsPrev3Directory.exists()) {
             backupsPrev3Directory.mkdirs();
@@ -353,7 +353,7 @@ public class V3Migrator implements Runnable {
             verifiedBackupCopy(mapFile, backupFile);
         }
 
-        PluginLogger.info(I.t("Backup complete."));
+        plugin.getLogger().info(I.t("Backup complete."));
     }
 
     /**
@@ -394,7 +394,7 @@ public class V3Migrator implements Runnable {
                         userNamesToFetch.add(oldPoster.getUserName());
                     }
                 } catch (InvalidConfigurationException ex) {
-                    PluginLogger.warning("Could not read poster data for key {0}", ex, key);
+                    plugin.getLogger().warning("Could not read poster data for key {0}", ex, key);
                 }
             }
         }
@@ -418,7 +418,7 @@ public class V3Migrator implements Runnable {
                         userNamesToFetch.add(oldMap.getUserName());
                     }
                 } catch (InvalidConfigurationException ex) {
-                    PluginLogger.warning("Could not read poster data for key '{0}'", ex, key);
+                    plugin.getLogger().warning("Could not read poster data for key '{0}'", ex, key);
                 }
             }
         }
@@ -433,17 +433,17 @@ public class V3Migrator implements Runnable {
      * @throws InterruptedException if the thread was interrupted while fetching UUIDs
      */
     private void fetchUUIDs() throws IOException, InterruptedException {
-        PluginLogger.info(I.t("Fetching UUIDs from Mojang..."));
+        plugin.getLogger().info(I.t("Fetching UUIDs from Mojang..."));
         try {
-            usersUUIDs = UUIDFetcher.fetch(new ArrayList<String>(userNamesToFetch));
+            usersUUIDs = UUIDFetcher.fetch(new ArrayList<>(userNamesToFetch));
         } catch (IOException ex) {
-            PluginLogger.error(I.t("An error occurred while fetching the UUIDs from Mojang"), ex);
+            plugin.getLogger().error(I.t("An error occurred while fetching the UUIDs from Mojang"), ex);
             throw ex;
         } catch (InterruptedException ex) {
-            PluginLogger.error(I.t("The migration worker has been interrupted"), ex);
+            plugin.getLogger().error(I.t("The migration worker has been interrupted"), ex);
             throw ex;
         }
-        PluginLogger.info(I.tn("Fetching done. {0} UUID have been retrieved.",
+        plugin.getLogger().info(I.tn("Fetching done. {0} UUID have been retrieved.",
                 "Fetching done. {0} UUIDs have been retrieved.", usersUUIDs.size()));
     }
 
@@ -457,25 +457,25 @@ public class V3Migrator implements Runnable {
             return true;
         }
         int remainingUsersCount = userNamesToFetch.size() - usersUUIDs.size();
-        PluginLogger.info(I.tn("Mojang did not find UUIDs for {0} player at the current time.",
+        plugin.getLogger().info(I.tn("Mojang did not find UUIDs for {0} player at the current time.",
                 "Mojang did not find UUIDs for {0} players at the current time.", remainingUsersCount));
-        PluginLogger.info(I.t("The Mojang servers limit requests rate at one per second, this may take some time..."));
+        plugin.getLogger().info(I.t("The Mojang servers limit requests rate at one per second, this may take some time..."));
 
         try {
             UUIDFetcher.fetchRemaining(userNamesToFetch, usersUUIDs);
         } catch (IOException ex) {
-            PluginLogger.error(I.t("An error occurred while fetching the UUIDs from Mojang"));
+            plugin.getLogger().error(I.t("An error occurred while fetching the UUIDs from Mojang"));
             throw ex;
         } catch (InterruptedException ex) {
-            PluginLogger.error(I.t("The migration worker has been interrupted"));
+            plugin.getLogger().error(I.t("The migration worker has been interrupted"));
             throw ex;
         }
 
         if (usersUUIDs.size() != userNamesToFetch.size()) {
-            PluginLogger.warning(I.tn("Mojang did not find player data for {0} player",
+            plugin.getLogger().warning(I.tn("Mojang did not find player data for {0} player",
                     "Mojang did not find player data for {0} players",
                     userNamesToFetch.size() - usersUUIDs.size()));
-            PluginLogger.warning(I.t("The following players do not exist or do not have paid accounts :"));
+            plugin.getLogger().warning(I.t("The following players do not exist or do not have paid accounts :"));
 
             String missingUsersList = "";
 
@@ -486,12 +486,12 @@ public class V3Migrator implements Runnable {
             }
             missingUsersList = missingUsersList.substring(0, missingUsersList.length());
 
-            PluginLogger.info(missingUsersList);
+            plugin.getLogger().info(missingUsersList);
         }
 
         if (usersUUIDs.size() <= 0) {
-            PluginLogger.info(I.t("Mojang could not find any of the registered players."));
-            PluginLogger.info(I.t("There is nothing to migrate. Stopping."));
+            plugin.getLogger().info(I.t("Mojang could not find any of the registered players."));
+            plugin.getLogger().info(I.t("There is nothing to migrate. Stopping."));
             return false;
         }
 
@@ -499,7 +499,7 @@ public class V3Migrator implements Runnable {
     }
 
     private void mergeMapData() {
-        PluginLogger.info(I.t("Merging map data..."));
+        plugin.getLogger().info(I.t("Merging map data..."));
 
         ArrayDeque<OldSavedMap> remainingMaps = new ArrayDeque<>();
         ArrayDeque<OldSavedPoster> remainingPosters = new ArrayDeque<>();
@@ -537,12 +537,12 @@ public class V3Migrator implements Runnable {
         postersToMigrate.addAll(remainingPosters);
 
         if (!missingMapIds.isEmpty()) {
-            PluginLogger.warning(I.tn("{0} registered minecraft map is missing from the save.",
+            plugin.getLogger().warning(I.tn("{0} registered minecraft map is missing from the save.",
                     "{0} registered minecraft maps are missing from the save.", missingMapIds.size()));
-            PluginLogger.warning(
+            plugin.getLogger().warning(
                     I.t("These maps will not be migrated,"
                             + " but this could mean the save has been altered or corrupted."));
-            PluginLogger.warning(I.t("The following maps are missing : {0} ",
+            plugin.getLogger().warning(I.t("The following maps are missing : {0} ",
                     StringUtils.join(missingMapIds, ',')));
         }
     }
@@ -550,20 +550,20 @@ public class V3Migrator implements Runnable {
     /* ****** Utils ***** */
 
     private void saveChanges() {
-        PluginLogger.info(I.t("Saving changes..."));
+        plugin.getLogger().info(I.t("Saving changes..."));
         MapManager.save();
     }
 
     private void cleanup() throws IOException {
-        PluginLogger.info(I.t("Cleaning up old data files..."));
+        plugin.getLogger().info(I.t("Cleaning up old data files..."));
 
         //Cleaning maps file
         if (oldMapsFile != null) {
             if (mapsToMigrate.isEmpty()) {
-                PluginLogger.info(I.t("Deleting old map data file..."));
+                plugin.getLogger().info(I.t("Deleting old map data file..."));
                 oldMapsFile.delete();
             } else {
-                PluginLogger.info(I.tn("{0} map could not be migrated.", "{0} maps could not be migrated.",
+                plugin.getLogger().info(I.tn("{0} map could not be migrated.", "{0} maps could not be migrated.",
                         mapsToMigrate.size()));
                 YamlConfiguration mapConfig = new YamlConfiguration();
                 mapConfig.set("IdCount", mapsToMigrate.size());
@@ -579,10 +579,10 @@ public class V3Migrator implements Runnable {
         //Cleaning posters file
         if (oldPostersFile != null) {
             if (postersToMigrate.isEmpty()) {
-                PluginLogger.info(I.t("Deleting old poster data file..."));
+                plugin.getLogger().info(I.t("Deleting old poster data file..."));
                 oldPostersFile.delete();
             } else {
-                PluginLogger.info(I.tn("{0} poster could not be migrated.", "{0} posters could not be migrated.",
+                plugin.getLogger().info(I.tn("{0} poster could not be migrated.", "{0} posters could not be migrated.",
                         postersToMigrate.size()));
                 YamlConfiguration posterConfig = new YamlConfiguration();
                 posterConfig.set("IdCount", postersToMigrate.size());
@@ -595,7 +595,7 @@ public class V3Migrator implements Runnable {
             }
         }
 
-        PluginLogger.info(I.t("Data that has not been migrated will be kept in the old data files."));
+        plugin.getLogger().info(I.t("Data that has not been migrated will be kept in the old data files."));
     }
 
     public synchronized boolean isRunning() {
