@@ -42,7 +42,7 @@ import fr.moribus.imageonmap.commands.IoMCommand;
 import fr.moribus.imageonmap.gui.MapListGui;
 import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;
-import fr.zcraft.quartzlib.components.gui.Gui;
+import fr.moribus.imageonmap.gui.Gui;
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.util.ArrayList;

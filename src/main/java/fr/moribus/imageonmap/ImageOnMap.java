@@ -56,7 +56,7 @@ import fr.moribus.imageonmap.migration.V3Migrator;
 import fr.moribus.imageonmap.ui.MapItemManager;
 import fr.zcraft.quartzlib.components.commands.CommandWorkers;
 import fr.zcraft.quartzlib.components.commands.Commands;
-import fr.zcraft.quartzlib.components.gui.Gui;
+import fr.moribus.imageonmap.gui.Gui;
 import fr.zcraft.quartzlib.components.i18n.I18n;
 import fr.zcraft.quartzlib.core.QuartzPlugin;
 import fr.zcraft.quartzlib.tools.UpdateChecker;

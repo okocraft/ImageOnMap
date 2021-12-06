@@ -30,7 +30,7 @@
 
 package fr.zcraft.quartzlib.components.commands;
 
-import fr.zcraft.quartzlib.components.gui.GuiUtils;
+import fr.moribus.imageonmap.gui.GuiUtils;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import org.bukkit.ChatColor;
 

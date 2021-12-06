@@ -30,7 +30,7 @@
 
 package fr.zcraft.quartzlib.tools.items;
 
-import fr.zcraft.quartzlib.components.gui.GuiUtils;
+import fr.moribus.imageonmap.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.nbt.NBT;
 import fr.zcraft.quartzlib.components.nbt.NBTCompound;
 import fr.zcraft.quartzlib.components.rawtext.RawText;
