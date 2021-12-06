@@ -479,8 +479,8 @@ public abstract class ExplorerGui<T> extends ActionGui {
         ItemMeta meta = icon.getItemMeta();
 
         String title;
-        Integer newPage;
-        Integer lastPage;
+        int newPage;
+        int lastPage;
 
         switch (paginationButtonType) {
             case "next":
