@@ -30,7 +30,6 @@
 
 package fr.zcraft.quartzlib.components.i18n;
 
-import com.google.common.base.Strings;
 import fr.zcraft.quartzlib.components.i18n.translators.Translator;
 import fr.zcraft.quartzlib.core.QuartzComponent;
 import fr.zcraft.quartzlib.core.QuartzLib;
@@ -38,13 +37,10 @@ import fr.zcraft.quartzlib.core.QuartzPlugin;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.reflection.Reflection;
 import java.io.File;
-import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +52,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
 
 public class I18n extends QuartzComponent {
     private static final Map<Locale, Set<Translator>> translators = new ConcurrentHashMap<>();
@@ -90,120 +85,11 @@ public class I18n extends QuartzComponent {
     private static boolean addCountToParameters = true;
     private static boolean playerLocaleWarning = false;
 
-
-
-
-    /* **  I18N OPTIONS  ** */
-
-    /**
-     * Call this to reset the primary locale to the system's default locale
-     * (the default value for the primary locale).
-     */
-    public static void useDefaultPrimaryLocale() {
-        setPrimaryLocale(null);
-    }
-
     /**
      * @return The name of the subdirectory where the translations are stored. Default: "i18n".
      */
     public static String getI18nDirectory() {
         return i18nDirectory;
-    }
-
-    /**
-     * For the locales to be correctly loaded, this should be called <em>before</em> enabling the component.
-     *
-     * @param i18nDirectory The name of the subdirectory where the translations are stored. Default:
-     *                      "i18n".
-     */
-    public static void setI18nDirectory(String i18nDirectory) {
-        I18n.i18nDirectory = i18nDirectory;
-    }
-
-    /**
-     * Sets the plugin's JAR file. Required if you don't use {@link QuartzPlugin}.
-     * For the locales to be correctly loaded, this should be called <em>before</em> enabling the component.
-     *
-     * @param jarFile A reference to the plugin's JAR file.
-     */
-    public static void setJarFile(final File jarFile) {
-        try {
-            I18n.jarFile = new JarFile(jarFile);
-        } catch (IOException e) {
-            PluginLogger.error("Unable to load JAR file {0}", e, jarFile.getAbsolutePath());
-        }
-    }
-
-    /**
-     * Enable the automatic replacement of user-friendly color codes in the strings.
-     *
-     * <p>If enabled, the following codes will be available.</p>
-     *
-     * <ul>
-     *     <li>
-     *         Every colors &amp; formatting codes without underscores, written in english:
-     *         <pre>
-     *             {black}, {darkblue}, {darkgreen}, {darkaqua}, {darkred}, {darkpurple}, {gold}, {gray},
-     *             {darkgray}, {blue}, {yellow}, {green}, {aqua}, {red}, {lightpurple}, {bold}, {strikethrough},
-     *             {underline}, {italic}, {obfuscated}, {white}, {reset}
-     *         </pre>
-     *     </li>
-     *     <li>
-     *         Some codes for some special types of messages:
-     *         <pre>{ce}, {ci}, {cs}, {cst}, {cc}</pre>
-     *         (resp. error, information, success, status, command).
-     *     </li>
-     * </ul>
-     *
-     * @param userFriendlyFormatting {@code false} to disable. Enabled by default.
-     * @see #setErrorColor(String)
-     * @see #setNoticeColor(String)
-     * @see #setSuccessColor(String)
-     * @see #setStatusColor(String)
-     * @see #setCommandColor(String)
-     */
-    public static void setUserFriendlyFormatting(boolean userFriendlyFormatting) {
-        I18n.userFriendlyFormatting = userFriendlyFormatting;
-    }
-
-    /**
-     * @param errorColor The color (or formatting) used to replace {@code {ce}}. Default: red.
-     *                   {@code null}: no formatting.
-     */
-    public static void setErrorColor(String errorColor) {
-        I18n.errorColor = Strings.nullToEmpty(errorColor);
-    }
-
-    /**
-     * @param noticeColor The color (or formatting) used to replace {@code {ci}}. Default: white.
-     *                    {@code null}: no formatting.
-     */
-    public static void setNoticeColor(String noticeColor) {
-        I18n.noticeColor = Strings.nullToEmpty(noticeColor);
-    }
-
-    /**
-     * @param successColor The color (or formatting) used to replace {@code {cs}}. Default: green.
-     *                     {@code null}: no formatting.
-     */
-    public static void setSuccessColor(String successColor) {
-        I18n.successColor = Strings.nullToEmpty(successColor);
-    }
-
-    /**
-     * @param statusColor The color (or formatting) used to replace {@code {cst}}. Default: gray.
-     *                    {@code null}: no formatting.
-     */
-    public static void setStatusColor(String statusColor) {
-        I18n.statusColor = Strings.nullToEmpty(statusColor);
-    }
-
-    /**
-     * @param commandColor The color (or formatting) used to replace {@code {cc}}. Default: gold.
-     *                     {@code null}: no formatting.
-     */
-    public static void setCommandColor(String commandColor) {
-        I18n.commandColor = Strings.nullToEmpty(commandColor);
     }
 
     /**
@@ -595,14 +481,6 @@ public class I18n extends QuartzComponent {
         primaryLocale = locale != null ? locale : Locale.getDefault();
     }
 
-    /**
-     * @return the fallback locale set, or {@code null} if unset.
-     */
-    public static Locale getFallbackLocale() {
-        return fallbackLocale;
-    }
-
-
 
     /* **  METADATA METHODS  ** */
 
@@ -613,87 +491,6 @@ public class I18n extends QuartzComponent {
      */
     public static void setFallbackLocale(final Locale locale) {
         fallbackLocale = locale;
-    }
-
-    /**
-     * Retrieves the last translator for a locale.
-     *
-     * @param locale A locale.
-     * @return The last translator for this locale; may be an empty string
-     *      if none found.
-     */
-    public static String getLastTranslator(Locale locale) {
-        return StringUtils.join(getLastTranslators(locale), ", ");
-    }
-
-    /**
-     * Retrieves the last translators for a locale.
-     *
-     * @param locale The locale.
-     * @return The last translators for this locale. The list may be empty.
-     */
-    public static List<String> getLastTranslators(final Locale locale) {
-        final List<String> lastTranslators = new ArrayList<>();
-
-        for (Translator translator : getTranslatorsChain(locale)) {
-            lastTranslators.add(translator.getLastTranslator());
-        }
-
-        return lastTranslators;
-    }
-
-    /**
-     * Retrieves the translation team for a locale.
-     *
-     * @param locale A locale.
-     * @return The last translator for this locale; may be an empty string
-     *      if none found.
-     */
-    public static String getTranslationTeam(Locale locale) {
-        return StringUtils.join(getTranslationTeams(locale), ", ");
-    }
-
-    /**
-     * Retrieves the translation teams for a locale.
-     *
-     * @param locale The locale.
-     * @return The translation teams for this locale. The list may be empty.
-     */
-    public static List<String> getTranslationTeams(final Locale locale) {
-        final List<String> teams = new ArrayList<>();
-
-        for (Translator translator : getTranslatorsChain(locale)) {
-            teams.add(translator.getTranslationTeam());
-        }
-
-        return teams;
-    }
-
-    /**
-     * Retrieves the person the error reports have to be sent to, for a locale.
-     *
-     * @param locale A locale.
-     * @return The receiver of the error reports for this locale; may be an
-     *      empty string if none found.
-     */
-    public static String getReportErrorsTo(Locale locale) {
-        return StringUtils.join(getAllReportErrorsTo(locale), ", ");
-    }
-
-    /**
-     * Retrieves the last translators for a locale.
-     *
-     * @param locale The locale.
-     * @return The last translators for this locale. The list may be empty.
-     */
-    public static List<String> getAllReportErrorsTo(final Locale locale) {
-        final List<String> reports = new ArrayList<>();
-
-        for (Translator translator : getTranslatorsChain(locale)) {
-            reports.add(translator.getReportErrorsTo());
-        }
-
-        return reports;
     }
 
     public static Locale localeFromString(final String localeName) {

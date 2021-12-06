@@ -109,29 +109,6 @@ public class FlatLocation extends Location {
     }
 
     /**
-     * Returns the distance (on the plane's X axis) between two locations.
-     * If the two locations aren't one the same plane, an exception is thrown.
-     *
-     * @param loc1 The first location.
-     * @param loc2 The second location.
-     * @return The distance
-     */
-    public static double flatDistanceX(FlatLocation loc1, FlatLocation loc2) {
-        checkSimilarLocations(loc1, loc2);
-
-        switch (loc1.getFacing()) {
-            case NORTH:
-            case SOUTH:
-                return Math.abs(loc1.getX() - loc2.getX());
-            case EAST:
-            case WEST:
-                return Math.abs(loc1.getZ() - loc2.getZ());
-            default:
-                throw new UnsupportedOperationException("Non-N/S/E/W orientations are not supported.");
-        }
-    }
-
-    /**
      * Returns the block distance (on the plane's X axis) between two locations.
      * If the two locations aren't one the same plane, an exception is thrown.
      *
@@ -152,20 +129,6 @@ public class FlatLocation extends Location {
             default:
                 throw new UnsupportedOperationException("Non-N/S/E/W orientations are not supported.");
         }
-    }
-
-    /**
-     * Returns the distance (on the plane's Y axis) between two locations.
-     * If the two locations aren't one the same plane, an exception is thrown.
-     *
-     * @param loc1 The first location.
-     * @param loc2 The second location.
-     * @return The distance
-     */
-    public static double flatDistanceY(FlatLocation loc1, FlatLocation loc2) {
-        checkSimilarLocations(loc1, loc2);
-
-        return Math.abs(loc1.getY() - loc2.getY());
     }
 
     /**

@@ -42,7 +42,6 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * This class implements an action-based GUI.
@@ -142,9 +141,6 @@ public abstract class ActionGui extends InventoryGui {
 
     /**
      * Creates a new action, represented by no item.
-     * This action will not be rendered to the user until
-     * {@link #updateAction(String, ItemStack, String)}
-     * is called.
      *
      * @param name The identifier of the action.
      * @param slot The slot the action will be placed on.
@@ -191,48 +187,12 @@ public abstract class ActionGui extends InventoryGui {
     /**
      * Updates the action represented by the given name.
      *
-     * @param name  The name of the action to update.
-     * @param item  The new material to affect to the action.
-     * @param title The new title to affect to the action.
-     * @throws IllegalArgumentException If no action has the given name.
-     */
-    protected void updateAction(String name, Material item, String title) {
-        updateAction(name, new ItemStack(item), title);
-    }
-
-    /**
-     * Updates the action represented by the given name.
-     *
-     * @param name  The name of the action to update.
-     * @param item  The new item to affect to the action.
-     * @param title The new title to affect to the action.
-     * @throws IllegalArgumentException If no action has the given name.
-     */
-    protected void updateAction(String name, ItemStack item, String title) {
-        updateAction(name, item);
-
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(title);
-        item.setItemMeta(meta);
-    }
-
-    /**
-     * Updates the action represented by the given name.
-     *
      * @param name The name of the action to update.
      * @param item The new item to affect to the action.
      * @throws IllegalArgumentException If no action has the given name.
      */
     protected void updateAction(String name, ItemStack item) {
         getAction(name).item = item;
-    }
-
-    protected ItemStackBuilder updateAction(String name, Material material) {
-        return updateAction(name).material(material);
-    }
-
-    protected ItemStackBuilder updateAction(String name) {
-        return getAction(name).updateItem();
     }
 
     /**
@@ -257,18 +217,6 @@ public abstract class ActionGui extends InventoryGui {
      */
     @Override
     protected abstract void onUpdate();
-
-    /**
-     * Raised when an action without any event handler has been triggered.
-     *
-     * @param name  The name of the triggered action.
-     * @param slot  The slot of the action.
-     * @param item  The item of the action.
-     * @param event The {@link InventoryClickEvent} raised when this action was triggered.
-     */
-    protected void unknown_action(String name, int slot, ItemStack item, InventoryClickEvent event) {
-        unknown_action(name, slot, item);
-    }
 
     /**
      * Raised when an action without any event handler has been triggered.
@@ -450,14 +398,6 @@ public abstract class ActionGui extends InventoryGui {
             this.item = item;
             this.callback = callback;
             this.builder = null;
-        }
-
-        public Action(String name, int slot, ItemStackBuilder builder, Method callback) {
-            this.name = name;
-            this.slot = slot;
-            this.item = null;
-            this.callback = callback;
-            this.builder = builder;
         }
 
         public ItemStack getItem() {

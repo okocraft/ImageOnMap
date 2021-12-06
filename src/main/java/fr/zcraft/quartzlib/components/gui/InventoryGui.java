@@ -228,28 +228,6 @@ public abstract class InventoryGui extends GuiBase {
     }
 
     /**
-     * Sets the height of the inventory.
-     * The given value is capped to the maximal height of an inventory.
-     * It will be applied on the next GUI update.
-     * This is a shortcut for {@link #setSize(int) setSize(height * INVENTORY_ROW_SIZE)}.
-     *
-     * @param height The new height of the inventory.
-     * @see #setSize(int)
-     */
-    protected final void setHeight(final int height) {
-        setSize(height * INVENTORY_ROW_SIZE);
-    }
-
-    /**
-     * Returns the title of the inventory.
-     *
-     * @return The title of the inventory.
-     */
-    protected String getTitle() {
-        return title;
-    }
-
-    /**
      * Sets the new title of the inventory.
      * It will be applied on the next GUI update.
      *

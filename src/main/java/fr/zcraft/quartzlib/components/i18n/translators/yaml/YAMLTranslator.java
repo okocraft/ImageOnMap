@@ -81,7 +81,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * <pre>
  *     {@link I#t I.t}("greetings.hi")                       # Returns "Hi there"
  *     {@link I#t I.t}("greetings.how")                      # Returns "How are you?"
- *     {@link I#tc I.tc}("other_context", "greetings.hi")    # Returns "Hi!"
  * </pre>
  */
 public class YAMLTranslator extends Translator {

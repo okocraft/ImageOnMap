@@ -55,8 +55,6 @@ public final class ActionBar {
 
     /**
      * Sends a constant message to the given player.
-     * <p>This message will remain on the screen until the {@link #removeMessage} method is called, or
-     * the server is stopped.</p>
      *
      * @param player  The player.
      * @param message The message to display.
@@ -64,21 +62,6 @@ public final class ActionBar {
     public static void sendPermanentMessage(Player player, String message) {
         actionMessages.put(player.getUniqueId(), message);
         MessageSender.sendActionBarMessage(player, message);
-
-        checkActionMessageUpdaterRunningState();
-    }
-
-    /**
-     * Sends a constant message to the given player.
-     * <p>This message will remain on the screen until the {@link #removeMessage} method is called, or
-     * the server is stopped.</p>
-     *
-     * @param playerUuid The player's UUID.
-     * @param message    The message to display.
-     */
-    public static void sendPermanentMessage(UUID playerUuid, String message) {
-        actionMessages.put(playerUuid, message);
-        MessageSender.sendActionBarMessage(playerUuid, message);
 
         checkActionMessageUpdaterRunningState();
     }
@@ -104,37 +87,10 @@ public final class ActionBar {
     /**
      * Removes the action bar message displayed to the given player.
      *
-     * @param playerUuid The UUID of the player.
-     * @param instant    If {@code true}, the message will be removed instantly. Else, it will
-     *                   dismiss progressively. Please note that in that case, the message may be
-     *                   displayed a few more seconds.
-     */
-    public static void removeMessage(UUID playerUuid, boolean instant) {
-        actionMessages.remove(playerUuid);
-
-        if (instant) {
-            MessageSender.sendActionBarMessage(playerUuid, "");
-        }
-
-        checkActionMessageUpdaterRunningState();
-    }
-
-    /**
-     * Removes the action bar message displayed to the given player.
-     *
      * @param player The player.
      */
     public static void removeMessage(Player player) {
         removeMessage(player, false);
-    }
-
-    /**
-     * Removes the action bar message displayed to the given player.
-     *
-     * @param playerUuid The UUID of the player.
-     */
-    public static void removeMessage(UUID playerUuid) {
-        removeMessage(playerUuid, false);
     }
 
 

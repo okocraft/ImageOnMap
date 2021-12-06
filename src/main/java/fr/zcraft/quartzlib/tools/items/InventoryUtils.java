@@ -31,11 +31,9 @@
 package fr.zcraft.quartzlib.tools.items;
 
 import fr.zcraft.quartzlib.tools.reflection.Reflection;
-import fr.zcraft.quartzlib.tools.runners.RunTask;
 import java.lang.reflect.InvocationTargetException;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -106,20 +104,6 @@ public abstract class InventoryUtils {
 
         return true;
 
-    }
-
-    /**
-     * Updates an inventory for the next tick.
-     * @param inventory The inventory to update later.
-     */
-    public static void updateInventoryLater(final Inventory inventory) {
-        RunTask.nextTick(() -> {
-            for (HumanEntity entity : inventory.getViewers()) {
-                if (entity instanceof Player) {
-                    ((Player) entity).updateInventory();
-                }
-            }
-        });
     }
 
     /**

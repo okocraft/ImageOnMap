@@ -8,7 +8,6 @@ package fr.zcraft.quartzlib.components.configuration;
 
 import fr.zcraft.quartzlib.core.QuartzComponent;
 import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.tools.Callback;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.io.File;
 import java.io.IOException;
@@ -16,38 +15,12 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 
 public class ConfigurationInstance extends QuartzComponent {
     private final String fileName;
     private final File file;
     private ConfigurationItem[] items;
-    private Callback<ConfigurationItem<?>> updateCallback;
     private FileConfiguration bukkitConfiguration;
-
-    /**
-     * Creates a configuration instance from a file.
-     *
-     * @param file The file containing the YAML configuration.
-     */
-    public ConfigurationInstance(File file) {
-        this.file = file;
-        this.fileName = null;
-        this.bukkitConfiguration = new YamlConfiguration();
-    }
-
-    /**
-     * Creates a configuration instance from a file.
-     *
-     * @param fileName The name, relative to the plugin's data folder, of the
-     *                 file containing the YAML configuration.
-     */
-    public ConfigurationInstance(String fileName) {
-        this.file = null;
-        this.fileName = fileName;
-        this.bukkitConfiguration = new YamlConfiguration();
-    }
 
     /**
      * Creates a configuration instance from a {@link FileConfiguration} directly.
@@ -246,17 +219,6 @@ public class ConfigurationInstance extends QuartzComponent {
         return bukkitConfiguration;
     }
 
-    /**
-     * Registers a callback called when the configuration is updated someway.
-     *
-     * <p>Callbacks are not called when the configuration is reloaded fully.</p>
-     *
-     * @param callback The callback.
-     */
-    public void registerConfigurationUpdateCallback(Callback<ConfigurationItem<?>> callback) {
-        updateCallback = callback;
-    }
-
     private void initFields() {
         for (ConfigurationItem<?> configField : items) {
             configField.init();
@@ -286,8 +248,5 @@ public class ConfigurationInstance extends QuartzComponent {
      * @param configurationItem The updated configuration item.
      */
     void triggerCallback(ConfigurationItem<?> configurationItem) {
-        if (updateCallback != null) {
-            updateCallback.call(configurationItem);
-        }
     }
 }

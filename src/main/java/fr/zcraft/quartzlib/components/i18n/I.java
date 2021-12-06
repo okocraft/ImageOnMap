@@ -153,21 +153,6 @@ public class I {
     }
 
     /**
-     * Translates the string in the given context.
-     *
-     * <p>The context is used when you have two identical strings to translate that may be
-     * translated differently according to the context.</p>
-     *
-     * @param context    The context.
-     * @param text       The string to translate.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated.
-     */
-    public static String tc(String context, String text, Object... parameters) {
-        return I18n.translate(null, context, text, null, null, parameters);
-    }
-
-    /**
      * Translates the string in the given context using the given locale.
      *
      * <p>The context is used when you have two identical strings to translate that may be
@@ -183,29 +168,6 @@ public class I {
      */
     public static String tc(Locale locale, String context, String text, Object... parameters) {
         return I18n.translate(locale, context, text, null, null, parameters);
-    }
-
-    /**
-     * Translates the string in the given context, with a plural.
-     *
-     * <p>The context is used when you have two identical strings to translate that may be
-     * translated differently according to the context.</p>
-     *
-     * <p>The count is likely to be used in the string, so if only a count is given, this count is
-     * also interpreted as a parameter (the first and only one, {@code {0}}). If this behavior annoys
-     * you, you can disable it using {@link I18n#addCountToParameters(boolean)}.</p>
-     *
-     * @param context    The context.
-     * @param singular   The singular version of the string.
-     * @param plural     The plural version of the string.
-     * @param count      The items count, used to choose the plural form according to the language
-     *                   plural rules.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated, chosen according to the language
-     *     plural rules.
-     */
-    public static String tcn(String context, String singular, String plural, Integer count, Object... parameters) {
-        return I18n.translate(null, context, singular, plural, count, parameters);
     }
 
     /**
@@ -248,140 +210,6 @@ public class I {
     }
 
     /**
-     * Translates the string using the player's locale.
-     *
-     * @param player     The locale of this player will be used to translate the string.
-     * @param text       The string to translate.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated.
-     */
-    public static String tl(Player player, String text, Object... parameters) {
-        return I18n.translate(getPlayerLocale(player), null, text, null, null, parameters);
-    }
-
-    /**
-     * Translates the string with a plural using the given locale.
-     *
-     * <p>The count is likely to be used in the string, so if only a count is given, this count is
-     * also interpreted as a parameter (the first and only one, {@code {0}}). If this behavior annoys
-     * you, you can disable it using {@link I18n#addCountToParameters(boolean)}.</p>
-     *
-     * @param locale     The locale to use to translate the string.
-     * @param singular   The singular version of the string.
-     * @param plural     The plural version of the string.
-     * @param count      The items count, used to choose the plural form according to the language
-     *                   plural rules.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated, chosen according to the language
-     *     plural rules.
-     */
-    public static String tln(Locale locale, String singular, String plural, Integer count, Object... parameters) {
-        return I18n.translate(locale, null, singular, plural, count, parameters);
-    }
-
-    /**
-     * Translates the string with a plural using the player's locale.
-     *
-     * <p>The count is likely to be used in the string, so if only a count is given, this count is
-     * also interpreted as a parameter (the first and only one, {@code {0}}). If this behavior annoys
-     * you, you can disable it using {@link I18n#addCountToParameters(boolean)}.</p>
-     *
-     * @param player     The locale of this player will be used to translate the string.
-     * @param singular   The singular version of the string.
-     * @param plural     The plural version of the string.
-     * @param count      The items count, used to choose the plural form according to the language
-     *                   plural rules.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated, chosen according to the language
-     *     plural rules.
-     */
-    public static String tln(Player player, String singular, String plural, Integer count, Object... parameters) {
-        return I18n.translate(getPlayerLocale(player), null, singular, plural, count, parameters);
-    }
-
-    /**
-     * Translates the string in the given context using the given locale.
-     *
-     * <p>The context is used when you have two identical strings to translate that may be
-     * translated differently according to the context.</p>
-     *
-     * @param locale     The locale to use to translate the string.
-     * @param context    The context.
-     * @param text       The string to translate.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated.
-     */
-    public static String tlc(Locale locale, String context, String text, Object... parameters) {
-        return I18n.translate(locale, context, text, null, null, parameters);
-    }
-
-    /**
-     * Translates the string in the given context using the player's locale.
-     *
-     * <p>The context is used when you have two identical strings to translate that may be
-     * translated differently according to the context.</p>
-     *
-     * @param player     The locale of this player will be used to translate the string.
-     * @param context    The context.
-     * @param text       The string to translate.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated.
-     */
-    public static String tlc(Player player, String context, String text, Object... parameters) {
-        return I18n.translate(getPlayerLocale(player), context, text, null, null, parameters);
-    }
-
-    /**
-     * Translates the string in the given context, with a plural using the given locale.
-     *
-     * <p>The context is used when you have two identical strings to translate that may be
-     * translated differently according to the context.</p>
-     *
-     * <p>The count is likely to be used in the string, so if only a count is given, this count is
-     * also interpreted as a parameter (the first and only one, {@code {0}}). If this behavior annoys
-     * you, you can disable it using {@link I18n#addCountToParameters(boolean)}.</p>
-     *
-     * @param locale     The locale to use to translate the string.
-     * @param context    The context.
-     * @param singular   The singular version of the string.
-     * @param plural     The plural version of the string.
-     * @param count      The items count, used to choose the plural form according to the language
-     *                   plural rules.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated, chosen according to the language
-     *     plural rules.
-     */
-    public static String tlcn(Locale locale, String context, String singular, String plural, Integer count,
-                              Object... parameters) {
-        return I18n.translate(locale, context, singular, plural, count, parameters);
-    }
-
-    /**
-     * Translates the string in the given context, with a plural using the player's locale.
-     *
-     * <p>The context is used when you have two identical strings to translate that may be
-     * translated differently according to the context.</p>
-     *
-     * <p>The count is likely to be used in the string, so if only a count is given, this count is
-     * also interpreted as a parameter (the first and only one, {@code {0}}). If this behavior annoys
-     * you, you can disable it using {@link I18n#addCountToParameters(boolean)}.</p>
-     *
-     * @param player     The locale of this player will be used to translate the string.
-     * @param context    The context.
-     * @param singular   The singular version of the string.
-     * @param plural     The plural version of the string.
-     * @param count      The items count, used to choose the plural form according to the language
-     *                   plural rules.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated, chosen according to the language
-     *     plural rules.
-     */
-    public static String tlcn(Player player, String context, String singular, String plural, Integer count,
-                              Object... parameters) {
-        return I18n.translate(getPlayerLocale(player), context, singular, plural, count, parameters);
-    }
-
-    /**
      * Translates the string and sends it to the given player.
      *
      * @param player     The player to send the message to.
@@ -390,76 +218,5 @@ public class I {
      */
     public static void sendT(Player player, String text, Object... parameters) {
         player.sendMessage(I18n.translate(I18n.getPlayerLocale(player), null, text, null, null, parameters));
-    }
-
-    /**
-     * Translates the string with a plural and sends it to the given player.
-     *
-     * <p>The count is likely to be used in the string, so if only a count is given, this count is
-     * also interpreted as a parameter (the first and only one, {@code {0}}). If this behavior annoys
-     * you, you can disable it using {@link I18n#addCountToParameters(boolean)}.</p>
-     *
-     * @param player     The player to send the message to.
-     * @param singular   The singular version of the string.
-     * @param plural     The plural version of the string.
-     * @param count      The items count, used to choose the plural form according to the language
-     *                   plural rules.
-     * @param parameters The parameters. See the class description for details.
-     */
-    public static void sendTn(Player player, String singular, String plural, Integer count, Object... parameters) {
-        player.sendMessage(I18n.translate(I18n.getPlayerLocale(player), null, singular, plural, count, parameters));
-    }
-
-    /**
-     * Translates the string in the given context and sends it to the given player.
-     *
-     * <p>The context is used when you have two identical strings to translate that may be
-     * translated differently according to the context.</p>
-     *
-     * @param player     The player to send the message to.
-     * @param context    The context.
-     * @param text       The string to translate.
-     * @param parameters The parameters. See the class description for details.
-     */
-    public static void sendTc(Player player, String context, String text, Object... parameters) {
-        player.sendMessage(I18n.translate(I18n.getPlayerLocale(player), context, text, null, null, parameters));
-    }
-
-    /**
-     * Translates the string in the given context, with a plural and sends it to the given player.
-     *
-     * <p>The context is used when you have two identical strings to translate that may be
-     * translated differently according to the context.</p>
-     *
-     * <p>The count is likely to be used in the string, so if only a count is given, this count is
-     * also interpreted as a parameter (the first and only one, {@code {0}}). If this behavior annoys
-     * you, you can disable it using {@link I18n#addCountToParameters(boolean)}.</p>
-     *
-     * @param player     The player to send the message to.
-     * @param context    The context.
-     * @param singular   The singular version of the string.
-     * @param plural     The plural version of the string.
-     * @param count      The items count, used to choose the plural form according to the language
-     *                   plural rules.
-     * @param parameters The parameters. See the class description for details.
-     */
-    public static void sendTcn(Player player, String context, String singular, String plural, Integer count,
-                               Object... parameters) {
-        player.sendMessage(I18n.translate(I18n.getPlayerLocale(player), context, singular, plural, count, parameters));
-    }
-
-    /**
-     * Returns the player's locale, or the primary locale if missing.
-     *
-     * @param player The player.
-     * @return The locale to use for this player.
-     */
-    private static Locale getPlayerLocale(final Player player) {
-        final Locale locale = I18n.getPlayerLocale(player);
-        if (locale != null) {
-            return locale;
-        } else {
-            return I18n.getPrimaryLocale();
-        }
     }
 }

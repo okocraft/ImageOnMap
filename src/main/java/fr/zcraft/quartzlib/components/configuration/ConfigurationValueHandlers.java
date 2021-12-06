@@ -178,96 +178,12 @@ public abstract class ConfigurationValueHandlers {
     /**
      * Tries to parse a byte value. Internal.
      */
-    @ConfigurationValueHandler({Short.class, short.class})
-    public static short handleShortValue(Object obj) throws ConfigurationParseException {
-        try {
-            return Short.parseShort(obj.toString(), 10);
-        } catch (NumberFormatException ex) {
-            throw new ConfigurationParseException("Invalid short value", obj);
-        }
-    }
-
-    /**
-     * Tries to parse a byte value. Internal.
-     */
-    @ConfigurationValueHandler({Integer.class, int.class})
-    public static int handleIntValue(Object obj) throws ConfigurationParseException {
-        try {
-            return Integer.parseInt(obj.toString(), 10);
-        } catch (NumberFormatException ex) {
-            throw new ConfigurationParseException("Invalid integer value", obj);
-        }
-    }
-
-    /**
-     * Tries to parse a byte value. Internal.
-     */
-    @ConfigurationValueHandler({Long.class, long.class})
-    public static long handleLongValue(Object obj) throws ConfigurationParseException {
-        try {
-            return Long.parseLong(obj.toString(), 10);
-        } catch (NumberFormatException ex) {
-            throw new ConfigurationParseException("Invalid long value", obj);
-        }
-    }
-
-    /**
-     * Tries to parse a byte value. Internal.
-     */
-    @ConfigurationValueHandler({Float.class, float.class})
-    public static float handleFloatValue(Object obj) throws ConfigurationParseException {
-        try {
-            return Float.parseFloat(obj.toString());
-        } catch (NumberFormatException ex) {
-            throw new ConfigurationParseException("Invalid float value", obj);
-        }
-    }
-
-    /**
-     * Tries to parse a byte value. Internal.
-     */
     @ConfigurationValueHandler({Double.class, double.class})
     public static double handleDoubleValue(Object obj) throws ConfigurationParseException {
         try {
             return Double.parseDouble(obj.toString());
         } catch (NumberFormatException ex) {
             throw new ConfigurationParseException("Invalid double value", obj);
-        }
-    }
-
-    /**
-     * Tries to parse a byte value. Internal.
-     */
-    @ConfigurationValueHandler({Character.class, char.class})
-    public static char handleCharValue(Object obj) throws ConfigurationParseException {
-        String str = obj.toString();
-        if (str.length() > 1) {
-            throw new ConfigurationParseException("String is too long to fit in a single character", obj);
-        }
-        return str.charAt(0);
-    }
-
-    /**
-     * Tries to parse a byte value. Internal.
-     */
-    @ConfigurationValueHandler
-    public static String handleStringValue(Object obj) throws ConfigurationParseException {
-        return obj.toString();
-    }
-
-    /**
-     * Tries to parse a byte value. Internal.
-     */
-    @ConfigurationValueHandler
-    public static Locale handleLocaleValue(Object obj) throws ConfigurationParseException {
-        if (obj.toString().isEmpty()) {
-            return null;
-        }
-
-        try {
-            return new Locale.Builder().setLanguageTag(obj.toString()).build();
-        } catch (IllformedLocaleException ex) {
-            throw new ConfigurationParseException("Illegal language tag : " + ex.getMessage(), obj);
         }
     }
 
@@ -344,14 +260,6 @@ public abstract class ConfigurationValueHandlers {
     /**
      * Tries to parse a byte value. Internal.
      */
-    public static <K, V> Map<K, V> handleMapValue(Object value, Class<K> keyType, Class<V> valueType)
-            throws ConfigurationParseException {
-        return handleMapValue(value, keyType, valueType, null);
-    }
-
-    /**
-     * Tries to parse a byte value. Internal.
-     */
     public static <K, V> Map<K, V> handleMapValue(Object value, Class<K> keyType, Class<V> valueType,
                                                   ConfigurationItem parent) throws ConfigurationParseException {
         Map<String, Object> rawMap;
@@ -380,11 +288,6 @@ public abstract class ConfigurationValueHandlers {
         return newMap;
     }
 
-    @ConfigurationValueHandler
-    public static Vector handleBukkitVectorValue(String str) throws ConfigurationParseException {
-        return handleBukkitVectorValue(Arrays.asList(str.split(",")));
-    }
-
     /**
      * Tries to parse a byte value. Internal.
      */
@@ -403,104 +306,6 @@ public abstract class ConfigurationValueHandlers {
             return new Vector(handleDoubleValue(list.get(0)), handleDoubleValue(list.get(1)),
                     handleDoubleValue(list.get(2)));
         }
-    }
-
-    /**
-     * Tries to parse a bukkit vector value. Internal.
-     */
-    @ConfigurationValueHandler
-    public static Vector handleBukkitVectorValue(Map map) throws ConfigurationParseException {
-        double x = map.containsKey("x") ? handleDoubleValue(map.get("x")) : 0;
-        double y = map.containsKey("y") ? handleDoubleValue(map.get("y")) : 0;
-        double z = map.containsKey("z") ? handleDoubleValue(map.get("z")) : 0;
-
-        return new Vector(x, y, z);
-    }
-
-    /**
-     * Tries to parse a byte value. Internal.
-     */
-    @ConfigurationValueHandler
-    public static World handleBukkitWorldValue(String str) throws ConfigurationParseException {
-        String worldName = str.trim();
-        for (World world : Bukkit.getWorlds()) {
-            if (world.getName().equalsIgnoreCase(worldName)) {
-                return world;
-            }
-        }
-
-        throw new ConfigurationParseException("World not found", str);
-    }
-
-    /**
-     * Tries to parse a enchantment value. Internal.
-     */
-    @ConfigurationValueHandler
-    public static Enchantment handleEnchantmentValue(String value) throws ConfigurationParseException {
-        Enchantment enchantment = Enchantment.getByName(value.toUpperCase());
-        if (enchantment == null) {
-            throw new ConfigurationParseException("Invalid enchantment name", value);
-        }
-        return enchantment;
-    }
-
-    /**
-     * Tries to parse an item stack value. Internal.
-     */
-    @ConfigurationValueHandler
-    public static ItemStack handleItemStackValue(Map map) throws ConfigurationParseException {
-        if (!map.containsKey("type")) {
-            throw new ConfigurationParseException("Key 'type' required.", map);
-        }
-
-        final Material material = Material.matchMaterial(map.get("type").toString());
-
-        if (material == null) {
-            throw new ConfigurationParseException("This material does not exist: '" + map.get("type").toString() + "'.",
-                    map);
-        }
-
-        int amount = map.containsKey("amount") ? handleIntValue(map.get("amount")) : 1;
-
-        ItemStackBuilder item;
-        boolean requiresCraftItem = false;
-
-        if (material.equals(Material.POTION)) {
-            Potion potion = handlePotionValue(map);
-            item = new ItemStackBuilder(potion.toItemStack(amount));
-        } else {
-            item = new ItemStackBuilder(material, amount);
-        }
-
-        if (map.containsKey("title")) {
-            item.title(map.get("title").toString());
-        }
-
-        if (map.containsKey("lore")) {
-            item.lore(handleListValue(map.get("lore"), String.class));
-        }
-
-        if (map.containsKey("glow")) {
-            item.glow(handleBoolValue(map.get("glow")));
-        }
-
-        if (map.containsKey("hideAttributes") && handleBoolValue(map.get("hideAttributes"))) {
-            item.hideAllAttributes();
-        }
-
-        if (map.containsKey("enchantments")) {
-            item.enchant(handleMapValue(map.get("enchantments"), Enchantment.class, Integer.class));
-        }
-
-        if (map.containsKey("nbt")) {
-            Object nbt = map.get("nbt");
-            if (nbt instanceof Map) {
-                item.nbt((Map<String, Object>) nbt);
-                requiresCraftItem = true;
-            }
-        }
-
-        return requiresCraftItem ? item.craftItem() : item.item();
     }
 
     /**
@@ -535,75 +340,6 @@ public abstract class ConfigurationValueHandlers {
         return effect;
     }
 
-    @ConfigurationValueHandler
-    public static PotionEffect handlePotionEffectValue(final String name) throws ConfigurationParseException {
-        return new PotionEffect(handlePotionEffectTypeValue(name), 30, 1);
-    }
-
-    /**
-     * Tries to parse a potion effect value. Internal.
-     */
-    @ConfigurationValueHandler
-    public static PotionEffect handlePotionEffectValue(final Map<?, ?> map) throws ConfigurationParseException {
-        final Integer color =
-                !map.containsKey("color") || map.get("color") == null ? null : handleIntValue(map.get("color"));
-
-        if (!map.containsKey("effect")) {
-            throw new ConfigurationParseException("Potion effect is required.", map);
-        }
-
-        final PotionEffectType effect = handlePotionEffectTypeValue(map.get("effect").toString());
-
-        // 1.13+: there is no longer a color, but there is a `has-icon` flag.
-        try {
-            return Reflection.instantiate(PotionEffect.class,
-                    effect,
-                    map.containsKey("duration") ? handleIntValue(map.get("duration")) : 1,
-                    map.containsKey("amplifier") ? handleIntValue(map.get("amplifier")) : 1,
-                    map.containsKey("ambient") && handleBoolValue(map.get("ambient")),
-                    map.containsKey("has-particles") && handleBoolValue(map.get("has-particles")),
-                    map.containsKey("has-icon") && handleBoolValue(map.get("has-icon"))
-            );
-        } catch (NoSuchMethodException | InstantiationException
-                | IllegalAccessException | InvocationTargetException ex) {
-            // 1.9 - 1.12: we can specify a color.
-            try {
-                return Reflection.instantiate(PotionEffect.class,
-                        effect,
-                        map.containsKey("duration") ? handleIntValue(map.get("duration")) : 1,
-                        map.containsKey("amplifier") ? handleIntValue(map.get("amplifier")) : 1,
-                        map.containsKey("ambient") && handleBoolValue(map.get("ambient")),
-                        map.containsKey("has-particles") && handleBoolValue(map.get("has-particles")),
-                        color != null ? Color.fromRGB(color) : null
-                );
-            } catch (NoSuchMethodException | InstantiationException
-                    | IllegalAccessException | InvocationTargetException e) {
-                // This one should always work.
-                return new PotionEffect(
-                        effect,
-                        map.containsKey("duration") ? handleIntValue(map.get("duration")) : 1,
-                        map.containsKey("amplifier") ? handleIntValue(map.get("amplifier")) : 1,
-                        map.containsKey("ambient") && handleBoolValue(map.get("ambient")),
-                        map.containsKey("has-particles") && handleBoolValue(map.get("has-particles"))
-                );
-            }
-        }
-    }
-
-    /**
-     * Tries to parse a dye color value. Internal.
-     */
-    @ConfigurationValueHandler
-    public static DyeColor handleDyeColorValue(Integer value) throws ConfigurationParseException {
-        DyeColor color = DyeColor.getByDyeData((byte) (int) value);
-
-        if (color == null) {
-            throw new ConfigurationParseException("Invalid dye color code", value);
-        }
-
-        return color;
-    }
-
     private static Object getRawValue(Map map, String key) {
         Object value = null;
         for (Object mapKey : map.keySet()) {
@@ -613,29 +349,6 @@ public abstract class ConfigurationValueHandlers {
         }
 
         return value;
-    }
-
-    /**
-     * Tries to parse a banner value. Internal.
-     */
-    @ConfigurationValueHandler
-    public static BannerMeta handleBannerValue(final Map map) throws ConfigurationParseException {
-        final BannerMeta banner = (BannerMeta) new ItemStack(Material.WHITE_BANNER).getItemMeta();
-        final DyeColor baseColor = getValue(map, "color", DyeColor.BLACK);
-        final List<?> patterns = getListValue(map, "patterns", new ArrayList<>(), Object.class);
-
-        banner.setBaseColor(baseColor);
-
-        for (Object rawPattern : patterns) {
-            Map<String, Object> mapPattern =
-                    ConfigurationValueHandlers.handleMapValue(rawPattern, String.class, Object.class);
-
-            DyeColor patternColor = getValue(mapPattern, "color", DyeColor.BLACK);
-            String patternName = getValue(mapPattern, "pattern", "");
-            banner.addPattern(new Pattern(patternColor, PatternType.getByIdentifier(patternName)));
-        }
-
-        return banner;
     }
 
     public static <T> T getValue(Map map, String key, T defaultValue) throws ConfigurationParseException {
@@ -652,17 +365,5 @@ public abstract class ConfigurationValueHandlers {
             return defaultValue;
         }
         return handleValue(rawValue, valueType);
-    }
-
-    /**
-     * Tries to parse a list value. Internal.
-     */
-    public static <T> List<T> getListValue(Map map, String key, List<T> defaultValue, Class<T> valueType)
-            throws ConfigurationParseException {
-        Object rawValue = getRawValue(map, key);
-        if (rawValue == null) {
-            return defaultValue;
-        }
-        return handleListValue(rawValue, valueType);
     }
 }

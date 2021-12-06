@@ -32,8 +32,6 @@ package fr.zcraft.quartzlib.components.configuration;
 
 import fr.zcraft.quartzlib.core.QuartzComponent;
 import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.tools.Callback;
-
 
 public abstract class Configuration extends QuartzComponent {
     /* ===== Static API ===== */
@@ -53,24 +51,6 @@ public abstract class Configuration extends QuartzComponent {
      */
     public static void save() {
         instance.save(true);
-    }
-
-    /**
-     * Reloads the config.yml configuration from the disk.
-     */
-    public static void reload() {
-        instance.reload(true);
-    }
-
-    /**
-     * Registers a callback called when the configuration is updated someway.
-     *
-     * <p>Callbacks are not called when the configuration is reloaded fully.</p>
-     *
-     * @param callback The callback.
-     */
-    public static void registerConfigurationUpdateCallback(final Callback<ConfigurationItem<?>> callback) {
-        instance.registerConfigurationUpdateCallback(callback);
     }
 
     @Override

@@ -40,13 +40,6 @@ import java.util.UUID;
 public class Attribute {
     NBTCompound nbt;
 
-    /**
-     * Creates a new empty attribute, not linked to any item.
-     */
-    public Attribute() {
-        this(new NBTCompound());
-    }
-
     Attribute(NBTCompound nbt) {
         this.nbt = nbt;
     }
@@ -66,26 +59,6 @@ public class Attribute {
      */
     public final void setName(String name) {
         nbt.put("Name", name);
-    }
-
-    /**
-     * Returns the name of the Attribute this Modifier is to act upon.
-     * Example: generic.attackDamage
-     * See http://minecraft.gamepedia.com/Attribute#Attributes for more information.
-     *
-     * @return the name of the Attribute this Modifier is to act upon.
-     */
-    public final String getAttributeName() {
-        return nbt.get("AttributeName", null);
-    }
-
-    /**
-     * Sets the name of the Attribute this Modifier is to act upon.
-     *
-     * @param attributeName The attribute name.
-     */
-    public final void setAttributeName(String attributeName) {
-        nbt.put("AttributeName", attributeName);
     }
 
     /**
@@ -168,65 +141,6 @@ public class Attribute {
      */
     public final NBTCompound getNBTCompound() {
         return nbt;
-    }
-
-    /**
-     * Returns the custom data payload associated to this attribute.
-     * This enabled plugins to put custom Attributes (and data) to any item.<br>
-     * The data payload is actually stored as the name of the attribute's modifier, which is not used by the game.<br>
-     * However, as the custom data shows an empty line (per slot in 1.9+ !) in
-     * the item's tooltip in the client, you may want to hide item attributes.
-     *
-     * @return the custom data payload associated to this attribute.
-     */
-    public final String getCustomData() {
-        return getName();
-    }
-
-    /**
-     * Sets the custom data payload associated to this attribute.
-     * See {@link #getCustomData() } for additional information.
-     *
-     * @param data the new data.
-     */
-    public final void setCustomData(String data) {
-        setName(data);
-    }
-
-    /**
-     * Returns this modifier's operation.
-     *
-     * @return this modifier's operation.
-     */
-    public final AttributeOperation getOperation() {
-        return AttributeOperation.fromCode(nbt.get("Operation", 0));
-    }
-
-    /**
-     * Sets this modifier's operation.
-     *
-     * @param operation The new operation value.
-     */
-    public final void setOperation(AttributeOperation operation) {
-        nbt.put("Operation", operation.getCode());
-    }
-
-    /**
-     * Returns the slot for which this modfier applies.
-     *
-     * @return the slot for which this modfier applies.
-     */
-    public final String getSlotName() {
-        return nbt.get("Slot", null);
-    }
-
-    /**
-     * Sets the slot for which this modfier applies.
-     *
-     * @param slotName The name of the slot.
-     */
-    public final void setSlotName(String slotName) {
-        nbt.put("Slot", slotName);
     }
 
     /**

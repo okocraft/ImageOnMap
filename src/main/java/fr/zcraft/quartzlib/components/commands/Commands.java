@@ -40,7 +40,6 @@ public class Commands extends QuartzComponent {
     public static final String CHAT_PREFIX = "┃";
 
     private static final List<CommandGroup> commandGroups = new ArrayList<>();
-    private static String globalPermission;
 
     /**
      * Registers a shortcut command.
@@ -89,22 +88,6 @@ public class Commands extends QuartzComponent {
         return true;
     }
 
-
-    /**
-     * Computes a list of possible autocomplete suggestions for the given command.
-     * @param sender The sender of the command.
-     * @param commandName The name of the command.
-     * @param args The partial arguments for the command.
-     * @return A list of suggestions.
-     */
-    public static List<String> tabComplete(CommandSender sender, String commandName, String[] args) {
-        CommandGroup commandGroup = getMatchingCommandGroup(commandName);
-        if (commandGroup == null) {
-            return new ArrayList<>();
-        }
-        return commandGroup.tabComplete(sender, args);
-    }
-
     /**
      * Gets the command matching the given class.
      * @param commandClass The command class.
@@ -128,14 +111,5 @@ public class Commands extends QuartzComponent {
             }
         }
         return null;
-    }
-
-
-    public static String getGlobalPermission() {
-        return globalPermission;
-    }
-
-    public static void setGlobalPermission(String permission) {
-        globalPermission = permission;
     }
 }

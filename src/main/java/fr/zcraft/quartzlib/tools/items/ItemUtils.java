@@ -32,7 +32,6 @@ package fr.zcraft.quartzlib.tools.items;
 
 import fr.zcraft.quartzlib.tools.reflection.NMSException;
 import fr.zcraft.quartzlib.tools.reflection.Reflection;
-import fr.zcraft.quartzlib.tools.runners.RunTask;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -44,18 +43,13 @@ import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-//import org.bukkit.Sound;
 
 /**
  * Utility class for dealing with items and inventories.
@@ -65,34 +59,6 @@ public abstract class ItemUtils {
     private static Method registryLookupMethod = null;
 
     private ItemUtils() {
-    }
-
-    /**
-     * Simulates the player consuming the ItemStack in their main hand, depending on
-     * their game mode. This decreases the ItemStack's size by one, and replaces
-     * it with air if nothing is left.
-     *
-     * @param player The player that will consume the stack.
-     * @return The updated ItemStack.
-     */
-    public static ItemStack consumeItemInMainHand(Player player) {
-        ItemStack newStack = consumeItem(player, player.getInventory().getItemInMainHand());
-        player.getInventory().setItemInMainHand(newStack);
-        return newStack;
-    }
-
-    /**
-     * Simulates the player consuming the ItemStack in their main hand, depending on
-     * their game mode. This decreases the ItemStack's size by one, and replaces
-     * it with air if nothing is left.
-     *
-     * @param player The player that will consume the stack.
-     * @return The updated ItemStack.
-     */
-    public static ItemStack consumeItemInOffHand(Player player) {
-        ItemStack newStack = consumeItem(player, player.getInventory().getItemInOffHand());
-        player.getInventory().setItemInOffHand(newStack);
-        return newStack;
     }
 
     /**
@@ -155,90 +121,6 @@ public abstract class ItemUtils {
         meta.setDisplayName(displayName);
         item.setItemMeta(meta);
         return item;
-    }
-
-    /**
-     * Checks if two item stacks are similar, by checking the type, data and display name (if set).
-     *
-     * @param first An item stack. Can be {@code null}.
-     * @param other Another item stack. Can be {@code null}.
-     * @return {@code true} if similar (either both {@code null} or similar).
-     */
-    public static boolean areSimilar(ItemStack first, ItemStack other) {
-        if (first == null || other == null) {
-            return first == other;
-        }
-
-        return first.getType() == other.getType()
-                && first.getData().equals(other.getData())
-                && ((!first.hasItemMeta() && !other.hasItemMeta())
-                || (!first.getItemMeta().hasDisplayName() && !other.getItemMeta().hasDisplayName())
-                || (first.getItemMeta().getDisplayName().equals(other.getItemMeta().getDisplayName())));
-    }
-
-    /**
-     * Checks if an item stack have the given display name.
-     *
-     * @param stack       An item stack. Can be {@code null}.
-     * @param displayName A display name.
-     * @return {@code true} if the item stack have the given display name.
-     */
-    public static boolean hasDisplayName(ItemStack stack, String displayName) {
-        return stack != null && stack.hasItemMeta() && stack.getItemMeta().hasDisplayName()
-                && stack.getItemMeta().getDisplayName().equals(displayName);
-    }
-
-    /**
-     * Emulates the item in the player loosing durability as if the given player was using it.
-     * If the player is in creative mode, the item won't be damaged at all.
-     * The Unbreaking enchantments are taken into account.
-     * The player's inventory is also updated, if needed.
-     *
-     * @param player The player that is using the item.
-     * @param item   The item in the player's hand.
-     * @param factor The amount of damage taken.
-     * @return `true` if the damaged item was broken, `false` otherwise.
-     */
-    public static boolean damageItem(@NotNull Player player, @NotNull ItemStack item, int factor) {
-        if (player.getGameMode() == GameMode.CREATIVE) {
-            return false;
-        }
-
-        ItemMeta meta = item.getItemMeta();
-
-        if (!(meta instanceof Damageable)) {
-            return false;
-        }
-
-        int newDurability = ((Damageable) meta).getDamage();
-        newDurability += newDurability(item.getEnchantmentLevel(Enchantment.DURABILITY)) * factor;
-
-        if (newDurability >= item.getType().getMaxDurability()) {
-            InventoryUtils.breakItemInHand(player, item);
-            player.updateInventory();
-            return true;
-        } else {
-            ((Damageable) meta).setDamage(newDurability);
-            item.setItemMeta(meta);
-            player.updateInventory();
-            return false;
-        }
-    }
-
-    /**
-     * Calculates the new durability, taking into account the unbreaking
-     * enchantment.
-     *
-     * @param unbreakingLevel The Unbreaking level (0 if not enchanted with
-     *                        that).
-     * @return The durability to add.
-     */
-    private static short newDurability(int unbreakingLevel) {
-        if (new Random().nextInt(100) <= (100 / (unbreakingLevel + 1))) {
-            return 1;
-        }
-
-        return 0;
     }
 
     /**
@@ -481,36 +363,6 @@ public abstract class ItemUtils {
      */
     public static void drop(Location location, ItemStack item) {
         location.getWorld().dropItem(location, item);
-    }
-
-    /**
-     * Naturally "drops" the item at the given location.
-     *
-     * @param location The location to drop the item at.
-     * @param item     The item to drop.
-     */
-    public static void dropNaturally(Location location, ItemStack item) {
-        location.getWorld().dropItemNaturally(location, item);
-    }
-
-    /**
-     * Naturally "drops" the item at the given location, at the next server tick.
-     *
-     * @param location The location to drop the item at.
-     * @param item     The item to drop.
-     */
-    public static void dropNaturallyLater(Location location, ItemStack item) {
-        RunTask.nextTick(() -> dropNaturally(location, item));
-    }
-
-    /**
-     * Drops the item at the given location, at the next server tick.
-     *
-     * @param location The location to drop the item at.
-     * @param item     The item to drop.
-     */
-    public static void dropLater(final Location location, final ItemStack item) {
-        RunTask.nextTick(() -> drop(location, item));
     }
 
     /**

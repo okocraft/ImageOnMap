@@ -82,17 +82,6 @@ public final class GuiUtils {
     /**
      * One-liner to construct an {@link ItemStack}.
      *
-     * @param material The stack's material.
-     * @param title    The stack's title.
-     * @return The constructed {@link ItemStack}.
-     */
-    public static ItemStack makeItem(Material material, String title) {
-        return makeItem(material, title, (List<String>) null);
-    }
-
-    /**
-     * One-liner to construct an {@link ItemStack}.
-     *
      * @param material  The stack's material.
      * @param title     The stack's title.
      * @param loreLines The stack's lore lines.

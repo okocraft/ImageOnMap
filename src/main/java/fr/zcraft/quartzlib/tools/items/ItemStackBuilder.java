@@ -108,13 +108,6 @@ import org.jetbrains.annotations.Nullable;
  *
  *                  // Any method of the builder, of course.
  *                  .title("A Craft ItemStack")
- *
- *                  // Returns a CraftItemStack object.
- *                  // Please note that, as specified in {@link #craftItem()}'s javadoc,
- *                  // the returned item is here a clone of the original ItemStack in all
- *                  // cases. The original ItemStack will be updated if it exists, by reference,
- *                  // but it will not be transformed into a CraftItemStack magically.
- *                  .craftItem();
  * </pre>
  */
 public class ItemStackBuilder {

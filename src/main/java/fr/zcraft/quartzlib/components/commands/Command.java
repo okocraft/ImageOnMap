@@ -35,16 +35,11 @@ import fr.zcraft.quartzlib.components.rawtext.RawText;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.tools.text.RawMessage;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -207,22 +202,6 @@ public abstract class Command {
         warning(sender, message);
     }
 
-    private static String invalidParameterString(int index, final String expected) {
-        return "Argument #" + (index + 1) + " invalid: expected " + expected;
-    }
-
-    private static String invalidParameterString(int index, final Object[] expected) {
-        String[] expectedStrings = new String[expected.length];
-
-        for (int i = expected.length; i-- > 0; ) {
-            expectedStrings[i] = expected[i].toString().toLowerCase();
-        }
-
-        String expectedString = StringUtils.join(expectedStrings, ',');
-
-        return "Argument #" + (index + 1) + " invalid: expected " + expectedString;
-    }
-
     /**
      * Runs the command.
      *
@@ -271,14 +250,6 @@ public abstract class Command {
      */
     public boolean canExecute(CommandSender sender) {
         String permissionPrefix = QuartzLib.getPlugin().getName().toLowerCase() + ".";
-        String globalPermission = Commands.getGlobalPermission();
-
-        if (globalPermission != null) {
-            if (sender.hasPermission(permissionPrefix + globalPermission)) {
-                return true;
-            }
-        }
-
         return sender.hasPermission(permissionPrefix + commandGroup.getUsualName());
     }
 
@@ -394,14 +365,6 @@ public abstract class Command {
     }
 
     /**
-     * Get the aliases.
-     * @return The aliases of this command.
-     */
-    public String[] getAliases() {
-        return aliases;
-    }
-
-    /**
      * Checks if the given name matches this command's, or any of its aliases.
      * @param name A command name.
      * @return {@code true} if this command can be called like that,
@@ -494,19 +457,6 @@ public abstract class Command {
         error("");
     }
 
-
-    ///////////// Methods for autocompletion /////////////
-
-    /**
-     * Sends a JSON-formatted message to the sender.
-     *
-     * @param rawMessage The JSON message.
-     * @throws CommandException if the command sender is not a player.
-     */
-    protected void tellRaw(String rawMessage) throws CommandException {
-        RawMessage.send(playerSender(), rawMessage);
-    }
-
     /**
      * Sends a {@linkplain RawText raw JSON text} to the sender.
      *
@@ -515,238 +465,6 @@ public abstract class Command {
     protected void send(RawText text) {
         RawMessage.send(sender, text);
     }
-
-    /**
-     * Returns the strings of the list starting with the given prefix.
-     *
-     * @param prefix The prefix.
-     * @param list   The strings.
-     * @return A sub-list containing the strings starting with prefix.
-     */
-    protected List<String> getMatchingSubset(String prefix, String... list) {
-        return getMatchingSubset(Arrays.asList(list), prefix);
-    }
-
-    /**
-     * Returns the strings of the list starting with the given prefix.
-     *
-     * @param list   The strings.
-     * @param prefix The prefix.
-     * @return A sub-list containing the strings starting with prefix.
-     */
-    protected List<String> getMatchingSubset(Iterable<? extends String> list, String prefix) {
-        List<String> matches = new ArrayList<>();
-
-        for (String item : list) {
-            if (item.startsWith(prefix)) {
-                matches.add(item);
-            }
-        }
-
-        return matches;
-    }
-
-
-    ///////////// Methods for parameters /////////////
-
-    /**
-     * Returns a list of player names starting by the given prefix, among all
-     * logged in players.
-     *
-     * @param prefix The prefix.
-     * @return A sub-list containing the players names starting with prefix.
-     */
-    protected List<String> getMatchingPlayerNames(String prefix) {
-        return getMatchingPlayerNames(Bukkit.getOnlinePlayers(), prefix);
-    }
-
-    /**
-     * Returns a list of player names starting by the given prefix, among the
-     * given players.
-     *
-     * @param players A list of players.
-     * @param prefix  The prefix.
-     * @return A sub-list containing the players names starting with prefix.
-     */
-    protected List<String> getMatchingPlayerNames(Iterable<? extends Player> players, String prefix) {
-        List<String> matches = new ArrayList<String>();
-
-        for (Player player : players) {
-            if (player.getName().startsWith(prefix)) {
-                matches.add(player.getName());
-            }
-        }
-
-        return matches;
-    }
-
-    /**
-     * Retrieves an integer at the given index, or aborts the execution if none
-     * can be found.
-     *
-     * @param index The index.
-     * @return The retrieved integer.
-     * @throws CommandException If the value is invalid.
-     */
-    protected int getIntegerParameter(int index) throws CommandException {
-        try {
-            return Integer.parseInt(args[index]);
-        } catch (NumberFormatException e) {
-            throw new CommandException(this, Reason.INVALID_PARAMETERS, invalidParameterString(index, "integer"));
-        }
-    }
-
-    /**
-     * Retrieves a double at the given index, or aborts the execution if none
-     * can be found.
-     *
-     * @param index The index.
-     * @return The retrieved double.
-     * @throws CommandException If the value is invalid.
-     */
-    protected double getDoubleParameter(int index) throws CommandException {
-        try {
-            return Double.parseDouble(args[index]);
-        } catch (NumberFormatException e) {
-            throw new CommandException(this, Reason.INVALID_PARAMETERS,
-                    invalidParameterString(index, "integer or decimal value"));
-        }
-    }
-
-    /**
-     * Retrieves a float at the given index, or aborts the execution if none can
-     * be found.
-     *
-     * @param index The index.
-     * @return The retrieved float.
-     * @throws CommandException If the value is invalid.
-     */
-    protected float getFloatParameter(int index) throws CommandException {
-        try {
-            return Float.parseFloat(args[index]);
-        } catch (NumberFormatException e) {
-            throw new CommandException(this, Reason.INVALID_PARAMETERS,
-                    invalidParameterString(index, "integer or decimal value"));
-        }
-    }
-
-    /**
-     * Retrieves a long at the given index, or aborts the execution if none can
-     * be found.
-     *
-     * @param index The index.
-     * @return The retrieved long.
-     * @throws CommandException If the value is invalid.
-     */
-    protected long getLongParameter(int index) throws CommandException {
-        try {
-            return Long.parseLong(args[index]);
-        } catch (NumberFormatException e) {
-            throw new CommandException(this, Reason.INVALID_PARAMETERS, invalidParameterString(index, "integer"));
-        }
-    }
-
-    /**
-     * Retrieves aa boolean at the given index, or aborts the execution if none
-     * can be found.
-     *
-     * <p>Accepts yes, y, on, true, 1, no, n, off, false, and 0.</p>
-     *
-     * @param index The index.
-     * @return The retrieved boolean.
-     * @throws CommandException If the value is invalid.
-     */
-    protected boolean getBooleanParameter(int index) throws CommandException {
-        switch (args[index].toLowerCase().trim()) {
-            case "yes":
-            case "y":
-            case "on":
-            case "true":
-            case "1":
-                return true;
-
-            case "no":
-            case "n":
-            case "off":
-            case "false":
-            case "0":
-                return false;
-
-            default:
-                throw new CommandException(this, Reason.INVALID_PARAMETERS,
-                        invalidParameterString(index, "boolean (yes/no)"));
-        }
-    }
-
-    /**
-     * Retrieves an enum value at the given index, or aborts the execution if
-     * none can be found.
-     *
-     * <p>Checks against the enum values without case, but does not converts
-     * spaces to underscores or things like that.</p>
-     *
-     * @param index    The index.
-     * @param enumType The enum to search into.
-     * @return The retrieved enum value.
-     * @throws CommandException If the value cannot be found in the enum.
-     */
-    protected <T extends Enum<?>> T getEnumParameter(int index, Class<T> enumType) throws CommandException {
-        Enum<?>[] enumValues = enumType.getEnumConstants();
-        String parameter = args[index].toLowerCase();
-
-        for (Enum<?> value : enumValues) {
-            if (value.toString().toLowerCase().equals(parameter)) {
-                return (T) value;
-            }
-        }
-
-        throw new CommandException(this, Reason.INVALID_PARAMETERS, invalidParameterString(index, enumValues));
-    }
-
-    /**
-     * Retrieves a player from its name at the given index, or aborts the
-     * execution if none can be found.
-     *
-     * @param index The index.
-     * @return The retrieved player.
-     * @throws CommandException If the value is invalid.
-     */
-    protected Player getPlayerParameter(int index) throws CommandException {
-        String parameter = args[index];
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getName().equals(parameter)) {
-                return player;
-            }
-        }
-
-        throw new CommandException(this, Reason.INVALID_PARAMETERS, invalidParameterString(index, "player name"));
-    }
-
-    /**
-     * Retrieves a player from its name at the given index, or aborts the
-     * execution if none can be found.
-     *
-     * @param parameter The string containing the name.
-     * @param callback  A consumer that will use the offline player's UUID
-     */
-    public void offlinePlayerParameter(final String parameter, final Consumer<UUID> callback) {
-        CommandWorkers cw = new CommandWorkers();
-        cw.offlineNameFetch(parameter, callback);
-    }
-
-    /**
-     * Retrieves a player from its name at the given index, or aborts the
-     * execution if none can be found.
-     *
-     * @param index    The index.
-     * @param callback A consumer that will use the offline player's UUID
-     */
-    public void offlinePlayerParameter(int index, final Consumer<UUID> callback) {
-        final String parameter = args[index];
-        offlinePlayerParameter(parameter, callback);
-    }
-
 
     ///////////// Methods for flags /////////////
 

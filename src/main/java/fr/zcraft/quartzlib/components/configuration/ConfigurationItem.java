@@ -102,24 +102,6 @@ public class ConfigurationItem<T> {
         return new ConfigurationItem<>(fieldName, null, type, deprecatedNames);
     }
 
-    /**
-     * Utility method to construct a configuration item.
-     */
-    public static <T extends ConfigurationSection> T section(String fieldName, Class<T> sectionClass,
-                                                             String... deprecatedNames) {
-        T section;
-        try {
-            section = Reflection.instantiate(sectionClass);
-            section.fieldName = fieldName;
-            section.deprecatedNames = deprecatedNames;
-        } catch (Exception ex) {
-            PluginLogger.warning("Unable to instantiate configuration field '{0}' of type '{1}'", ex, fieldName,
-                    sectionClass.getName());
-            throw new RuntimeException(ex);
-        }
-        return section;
-    }
-
     public static <T> ConfigurationList<T> list(String fieldName, Class<T> type, String... deprecatedNames) {
         return new ConfigurationList<>(fieldName, new ArrayList<T>(), type, deprecatedNames);
     }
@@ -143,14 +125,6 @@ public class ConfigurationItem<T> {
         } catch (ConfigurationParseException ex) {
             return defaultValue;
         }
-    }
-
-    /**
-     * Gets the default value.
-     * @return the default value for this configuration item.
-     */
-    public T getDefaultValue() {
-        return defaultValue;
     }
 
     /**

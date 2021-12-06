@@ -578,27 +578,11 @@ public abstract class ExplorerGui<T> extends ActionGui {
     }
 
     /**
-     * Displays the previous horizontal page, if possible.
-     */
-    @GuiAction
-    public void previous() {
-        setCurrentPageX(currentPageX - 1);
-    }
-
-    /**
      * Displays the previous vertical page, if possible.
      */
     @GuiAction
     public void up() {
         setCurrentPageY(currentPageY - 1);
-    }
-
-    /**
-     * Displays the next vertical page, if possible.
-     */
-    @GuiAction
-    public void down() {
-        setCurrentPageY(currentPageY + 1);
     }
 
     public boolean canGoNext() {
@@ -617,16 +601,8 @@ public abstract class ExplorerGui<T> extends ActionGui {
         return currentPageY < pageCountY - 1;
     }
 
-    public int getCurrentPageX() {
-        return currentPageX;
-    }
-
     public void setCurrentPageX(int currentPageX) {
         setCurrentPage(currentPageX, currentPageY);
-    }
-
-    public int getCurrentPageY() {
-        return currentPageY;
     }
 
     public void setCurrentPageY(int currentPageY) {
@@ -673,22 +649,6 @@ public abstract class ExplorerGui<T> extends ActionGui {
     }
 
     /**
-     * @return The GUI's manipulation mode.
-     */
-    protected Mode getMode() {
-        return mode;
-    }
-
-    /**
-     * Sets the GUI's manipulation mode.
-     *
-     * @param mode The mode.
-     */
-    protected void setMode(Mode mode) {
-        this.mode = mode;
-    }
-
-    /**
      * If set to {@code true}, the horizontal scrolling line will remain empty even without
      * scrolls (with one page typically), so you can place buttons or things like that in this
      * area.
@@ -698,18 +658,6 @@ public abstract class ExplorerGui<T> extends ActionGui {
      */
     public void setKeepHorizontalScrollingSpace(boolean keepHorizontalScrollingSpace) {
         this.keepHorizontalScrollingSpace = keepHorizontalScrollingSpace;
-    }
-
-    /**
-     * If set to {@code true}, the vertical scrolling line will remain empty even without
-     * scrolls (with one page typically), so you can place buttons or things like that in this
-     * area.
-     * <p>Else, with one page, the place will be used to display an additional column of data.</p>
-     *
-     * @param keepVerticalScrollingSpace {@code true} if enabled.
-     */
-    public void setKeepVerticalScrollingSpace(boolean keepVerticalScrollingSpace) {
-        this.keepVerticalScrollingSpace = keepVerticalScrollingSpace;
     }
 
     /**
