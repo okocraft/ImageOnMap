@@ -54,7 +54,6 @@ import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.migration.MigratorExecutor;
 import fr.moribus.imageonmap.migration.V3Migrator;
 import fr.moribus.imageonmap.ui.MapItemManager;
-import fr.zcraft.quartzlib.components.commands.CommandWorkers;
 import fr.zcraft.quartzlib.components.commands.Commands;
 import fr.moribus.imageonmap.gui.Gui;
 import fr.zcraft.quartzlib.components.i18n.I18n;
@@ -70,7 +69,6 @@ public final class ImageOnMap extends QuartzPlugin {
     private static ImageOnMap plugin;
     private final File mapsDirectory;
     private File imagesDirectory;
-    private CommandWorkers commandWorker;
 
     public ImageOnMap() {
         imagesDirectory = new File(this.getDataFolder(), IMAGES_DIRECTORY_NAME);
@@ -94,9 +92,6 @@ public final class ImageOnMap extends QuartzPlugin {
         return new File(imagesDirectory, "map" + mapID + ".png");
     }
 
-    public CommandWorkers getCommandWorker() {
-        return commandWorker;
-    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -113,7 +108,6 @@ public final class ImageOnMap extends QuartzPlugin {
 
 
         saveDefaultConfig();
-        commandWorker = loadComponent(CommandWorkers.class);
         loadComponents(I18n.class, Gui.class, Commands.class, PluginConfiguration.class, ImageIOExecutor.class,
                 ImageRendererExecutor.class);
 
