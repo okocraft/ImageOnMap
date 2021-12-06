@@ -83,10 +83,9 @@ public final class ReducedDebugInfo {
      * @param player The player.
      * @param reduce {@code true} to reduce debugs infos; {@code false} to
      *               expand them.
-     * @return {@code true} if the packet was successfully sent.
      */
-    public static boolean setForPlayer(final Player player, final boolean reduce) {
-        return setForPlayer(player, reduce, false);
+    public static void setForPlayer(final Player player, final boolean reduce) {
+        setForPlayer(player, reduce, false);
     }
 
     /**

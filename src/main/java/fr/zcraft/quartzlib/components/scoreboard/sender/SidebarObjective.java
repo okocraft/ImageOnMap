@@ -82,9 +82,8 @@ public class SidebarObjective {
      *
      * @param name  The name of the score.
      * @param score The score associated.
-     * @return {@code true} if a previous score was overwritten by this one.
      */
-    public boolean setScore(String name, Integer score) {
+    public void setScore(String name, Integer score) {
         Validate.notNull(name, "The score name cannot be null!");
         Validate.notNull(score, "The score cannot be null!");
 
@@ -92,18 +91,17 @@ public class SidebarObjective {
             name = name.substring(0, MAX_LENGTH_SCORE_NAME);
         }
 
-        return scores.put(name, score) != null;
+        scores.put(name, score);
     }
 
     /**
      * Removes a score.
      * @param name The name of the score.
-     * @return {@code true} if a previous score existed with this name.
      */
-    public boolean removeScore(String name) {
+    public void removeScore(String name) {
         Validate.notNull(name, "The score name cannot be null!");
 
-        return scores.remove(name) != null;
+        scores.remove(name);
     }
 
     /**

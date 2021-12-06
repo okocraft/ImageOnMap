@@ -68,11 +68,10 @@ public abstract class ItemUtils {
      *
      * @param player The player that will consume the stack.
      * @param item   The stack to be consumed.
-     * @return The updated stack.
      */
-    public static ItemStack consumeItem(Player player, ItemStack item) {
+    public static void consumeItem(Player player, ItemStack item) {
         if (player.getGameMode() == GameMode.CREATIVE) {
-            return item;
+            return;
         }
 
         int amount = item.getAmount();
@@ -81,7 +80,6 @@ public abstract class ItemUtils {
         } else {
             item.setAmount(amount - 1);
         }
-        return item;
     }
 
     /**

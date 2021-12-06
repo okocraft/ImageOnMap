@@ -242,13 +242,11 @@ public abstract class RawTextPart<T extends RawTextPart<T>> implements Iterable<
      *     but only once (else, or if the color was previously set, an error will be thrown).
      *
      * @param styles The styles to add.
-     * @return The current raw text component, for method chaining.
      */
-    public T style(Iterable<ChatColor> styles) {
+    public void style(Iterable<ChatColor> styles) {
         for (ChatColor style : styles) {
             style(style);
         }
-        return (T) this;
     }
 
     /**

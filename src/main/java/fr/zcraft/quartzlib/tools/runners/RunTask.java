@@ -50,10 +50,9 @@ public final class RunTask {
      * Returns a task that will run on the next server tick.
      *
      * @param runnable The task to be run.
-     * @return The BukkitTask that will run.
      */
-    public static BukkitTask nextTick(Runnable runnable) {
-        return scheduler.runTask(QuartzLib.getPlugin(), runnable);
+    public static void nextTick(Runnable runnable) {
+        scheduler.runTask(QuartzLib.getPlugin(), runnable);
     }
 
     /**
@@ -71,10 +70,9 @@ public final class RunTask {
      *
      * @param runnable The task to be run.
      * @param delay    The ticks to wait before running the task.
-     * @return The BukkitTask that will run.
      */
-    public static BukkitTask later(Runnable runnable, long delay) {
-        return scheduler.runTaskLater(QuartzLib.getPlugin(), runnable, delay);
+    public static void later(Runnable runnable, long delay) {
+        scheduler.runTaskLater(QuartzLib.getPlugin(), runnable, delay);
     }
 
     /**

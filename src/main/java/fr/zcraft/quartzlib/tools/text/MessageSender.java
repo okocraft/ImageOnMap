@@ -351,12 +351,9 @@ public final class MessageSender {
      *
      * @param receiver The receiver of the message.
      * @param message  The message.
-     * @return {@code false} if an error occurred while sending the message. If this happens, the
-     *         {@link org.bukkit.command.CommandSender#sendMessage(String) sendMessage} method is
-     *         automatically called as a fallback.
      */
-    public static boolean sendSystemMessage(Player receiver, String message) {
-        return sendMessage(receiver, message, MessageType.SYSTEM);
+    public static void sendSystemMessage(Player receiver, String message) {
+        sendMessage(receiver, message, MessageType.SYSTEM);
     }
 
     /**
@@ -383,12 +380,9 @@ public final class MessageSender {
      *
      * @param receiver The receiver of the message.
      * @param message  The message.
-     * @return {@code false} if an error occurred while sending the message. If this happens, the
-     *         {@link org.bukkit.command.CommandSender#sendMessage(String) sendMessage} method is
-     *         automatically called as a fallback.
      */
-    public static boolean sendSystemMessage(Player receiver, RawText message) {
-        return sendMessage(receiver, message, MessageType.SYSTEM);
+    public static void sendSystemMessage(Player receiver, RawText message) {
+        sendMessage(receiver, message, MessageType.SYSTEM);
     }
 
     /**
@@ -413,13 +407,10 @@ public final class MessageSender {
      *
      * @param receiver The receiver of the message.
      * @param message  The message.
-     * @return {@code false} if an error occurred while sending the message. If this happens, the
-     *         message is not sent at all. Such an error is likely to be caused by an incompatible Bukkit
-     *         version.
      * @see ActionBar
      */
-    public static boolean sendActionBarMessage(Player receiver, String message) {
-        return sendMessage(receiver, message, MessageType.ACTION_BAR);
+    public static void sendActionBarMessage(Player receiver, String message) {
+        sendMessage(receiver, message, MessageType.ACTION_BAR);
     }
 
     /**

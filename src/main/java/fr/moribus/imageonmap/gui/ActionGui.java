@@ -144,11 +144,9 @@ public abstract class ActionGui extends InventoryGui {
      *
      * @param name The identifier of the action.
      * @param slot The slot the action will be placed on.
-     * @return an {@link ItemStackBuilder}
-     *     ItemStackBuilder to build the representing item
      */
-    protected ItemStackBuilder action(String name, int slot) {
-        return action(name, slot, (ItemStack) null);
+    protected void action(String name, int slot) {
+        action(name, slot, (ItemStack) null);
     }
 
     /**

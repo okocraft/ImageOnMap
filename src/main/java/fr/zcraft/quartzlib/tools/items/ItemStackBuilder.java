@@ -488,15 +488,13 @@ public class ItemStackBuilder {
      * Adds a glow effect (a fake enchantment) to the ItemStack. This can only
      * be called once, otherwise an IllegalStateException will be thrown.
      *
-     * @return The current ItemStackBuilder instance, for methods chaining.
      */
-    public ItemStackBuilder glow() {
+    public void glow() {
         if (this.glowing) {
             throw new IllegalStateException("Glowing has already been set.");
         }
 
         this.glowing = true;
-        return this;
     }
 
     /**
@@ -541,11 +539,9 @@ public class ItemStackBuilder {
      * @param enchantment The enchantment
      * @param level       The enchantment level. The enchant is added with the
      *                    unsafe method, so you can put any number here.
-     * @return The current ItemStackBuilder instance, for methods chaining.
      */
-    public ItemStackBuilder enchant(Enchantment enchantment, int level) {
+    public void enchant(Enchantment enchantment, int level) {
         enchantments.put(enchantment, level);
-        return this;
     }
 
     /**
