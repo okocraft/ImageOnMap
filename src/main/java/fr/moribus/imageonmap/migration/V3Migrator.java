@@ -524,8 +524,7 @@ public class V3Migrator implements Runnable {
             if (playerUUID == null) {
                 remainingPosters.add(poster);
             } else if (!poster.isMapValid()) {
-                missingMapIds.addAll(Arrays.stream(ArrayUtils.toObject(poster.getMapsIds())).map(id -> (int) id)
-                        .collect(Collectors.toList()));
+                missingMapIds.addAll(Arrays.stream(ArrayUtils.toObject(poster.getMapsIds())).map(id -> (int) id).toList());
             } else {
                 MapManager.insertMap(poster.toImageMap(playerUUID));
             }
