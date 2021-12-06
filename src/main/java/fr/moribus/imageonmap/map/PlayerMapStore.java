@@ -147,7 +147,7 @@ public class PlayerMapStore implements ConfigurationSerializable {
     }
 
     public synchronized ImageMap[] getMaps() {
-        return mapList.toArray(new ImageMap[mapList.size()]);
+        return mapList.toArray(new ImageMap[0]);
     }
 
     public synchronized ImageMap getMap(String mapId) {

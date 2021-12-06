@@ -324,7 +324,7 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
     }
 
     public Command[] getCommands() {
-        return commands.toArray(new Command[commands.size()]);
+        return commands.toArray(new Command[0]);
     }
 
     public String getDescription() {

@@ -157,7 +157,7 @@ public class ConfigurationItem<T> {
             }
         }
 
-        return allNames.toArray(new String[allNames.size()]);
+        return allNames.toArray(new String[0]);
     }
 
     /**

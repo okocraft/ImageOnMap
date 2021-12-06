@@ -78,7 +78,7 @@ public class HelpCommand extends Command {
         }
 
         new GroupHelpPagination()
-                .setData(displayedCommands.toArray(new Command[displayedCommands.size()]))
+                .setData(displayedCommands.toArray(new Command[0]))
                 .setCurrentPage(page)
                 .display(sender);
     }

@@ -168,7 +168,7 @@ public class ConfigurationInstance extends QuartzComponent {
             }
         }
 
-        items = itemsList.toArray(new ConfigurationItem[itemsList.size()]);
+        items = itemsList.toArray(new ConfigurationItem[0]);
         initFields();
     }
 
