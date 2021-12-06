@@ -74,8 +74,8 @@ public class PosterOnASurface {
         FlatLocation loc = location.clone();
 
 
-        int x = 0;
-        int y = 0;
+        int x;
+        int y;
         switch (bf) {
             case EAST, WEST, NORTH, SOUTH -> {
                 y = map.getRowCount();
