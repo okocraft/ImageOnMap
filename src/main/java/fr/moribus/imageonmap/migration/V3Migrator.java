@@ -480,7 +480,7 @@ public class V3Migrator implements Runnable {
                     missingUsersList += user + ", ";
                 }
             }
-            missingUsersList = missingUsersList.substring(0, missingUsersList.length());
+            missingUsersList = missingUsersList;
 
             plugin.getLogger().info(missingUsersList);
         }
