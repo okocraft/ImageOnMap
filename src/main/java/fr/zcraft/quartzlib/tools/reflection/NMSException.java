@@ -34,5 +34,11 @@ package fr.zcraft.quartzlib.tools.reflection;
  * Represents an exception thrown while accessing Minecraft NMS classes.
  */
 public class NMSException extends Exception {
+    public NMSException(String text, Throwable cause) {
+        super(text, cause);
+    }
 
+    public NMSException(String text) {
+        super(text);
+    }
 }
