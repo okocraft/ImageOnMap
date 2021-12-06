@@ -205,8 +205,7 @@ public final class UUIDFetcher {
             return uuidMap;
         }
 
-        List<String> remainingNames = new ArrayList<String>();
-        remainingNames.addAll(names);
+        List<String> remainingNames = new ArrayList<>(names);
 
         for (Object profile : array) {
             JSONObject jsonProfile = (JSONObject) profile;
