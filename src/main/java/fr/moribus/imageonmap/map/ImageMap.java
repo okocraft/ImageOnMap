@@ -81,8 +81,8 @@ public abstract class ImageMap implements ConfigurationSerializable {
 
     protected ImageMap(Map<String, Object> map, UUID userUUID, Type mapType) throws InvalidConfigurationException {
         this(userUUID, mapType,
-                (String) getNullableFieldValue(map, "id"),
-                (String) getNullableFieldValue(map, "name"));
+                getNullableFieldValue(map, "id"),
+                getNullableFieldValue(map, "name"));
 
     }
 
