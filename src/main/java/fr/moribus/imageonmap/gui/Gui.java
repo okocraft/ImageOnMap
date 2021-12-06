@@ -53,27 +53,6 @@ public final class Gui extends QuartzComponent {
     private static final HashMap<Class<? extends Listener>, Listener> guiListeners = new HashMap<>();
 
     /**
-     * Registers an events listener, if it was not registered before.
-     *
-     * @param listenerClass The listener's class to register. No-args constructor required.
-     */
-    protected static void registerListener(Class<? extends Listener> listenerClass) {
-        if (guiListeners.containsKey(listenerClass)) {
-            return;
-        }
-
-        try {
-            Constructor<? extends Listener> constructor = listenerClass.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            Listener listener = constructor.newInstance();
-            guiListeners.put(listenerClass, listener);
-            QuartzLib.registerEvents(listener);
-        } catch (Throwable ex) {
-            PluginLogger.error("Could not register listener for GUI", ex);
-        }
-    }
-
-    /**
      * Opens a GUI for a player.
      *
      * @param <T>    A GUI type.
@@ -130,40 +109,6 @@ public final class Gui extends QuartzComponent {
                 openGui.close();
             }
         }
-    }
-
-    /**
-     * Returns the currently open GUI for that player, or null if no GUI
-     * is open through this API.
-     *
-     * @param entity The GUI's viewer.
-     * @return the currently opened GUI.
-     */
-    public static GuiBase getOpenGui(HumanEntity entity) {
-        if (!(entity instanceof Player)) {
-            return null;
-        }
-        return openGuis.get(entity);
-    }
-
-    /**
-     * Returns the currently open GUI of the given type for that player, or
-     * {@code null} if no GUI of this type is open through this API.
-     *
-     * @param <T>      The type of the GUI.
-     * @param entity   The GUI's viewer.
-     * @param guiClass The GUI class.
-     * @return the currently opened GUI.
-     */
-    public static <T extends GuiBase> T getOpenGui(HumanEntity entity, Class<T> guiClass) {
-        GuiBase openGui = getOpenGui(entity);
-        if (openGui == null) {
-            return null;
-        }
-        if (!guiClass.isAssignableFrom(openGui.getClass())) {
-            return null;
-        }
-        return (T) openGui;
     }
 
     /**
