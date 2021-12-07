@@ -39,6 +39,7 @@ package fr.moribus.imageonmap.image;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.map.ImageMap;
+import fr.moribus.imageonmap.util.ExceptionCatcher;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -56,17 +57,9 @@ public class ImageIOExecutor {
             new ThreadFactoryBuilder()
                     .setDaemon(true)
                     .setNameFormat("Image IO - #%d")
-                    .setUncaughtExceptionHandler(ImageIOExecutor::exceptionCatcher)
+                    .setUncaughtExceptionHandler(ExceptionCatcher::catchException)
                     .build()
     );
-
-    private static void exceptionCatcher(Thread thread, Throwable throwable) {
-        ImageOnMap.getPlugin().getLogger().log(
-                Level.SEVERE,
-                "An exception occurred in the thread " + thread.getName(),
-                throwable
-        );
-    }
 
     @FunctionalInterface
     interface ExceptionalRunnable {

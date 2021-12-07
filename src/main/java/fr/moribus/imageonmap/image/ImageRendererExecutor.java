@@ -36,12 +36,17 @@
 
 package fr.moribus.imageonmap.image;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.PluginConfiguration;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
+import fr.moribus.imageonmap.util.ExceptionCatcher;
 import fr.zcraft.quartzlib.components.i18n.I;
+import org.bukkit.Bukkit;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,26 +59,25 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.imageio.ImageIO;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
-import org.bukkit.Bukkit;
-
 public class ImageRendererExecutor {
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(
-        Math.min(Runtime.getRuntime().availableProcessors(), 4), new ThreadFactoryBuilder()
-                .setDaemon(true)
-                .setNameFormat("Image Renderer - #%d")
-                .build()
+            Math.min(Runtime.getRuntime().availableProcessors(), 4),
+            new ThreadFactoryBuilder()
+                    .setDaemon(true)
+                    .setNameFormat("Image Renderer - #%d")
+                    .setUncaughtExceptionHandler(ExceptionCatcher::catchException)
+                    .build()
     );
 
     public static Executor getMainThread() {
         return Bukkit.getScheduler().getMainThreadExecutor(ImageOnMap.getPlugin());
     }
 
-    @FunctionalInterface interface ExceptionalSupplier<T> { public T supply() throws Throwable; }
+    @FunctionalInterface
+    interface ExceptionalSupplier<T> {
+        T supply() throws Throwable;
+    }
 
     private static <T> CompletableFuture<T> supply(ExceptionalSupplier<T> supplier, Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
@@ -118,7 +122,7 @@ public class ImageRendererExecutor {
     }
 
     public static CompletableFuture<ImageMap> render(final URL url, final ImageUtils.ScalingType scaling, final UUID playerUUID,
-                              final int width, final int height) {
+                                                     final int width, final int height) {
         return supply(() -> {
             BufferedImage image = null;
             //If the link is an imgur one
@@ -179,7 +183,7 @@ public class ImageRendererExecutor {
     }
 
     public static CompletableFuture<ImageMap> update(final URL url, final ImageUtils.ScalingType scaling, final UUID playerUUID,
-                              final ImageMap map, final int width, final int height) {
+                                                     final ImageMap map, final int width, final int height) {
         return supply(() -> {
             final URLConnection connection = connecting(url);
 
@@ -218,7 +222,7 @@ public class ImageRendererExecutor {
 
     private static ImageMap renderSingle(final BufferedImage image, final UUID playerUUID) throws Throwable {
         MapManager.checkMapLimit(1, playerUUID);
-        final CompletableFuture<Integer> futureMapID = supply(() ->  MapManager.getNewMapsIds(1)[0], getMainThread());
+        final CompletableFuture<Integer> futureMapID = supply(() -> MapManager.getNewMapsIds(1)[0], getMainThread());
 
         final int mapID = futureMapID.get();
         ImageIOExecutor.saveImage(mapID, image);
@@ -233,8 +237,8 @@ public class ImageRendererExecutor {
         final PosterImage poster = new PosterImage(image);
         final int mapCount = poster.getImagesCount();
         MapManager.checkMapLimit(mapCount, playerUUID);
-        
-        final CompletableFuture<int[]> futureMapsIds = supply(() ->  MapManager.getNewMapsIds(mapCount), getMainThread());
+
+        final CompletableFuture<int[]> futureMapsIds = supply(() -> MapManager.getNewMapsIds(mapCount), getMainThread());
         poster.splitImages();
         final int[] mapsIDs = futureMapsIds.get();
 
