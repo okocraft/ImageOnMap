@@ -45,7 +45,7 @@ import fr.moribus.imageonmap.commands.CommandException;
 import fr.moribus.imageonmap.commands.CommandInfo;
 import fr.moribus.imageonmap.commands.Commands;
 import fr.moribus.imageonmap.commands.WithFlags;
-import fr.zcraft.quartzlib.components.i18n.I;
+import fr.moribus.imageonmap.i18n.I;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;

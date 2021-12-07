@@ -28,7 +28,7 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
-package fr.zcraft.quartzlib.components.i18n.translators.properties;
+package fr.moribus.imageonmap.i18n.translators.properties;
 
 import java.io.File;
 import java.io.FileInputStream;

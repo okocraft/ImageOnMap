@@ -28,15 +28,16 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
-package fr.zcraft.quartzlib.components.i18n.translators.properties;
+package fr.moribus.imageonmap.i18n.translators.properties;
 
-import fr.zcraft.quartzlib.components.i18n.I18n;
-import fr.zcraft.quartzlib.components.i18n.translators.Translation;
-import fr.zcraft.quartzlib.components.i18n.translators.Translator;
 import java.io.File;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import fr.moribus.imageonmap.i18n.I18n;
+import fr.moribus.imageonmap.i18n.translators.Translation;
+import fr.moribus.imageonmap.i18n.translators.Translator;
 
 
 /**

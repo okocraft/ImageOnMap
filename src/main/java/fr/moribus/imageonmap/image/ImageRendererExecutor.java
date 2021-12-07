@@ -40,10 +40,11 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.PluginConfiguration;
+import fr.moribus.imageonmap.i18n.I;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.util.ExceptionCatcher;
-import fr.zcraft.quartzlib.components.i18n.I;
+
 import org.bukkit.Bukkit;
 
 import javax.imageio.ImageIO;

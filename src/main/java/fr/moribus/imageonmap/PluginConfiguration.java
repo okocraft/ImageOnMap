@@ -36,12 +36,12 @@
 
 package fr.moribus.imageonmap;
 
-import fr.zcraft.quartzlib.components.i18n.I18n;
-
 import java.util.Locale;
 import java.util.function.Supplier;
 
 import org.bukkit.configuration.file.FileConfiguration;
+
+import fr.moribus.imageonmap.i18n.I18n;
 
 public final class PluginConfiguration {
 

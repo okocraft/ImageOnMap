@@ -28,10 +28,60 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
-package fr.zcraft.quartzlib.components.i18n;
+package fr.moribus.imageonmap.i18n.translators;
 
-public class UnsupportedLocaleException extends IllegalArgumentException {
+import java.util.List;
 
-    private static final long serialVersionUID = -2746324692893193071L;
 
+/**
+ * Represents a translation.
+ */
+public class Translation {
+    private final String original;
+    private final String originalPlural;
+    private final String context;
+    private final List<String> translations;
+
+    /**
+     * Creates a new translation.
+     */
+    public Translation(String context, String original, String originalPlural, List<String> translations) {
+        this.context = context;
+        this.original = original;
+        this.originalPlural = originalPlural;
+        this.translations = translations;
+    }
+
+    /**
+     * Gets the original, untranslated, string.
+     * @return The original, untranslated, string.
+     */
+    public String getOriginal() {
+        return original;
+    }
+
+    /**
+     * Gets the original, untranslated, plural form.
+     * @return The original, untranslated, plural form.
+     */
+    public String getOriginalPlural() {
+        return originalPlural;
+    }
+
+    /**
+     * Gets the translation context.
+     * @return The translation context, or {@code null} if no context was set. Note that an empty
+     *     context string and a {@code null} one do not mean the same thing.
+     */
+    public String getContext() {
+        return context;
+    }
+
+    /**
+     * Gets all of the available translations.
+     * @return All the available translations.
+     */
+    public List<String> getTranslations() {
+        return translations;
+    }
 }

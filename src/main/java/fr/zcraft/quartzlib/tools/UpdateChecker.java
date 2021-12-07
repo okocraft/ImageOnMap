@@ -30,7 +30,7 @@
 
 package fr.zcraft.quartzlib.tools;
 
-import fr.zcraft.quartzlib.components.i18n.I;
+import fr.moribus.imageonmap.i18n.I;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.tools.runners.RunAsyncTask;
 import fr.zcraft.quartzlib.tools.runners.RunTask;

@@ -35,10 +35,10 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
-package fr.zcraft.quartzlib.components.i18n.translators.gettext;
+package fr.moribus.imageonmap.i18n.translators.gettext;
 
-import fr.zcraft.quartzlib.components.i18n.translators.Translation;
-import fr.zcraft.quartzlib.components.i18n.translators.Translator;
+import fr.moribus.imageonmap.i18n.translators.Translation;
+import fr.moribus.imageonmap.i18n.translators.Translator;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.io.File;
 import java.io.Reader;

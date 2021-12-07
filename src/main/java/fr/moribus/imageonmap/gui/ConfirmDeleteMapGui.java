@@ -37,10 +37,10 @@
 package fr.moribus.imageonmap.gui;
 
 import fr.moribus.imageonmap.Permissions;
+import fr.moribus.imageonmap.i18n.I;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.map.MapManagerException;
-import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -38,10 +38,11 @@ package fr.moribus.imageonmap.commands.maptool;
 
 import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.commands.IoMCommand;
+import fr.moribus.imageonmap.i18n.I;
 import fr.moribus.imageonmap.ui.MapItemManager;
 import fr.moribus.imageonmap.commands.CommandException;
 import fr.moribus.imageonmap.commands.CommandInfo;
-import fr.zcraft.quartzlib.components.i18n.I;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

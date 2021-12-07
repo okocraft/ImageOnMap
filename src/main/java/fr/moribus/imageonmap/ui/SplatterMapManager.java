@@ -41,7 +41,7 @@ import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.map.PosterMap;
 import fr.moribus.imageonmap.gui.GuiUtils;
-import fr.zcraft.quartzlib.components.i18n.I;
+import fr.moribus.imageonmap.i18n.I;
 import fr.zcraft.quartzlib.tools.items.GlowEffect;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import fr.zcraft.quartzlib.tools.world.FlatLocation;

@@ -35,9 +35,8 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
-package fr.zcraft.quartzlib.components.i18n.translators.gettext;
+package fr.moribus.imageonmap.i18n.translators.gettext;
 
-import fr.zcraft.quartzlib.components.i18n.translators.Translation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -48,6 +47,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import fr.moribus.imageonmap.i18n.translators.Translation;
 
 
 /**

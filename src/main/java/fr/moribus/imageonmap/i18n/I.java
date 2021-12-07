@@ -28,7 +28,7 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
-package fr.zcraft.quartzlib.components.i18n;
+package fr.moribus.imageonmap.i18n;
 
 import java.util.Locale;
 import org.bukkit.entity.Player;

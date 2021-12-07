@@ -28,9 +28,9 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
-package fr.zcraft.quartzlib.components.i18n;
+package fr.moribus.imageonmap.i18n;
 
-import fr.zcraft.quartzlib.components.i18n.translators.Translator;
+import fr.moribus.imageonmap.i18n.translators.Translator;
 import fr.zcraft.quartzlib.core.QuartzComponent;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.core.QuartzPlugin;
