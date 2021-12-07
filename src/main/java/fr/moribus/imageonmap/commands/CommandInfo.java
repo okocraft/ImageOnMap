@@ -28,7 +28,7 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
-package fr.zcraft.quartzlib.components.commands;
+package fr.moribus.imageonmap.commands;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

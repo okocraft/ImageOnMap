@@ -38,7 +38,7 @@ package fr.moribus.imageonmap.commands;
 
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
-import fr.zcraft.quartzlib.components.commands.Command;
+import fr.moribus.imageonmap.commands.Command;
 
 import java.util.ArrayList;
 import java.util.List;

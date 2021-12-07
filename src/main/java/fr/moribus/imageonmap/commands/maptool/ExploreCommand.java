@@ -40,8 +40,8 @@ package fr.moribus.imageonmap.commands.maptool;
 import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.commands.IoMCommand;
 import fr.moribus.imageonmap.gui.MapListGui;
-import fr.zcraft.quartzlib.components.commands.CommandException;
-import fr.zcraft.quartzlib.components.commands.CommandInfo;
+import fr.moribus.imageonmap.commands.CommandException;
+import fr.moribus.imageonmap.commands.CommandInfo;
 import fr.moribus.imageonmap.gui.Gui;
 import fr.zcraft.quartzlib.components.i18n.I;
 

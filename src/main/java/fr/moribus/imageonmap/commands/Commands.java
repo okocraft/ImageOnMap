@@ -28,15 +28,13 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
-package fr.zcraft.quartzlib.components.commands;
+package fr.moribus.imageonmap.commands;
 
-import fr.zcraft.quartzlib.core.QuartzComponent;
-import fr.zcraft.quartzlib.core.QuartzLib;
+import fr.moribus.imageonmap.ImageOnMap;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.command.CommandSender;
 
-public class Commands extends QuartzComponent {
+public class Commands {
     public static final String CHAT_PREFIX = "┃";
 
     private static final List<CommandGroup> commandGroups = new ArrayList<>();
@@ -52,7 +50,7 @@ public class Commands extends QuartzComponent {
         }
         CommandGroup newCommandGroup = new CommandGroup(group, commandClass, shortcutNames);
 
-        newCommandGroup.register(QuartzLib.getPlugin());
+        newCommandGroup.register(ImageOnMap.getPlugin());
         commandGroups.add(newCommandGroup);
     }
 
@@ -63,7 +61,7 @@ public class Commands extends QuartzComponent {
      */
     public static void register(String[] names, Class<? extends Command>... commandsClasses) {
         final CommandGroup commandGroup = new CommandGroup(names, commandsClasses);
-        commandGroup.register(QuartzLib.getPlugin());
+        commandGroup.register(ImageOnMap.getPlugin());
 
         commandGroups.add(commandGroup);
     }

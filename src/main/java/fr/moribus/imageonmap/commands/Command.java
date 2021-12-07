@@ -28,9 +28,9 @@
  * knowledge of the CeCILL-B license and that you accept its terms.
  */
 
-package fr.zcraft.quartzlib.components.commands;
+package fr.moribus.imageonmap.commands;
 
-import fr.zcraft.quartzlib.components.commands.CommandException.Reason;
+import fr.moribus.imageonmap.commands.CommandException.Reason;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import java.util.ArrayList;
 import java.util.Collections;
