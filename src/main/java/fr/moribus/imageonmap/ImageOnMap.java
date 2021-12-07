@@ -109,7 +109,7 @@ public final class ImageOnMap extends QuartzPlugin {
         }
 
         saveDefaultConfig();
-        loadComponents(I18n.class, Gui.class, Commands.class, PluginConfiguration.class, ImageIOExecutor.class,
+        loadComponents(I18n.class, Gui.class, Commands.class, ImageIOExecutor.class,
                 ImageRendererExecutor.class);
 
         //Init all the things !

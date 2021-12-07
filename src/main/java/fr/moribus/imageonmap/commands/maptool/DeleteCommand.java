@@ -43,14 +43,17 @@ import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.map.MapManagerException;
 import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;
+import fr.zcraft.quartzlib.components.commands.Commands;
 import fr.zcraft.quartzlib.components.commands.WithFlags;
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.components.rawtext.RawText;
 import fr.zcraft.quartzlib.tools.PluginLogger;
-import fr.zcraft.quartzlib.tools.text.RawMessage;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -58,16 +61,15 @@ import org.bukkit.entity.Player;
 @WithFlags({"confirm"})
 public class DeleteCommand extends IoMCommand {
 
-    private static RawText deleteMsg(Class klass, String playerName, ImageMap map) {
-        return new RawText(I.t("You are going to delete") + " ")
-                .then(map.getId())
-                .color(ChatColor.GOLD)
-                .then(". " + I.t("Are you sure ? "))
-                .color(ChatColor.WHITE)
-                .then(I.t("[Confirm]"))
-                .color(ChatColor.GREEN)
-                .hover(new RawText(I.t("{red}This map will be deleted {bold}forever{red}!")))
-                .command(klass, playerName + ":" + "\"" + map.getId() + "\"", "--confirm")
+    private static Component deleteMsg(String playerName, ImageMap map) {
+        return Component.text().append(Component.text(I.t("You are going to delete") + " " + map.getId()))
+                .color(NamedTextColor.GOLD)
+                .append(Component.text(". " + I.t("Are you sure ? ")))
+                .color(NamedTextColor.WHITE)
+                .append(Component.text("[Confirm]"))
+                .color(NamedTextColor.GREEN)
+                .hoverEvent(HoverEvent.showText(Component.text(I.t("{red}This map will be deleted {bold}forever{red}!"))))
+                .clickEvent(ClickEvent.runCommand(Commands.getCommandInfo(DeleteCommand.class).build(playerName + ":" + "\"" + map.getId() + "\"", "--confirm")))
                 .build();
     }
 
@@ -110,8 +112,7 @@ public class DeleteCommand extends IoMCommand {
             }
 
             if (!confirm) {
-                RawText msg = deleteMsg(getClass(), playerName, map);
-                RawMessage.send(sender, msg);
+                sender.sendMessage(deleteMsg(playerName, map));
             } else {
                 if (sender != null && sender.isOnline() && sender.getInventory() != null) {
                     MapManager.clear(sender.getInventory(), map);

@@ -35,7 +35,6 @@ import fr.zcraft.quartzlib.core.QuartzComponent;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.core.QuartzPlugin;
 import fr.zcraft.quartzlib.tools.PluginLogger;
-import fr.zcraft.quartzlib.tools.reflection.Reflection;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Comparator;
@@ -83,7 +82,6 @@ public class I18n extends QuartzComponent {
     private static final String commandColor = ChatColor.GOLD.toString();
 
     private static boolean addCountToParameters = true;
-    private static boolean playerLocaleWarning = false;
 
     /**
      * @return The name of the subdirectory where the translations are stored. Default: "i18n".
@@ -113,19 +111,7 @@ public class I18n extends QuartzComponent {
         if (player == null) {
             return null;
         }
-
-        try {
-            final Object playerHandle = Reflection.call(player, "getHandle");
-            final String localeName = (String) Reflection.getFieldValue(playerHandle, "locale");
-            return localeFromString(localeName);
-        } catch (Exception e) {
-            if (!playerLocaleWarning) {
-                PluginLogger.warning("Could not retrieve locale for player {0}", e, player.getName());
-                playerLocaleWarning = true;
-            }
-
-            return null;
-        }
+        return localeFromString(player.getLocale());
     }
 
     /**

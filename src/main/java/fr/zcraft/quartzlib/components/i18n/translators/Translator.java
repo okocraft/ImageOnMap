@@ -35,7 +35,6 @@ import fr.zcraft.quartzlib.components.i18n.translators.properties.PropertiesTran
 import fr.zcraft.quartzlib.components.i18n.translators.yaml.YAMLTranslator;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.tools.PluginLogger;
-import fr.zcraft.quartzlib.tools.reflection.Reflection;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,7 +42,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
@@ -106,7 +104,18 @@ public abstract class Translator {
      * @return A translations loader for this file.
      */
     public static Translator getInstance(Locale locale, File file) {
-        return getInstance(getTranslatorClass(file.getName()), locale, file);
+        final String[] fileNameParts = file.getName().split("\\.");
+
+        if (fileNameParts.length < 2) {
+            return null;
+        }
+
+        return switch (fileNameParts[fileNameParts.length - 1].toLowerCase()) {
+            case "po" -> new GettextPOTranslator(locale, file);
+            case "yml", "yaml" -> new YAMLTranslator(locale, file);
+            case "properties", "class" -> new PropertiesTranslator(locale, file);
+            default -> null;
+        };
     }
 
     /**
@@ -117,50 +126,16 @@ public abstract class Translator {
      * @return A translations loader for this file.
      */
     public static Translator getInstance(Locale locale, String resourceReference) {
-        return getInstance(getTranslatorClass(resourceReference), locale, resourceReference);
-    }
-
-    /**
-     * Instanciate a Translator instance from the given class.
-     *
-     * @param clazz           The class.
-     * @param locale          The locale for this translator.
-     * @param resourcePointer A pointer to the resource: either a {@link File} or a {@link String} to reference a
-     *                        bundled resource.
-     * @return The new instance, or {@code null} if none could be made ({@code null} class or invalid constructor
-     *     or exception).
-     */
-    private static Translator getInstance(final Class<? extends Translator> clazz, final Locale locale,
-                                          final Object resourcePointer) {
-        if (clazz == null) {
-            return null;
-        }
-
-        try {
-            return Reflection.instantiate(clazz, locale, resourcePointer);
-        } catch (NoSuchMethodException | InstantiationException
-                | IllegalAccessException | InvocationTargetException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Extracts from the file name and returns the translator type to use.
-     *
-     * @param fileName The file name.
-     * @return The translator type to be used.
-     */
-    private static Class<? extends Translator> getTranslatorClass(final String fileName) {
-        final String[] fileNameParts = fileName.split("\\.");
+        final String[] fileNameParts = resourceReference.split("\\.");
 
         if (fileNameParts.length < 2) {
             return null;
         }
 
         return switch (fileNameParts[fileNameParts.length - 1].toLowerCase()) {
-            case "po" -> GettextPOTranslator.class;
-            case "yml", "yaml" -> YAMLTranslator.class;
-            case "properties", "class" -> PropertiesTranslator.class;
+            case "po" -> new GettextPOTranslator(locale, resourceReference);
+            case "yml", "yaml" -> new YAMLTranslator(locale, resourceReference);
+            case "properties", "class" -> new PropertiesTranslator(locale, resourceReference);
             default -> null;
         };
     }

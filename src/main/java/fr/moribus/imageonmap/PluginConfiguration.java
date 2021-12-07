@@ -36,25 +36,47 @@
 
 package fr.moribus.imageonmap;
 
-import static fr.zcraft.quartzlib.components.configuration.ConfigurationItem.item;
+import fr.zcraft.quartzlib.components.i18n.I18n;
 
-import fr.zcraft.quartzlib.components.configuration.Configuration;
-import fr.zcraft.quartzlib.components.configuration.ConfigurationItem;
 import java.util.Locale;
+import java.util.function.Supplier;
 
+import org.bukkit.configuration.file.FileConfiguration;
 
-public final class PluginConfiguration extends Configuration {
-    public static final ConfigurationItem<Locale> LANG = item("lang", Locale.class);
+public final class PluginConfiguration {
 
-    public static final ConfigurationItem<Boolean> CHECK_FOR_UPDATES = item("check-for-updates", true);
+    private static final ImageOnMap PLUGIN = ImageOnMap.getPlugin();
 
-    public static final ConfigurationItem<Integer> MAP_GLOBAL_LIMIT = item("map-global-limit", 0, "Limit-map-by-server");
-    public static final ConfigurationItem<Integer> MAP_PLAYER_LIMIT = item("map-player-limit", 0, "Limit-map-by-player");
+    public static final Supplier<Locale> LANG = () -> I18n.localeFromString(PLUGIN.getConfig().getString("lang"));
 
-    public static final ConfigurationItem<Boolean> SAVE_FULL_IMAGE = item("save-full-image", true);
+    public static final Supplier<Boolean> CHECK_FOR_UPDATES = () -> PLUGIN.getConfig().getBoolean("check-for-updates");
 
+    public static final Supplier<Integer> MAP_GLOBAL_LIMIT = () -> {
+        FileConfiguration config = PLUGIN.getConfig();
+        if (config.isInt("map-global-limit")) {
+            return config.getInt("map-global-limit");
+        }
+        if (config.isInt("Limit-map-by-server")) {
+            return config.getInt("Limit-map-by-server");
+        }
+        return 0;
+    };
 
-    public static final ConfigurationItem<Integer> LIMIT_SIZE_X = item("limit-map-size-x", 0);
-    public static final ConfigurationItem<Integer> LIMIT_SIZE_Y = item("limit-map-size-y", 0);
+    public static final Supplier<Integer> MAP_PLAYER_LIMIT = () -> {
+        FileConfiguration config = PLUGIN.getConfig();
+        if (config.isInt("map-player-limit")) {
+            return config.getInt("map-player-limit");
+        }
+        if (config.isInt("Limit-map-by-player")) {
+            return config.getInt("Limit-map-by-player");
+        }
+        return 0;
+    };
+
+    public static final Supplier<Boolean> SAVE_FULL_IMAGE = () -> PLUGIN.getConfig().getBoolean("save-full-image");
+
+    public static final Supplier<Integer> LIMIT_SIZE_X = () -> PLUGIN.getConfig().getInt("limit-map-size-x");
+
+    public static final Supplier<Integer> LIMIT_SIZE_Y = () -> PLUGIN.getConfig().getInt("limit-map-size-y");
 
 }
