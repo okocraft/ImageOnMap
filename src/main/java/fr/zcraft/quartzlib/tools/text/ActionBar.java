@@ -31,6 +31,8 @@
 package fr.zcraft.quartzlib.tools.text;
 
 import fr.zcraft.quartzlib.core.QuartzLib;
+import net.kyori.adventure.text.Component;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +63,7 @@ public final class ActionBar {
      */
     public static void sendPermanentMessage(Player player, String message) {
         actionMessages.put(player.getUniqueId(), message);
-        MessageSender.sendActionBarMessage(player, message);
+        player.sendActionBar(Component.text(message));
 
         checkActionMessageUpdaterRunningState();
     }
@@ -78,7 +80,7 @@ public final class ActionBar {
         actionMessages.remove(player.getUniqueId());
 
         if (instant) {
-            MessageSender.sendActionBarMessage(player, "");
+            player.sendActionBar(Component.empty());
         }
 
         checkActionMessageUpdaterRunningState();
@@ -108,7 +110,7 @@ public final class ActionBar {
             for (Map.Entry<UUID, String> entry : actionMessages.entrySet()) {
                 Player player = Bukkit.getPlayer(entry.getKey());
                 if (player != null && player.isOnline()) {
-                    MessageSender.sendActionBarMessage(player, entry.getValue());
+                    player.sendActionBar(Component.text(entry.getValue()));
                 }
             }
         };

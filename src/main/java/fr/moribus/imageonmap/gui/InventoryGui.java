@@ -31,7 +31,6 @@
 package fr.moribus.imageonmap.gui;
 
 import fr.zcraft.quartzlib.tools.items.InventoryUtils;
-import fr.zcraft.quartzlib.tools.reflection.Reflection;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import java.lang.reflect.InvocationTargetException;
 import org.bukkit.Bukkit;
@@ -174,14 +173,7 @@ public abstract class InventoryGui extends GuiBase {
         Player player = getPlayer();
 
         boolean titleIsStillTheSame = false;
-        try {
-            titleIsStillTheSame = player.getOpenInventory().getTitle().equals(title);
-        } catch (final NoSuchMethodError e) {
-            try {
-                titleIsStillTheSame = Reflection.call(inventory, "getTitle").equals(title);
-            } catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
-            }
-        }
+        titleIsStillTheSame = player.getOpenInventory().getTitle().equals(title);
 
         // If inventory does not need to be regenerated
         if (inventory != null && titleIsStillTheSame && inventory.getSize() == size) {

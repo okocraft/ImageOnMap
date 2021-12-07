@@ -36,16 +36,12 @@
 
 package fr.moribus.imageonmap.gui;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.PosterMap;
 import fr.moribus.imageonmap.map.SingleMap;
 import fr.moribus.imageonmap.ui.MapItemManager;
-import fr.moribus.imageonmap.gui.ExplorerGui;
-import fr.moribus.imageonmap.gui.Gui;
-import fr.moribus.imageonmap.gui.GuiAction;
-import fr.moribus.imageonmap.gui.GuiUtils;
-import fr.moribus.imageonmap.gui.PromptGui;
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import java.util.ArrayList;
@@ -54,8 +50,14 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
 public class MapDetailGui extends ExplorerGui<Integer> {
@@ -230,32 +232,47 @@ public class MapDetailGui extends ExplorerGui<Integer> {
             return;
         }
 
-        PromptGui.prompt(getPlayer(), newName -> {
-            if (!Permissions.RENAME.grantedTo(getPlayer())) {
-                I.sendT(getPlayer(), "{ce}You are no longer allowed to do that.");
-                return;
+        ConversationFactory cf = new ConversationFactory(ImageOnMap.getPlugin(ImageOnMap.class));
+        cf.withLocalEcho(false);
+        cf.withFirstPrompt(new StringPrompt() {
+
+            @Override
+            public @Nullable Prompt acceptInput(@NotNull ConversationContext context, @Nullable String input) {
+                if (!Permissions.RENAME.grantedTo(getPlayer())) {
+                    I.sendT(getPlayer(), "{ce}You are no longer allowed to do that.");
+                    return END_OF_CONVERSATION;
+                }
+    
+                if (input == null || input.isEmpty()) {
+                    I.sendT(getPlayer(), "{ce}Map names can't be empty.");
+                    return END_OF_CONVERSATION;
+                }
+                if (input.equals(map.getName())) {
+                    return END_OF_CONVERSATION;
+                }
+    
+                map.rename(input);
+                I.sendT(getPlayer(), "{cs}Map successfully renamed.");
+    
+                if (getParent() != null) {
+                    RunTask.later(() -> Gui.open(getPlayer(), MapDetailGui.this), 1L);
+    
+                } else {
+                    close();
+                }
+                
+                return END_OF_CONVERSATION;
             }
 
-            if (newName == null || newName.isEmpty()) {
-                I.sendT(getPlayer(), "{ce}Map names can't be empty.");
-                return;
+            @Override
+            public @NotNull String getPromptText(@NotNull ConversationContext arg0) {
+                return "";
             }
-            if (newName.equals(map.getName())) {
-                return;
-            }
+            
+        });
 
-            map.rename(newName);
-            I.sendT(getPlayer(), "{cs}Map successfully renamed.");
-
-            if (getParent() != null) {
-                RunTask.later(() -> Gui.open(getPlayer(), this), 1L);
-
-            } else {
-                close();
-            }
-        }, map.getName(), this);
-
-
+        close();
+        cf.buildConversation(getPlayer()).begin();
     }
 
     @GuiAction("delete")

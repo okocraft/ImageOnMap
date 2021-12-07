@@ -33,7 +33,8 @@ package fr.zcraft.quartzlib.tools.items;
 import fr.zcraft.quartzlib.core.QuartzComponent;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.tools.PluginLogger;
-import fr.zcraft.quartzlib.tools.reflection.Reflection;
+
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,13 +96,16 @@ public class GlowEffect extends QuartzComponent {
         try {
             // We change this to force Bukkit to accept a new enchantment.
             // Thanks to Cybermaxke on BukkitDev.
-            Reflection.setFieldValue(Enchantment.class, null, "acceptingNew", true);
+            Field acceptingNewField =  Enchantment.class.getField("acceptingNew");
+            acceptingNewField.setAccessible(true);
+            acceptingNewField.set(null, true);
+            glowEnchantment = new GlowEffectEnchantment();
+            Enchantment.registerEnchantment(glowEnchantment);
+            Enchantment.stopAcceptingRegistrations();
         } catch (Exception e) {
             PluginLogger.error("Unable to re-enable enchantments registrations", e);
         }
 
-        glowEnchantment = new GlowEffectEnchantment();
-        Enchantment.registerEnchantment(glowEnchantment);
 
         return glowEnchantment;
     }

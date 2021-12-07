@@ -30,8 +30,6 @@
 
 package fr.zcraft.quartzlib.tools.items;
 
-import fr.zcraft.quartzlib.tools.reflection.Reflection;
-import java.lang.reflect.InvocationTargetException;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -61,26 +59,7 @@ public abstract class InventoryUtils {
             return false;
         }
 
-        // The `getName` and `getTitle` methods were removed in 1.13+, as they are now only available in the
-        // InventoryView, when an inventory is opened. So we use reflection to test the titles if possible;
-        // else, we only rely on the content.
-        // We initialize the test variables to true, so if the test fails, this criteria is considered valid
-        // and ignored.
-
-        boolean sameName = true;
-        boolean sameTitle = true;
-
-        try {
-            sameName = Reflection.call(inventory1, "getName").equals(Reflection.call(inventory2, "getName"));
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
-        }
-
-        try {
-            sameTitle = Reflection.call(inventory1, "getTitle").equals(Reflection.call(inventory2, "getTitle"));
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
-        }
-
-        if (!sameName || !sameTitle || inventory1.getSize() != inventory2.getSize()
+        if (inventory1.getSize() != inventory2.getSize()
                 || inventory1.getType() != inventory2.getType()) {
             return false;
         }

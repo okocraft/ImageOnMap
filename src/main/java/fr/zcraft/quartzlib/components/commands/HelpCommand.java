@@ -33,7 +33,6 @@ package fr.zcraft.quartzlib.components.commands;
 import fr.moribus.imageonmap.gui.GuiUtils;
 import fr.zcraft.quartzlib.components.rawtext.RawText;
 import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.commands.PaginatedTextView;
 import fr.zcraft.quartzlib.tools.text.RawMessage;
 import java.io.IOException;
@@ -101,14 +100,20 @@ public class HelpCommand extends Command {
         message += GuiUtils.generatePrefixedFixedLengthString("§6" + Commands.CHAT_PREFIX + " ",
                 "Usage: §r" + command.getUsageString()) + "\n";
 
-        String help = getHelpText(command);
-        if (help.isEmpty()) {
-            message += "§c" + Commands.CHAT_PREFIX + " There is no help message for this command.";
-        } else {
-            message += help;
-        }
+        try {
 
-        sender.sendMessage(message);
+            String help = getHelpText(command);
+            if (help.isEmpty()) {
+                message += "§c" + Commands.CHAT_PREFIX + " There is no help message for this command.";
+            } else {
+                message += help;
+            }
+
+            sender.sendMessage(message);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getHelpText(Command command) throws IOException {

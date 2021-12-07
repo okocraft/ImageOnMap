@@ -31,11 +31,15 @@
 package fr.zcraft.quartzlib.tools;
 
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.components.rawtext.RawText;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.tools.runners.RunAsyncTask;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
-import fr.zcraft.quartzlib.tools.text.MessageSender;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -49,7 +53,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -209,31 +212,28 @@ public final class UpdateChecker implements Listener {
 
     private static PlayerNotificationSender getDefaultPlayerNotificationSender() {
         return (version, link, player) -> {
-            final RawText hover = new RawText()
-                    .then(I.t("Click here to open"))
-                    .then("\n")
-                    .then(link.toString().replaceFirst("https://", "").replaceFirst("www\\.", "")).color(ChatColor.GRAY)
-                    .build();
+            URL url;
+            try {
+                url = link.toURL();
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException(e);
+            }
 
-            MessageSender.sendSystemMessage(player, "");
-            MessageSender.sendSystemMessage(player, new RawText()
-                    .uri(link)
-                    .hover(hover)
-                    .then("✦ ")
-                    .color(ChatColor.GOLD)
-                    .then(I.t("{0} {1} is available!", QuartzLib.getPlugin().getDescription().getName(), version))
-                    .color(ChatColor.GOLD)
-                    .style(ChatColor.BOLD)
-                    .build()
-            );
-            MessageSender.sendSystemMessage(player, new RawText()
-                    .then(I.t("You're still running {0}. Click here to update.",
-                            QuartzLib.getPlugin().getDescription().getVersion()))
-                    .color(ChatColor.YELLOW)
-                    .uri(link)
-                    .hover(hover)
-                    .build()
-            );
+            player.sendMessage(Component.text().append(Component.newline())
+                    .clickEvent(ClickEvent.openUrl(url))
+                    .hoverEvent(HoverEvent.showText(Component.text("Click here to open\n" +
+                            link.toString().replaceFirst("https://", "").replaceFirst("www\\.", ""))))
+                    .append(Component.text("✦ "))
+                    .append(Component.text(
+                            I.t("{0} {1} is available!", QuartzLib.getPlugin().getDescription().getName(), version)))
+                    .decorate(TextDecoration.BOLD).build());
+
+            player.sendMessage(Component.text()
+                    .append(Component.text(I.t("You're still running {0}. Click here to update.",
+                            QuartzLib.getPlugin().getDescription().getVersion())))
+                    .color(NamedTextColor.YELLOW)
+                    .clickEvent(ClickEvent.openUrl(url))
+                    .build());
         };
     }
 
