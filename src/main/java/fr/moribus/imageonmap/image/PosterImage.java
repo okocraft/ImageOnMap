@@ -36,18 +36,18 @@
 
 package fr.moribus.imageonmap.image;
 
-
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 /**
  * This class represents an image split into pieces
  */
 public class PosterImage {
+
     private static final int WIDTH = 128;
     private static final int HEIGHT = 128;
 
     private final BufferedImage originalImage;
+
     private BufferedImage[] cutImages;
     private int lines;
     private int columns;
@@ -78,6 +78,7 @@ public class PosterImage {
         if (remainderX > 0) {
             columns++;
         }
+
         if (remainderY > 0) {
             lines++;
         }
@@ -109,7 +110,6 @@ public class PosterImage {
             }
             throw e;
         }
-
     }
 
     /**
@@ -120,12 +120,10 @@ public class PosterImage {
      * @return the requested subimage.
      */
     private BufferedImage makeSubImage(BufferedImage originalImage, int x, int y) {
-
         BufferedImage newImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 
-        Graphics graphics = newImage.getGraphics();
+        newImage.getGraphics().drawImage(originalImage, -x, -y, null);
 
-        graphics.drawImage(originalImage, -x, -y, null);
         return newImage;
     }
 
@@ -157,5 +155,4 @@ public class PosterImage {
     public int getImagesCount() {
         return cutImagesCount;
     }
-
 }
