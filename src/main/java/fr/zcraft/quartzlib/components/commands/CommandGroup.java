@@ -313,10 +313,6 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
         return names[0];
     }
 
-    public String[] getNames() {
-        return names.clone();
-    }
-
     public List<String> getAliases() {
         return Arrays.asList(names).subList(1, names.length);
     }
@@ -335,10 +331,6 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
 
     public boolean isShortcutCommand() {
         return shortcutCommandGroup != null;
-    }
-
-    public CommandGroup getShortcutCommandGroup() {
-        return shortcutCommandGroup;
     }
 
 }

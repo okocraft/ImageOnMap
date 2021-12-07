@@ -36,15 +36,12 @@
 
 package fr.moribus.imageonmap.image;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.PluginConfiguration;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.components.worker.Worker;
-import fr.zcraft.quartzlib.components.worker.WorkerAttributes;
-import fr.zcraft.quartzlib.components.worker.WorkerCallback;
-import fr.zcraft.quartzlib.components.worker.WorkerRunnable;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,13 +49,42 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javax.imageio.ImageIO;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import org.bukkit.Bukkit;
 
-@WorkerAttributes(name = "Image Renderer", queriesMainThread = true)
-public class ImageRendererExecutor extends Worker {
+public class ImageRendererExecutor {
+
+    private static final ExecutorService executor = Executors.newFixedThreadPool(
+        Math.min(Runtime.getRuntime().availableProcessors(), 4), new ThreadFactoryBuilder()
+                .setDaemon(true)
+                .setNameFormat("Image Renderer - #%d")
+                .build()
+    );
+
+    public static Executor getMainThread() {
+        return Bukkit.getScheduler().getMainThreadExecutor(ImageOnMap.getPlugin());
+    }
+
+    @FunctionalInterface interface ExceptionalSupplier<T> { public T supply() throws Throwable; }
+
+    private static <T> CompletableFuture<T> supply(ExceptionalSupplier<T> supplier, Executor executor) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return supplier.supply();
+            } catch (Throwable t) {
+                throw new IllegalArgumentException(t);
+            }
+        }, executor);
+    }
+
     private static URLConnection connecting(URL url) throws IOException {
         final URLConnection connection = url.openConnection();
         connection.addRequestProperty("User-Agent",
@@ -91,97 +117,86 @@ public class ImageRendererExecutor extends Worker {
         }
     }
 
-    public static void render(final URL url, final ImageUtils.ScalingType scaling, final UUID playerUUID,
-                              final int width, final int height, WorkerCallback<ImageMap> callback) {
-        submitQuery(new WorkerRunnable<ImageMap>() {
-            @Override
-            public ImageMap run() throws Throwable {
+    public static CompletableFuture<ImageMap> render(final URL url, final ImageUtils.ScalingType scaling, final UUID playerUUID,
+                              final int width, final int height) {
+        return supply(() -> {
+            BufferedImage image = null;
+            //If the link is an imgur one
+            if (url.toString().toLowerCase().startsWith("https://imgur.com/")) {
 
-                BufferedImage image = null;
-                //If the link is an imgur one
-                if (url.toString().toLowerCase().startsWith("https://imgur.com/")) {
+                //Not handled, can't with the hash only access the image in i.imgur.com/<hash>.<extension>
 
-                    //Not handled, can't with the hash only access the image in i.imgur.com/<hash>.<extension>
+                if (url.toString().contains("gallery/")) {
+                    throw new IOException(
+                            "We do not support imgur gallery yet, please use direct link to image instead."
+                                    + " Right click on the picture you want "
+                                    + "to use then select copy picture link:) ");
+                }
 
-                    if (url.toString().contains("gallery/")) {
-                        throw new IOException(
-                                "We do not support imgur gallery yet, please use direct link to image instead."
-                                        + " Right click on the picture you want "
-                                        + "to use then select copy picture link:) ");
-                    }
+                for (Extension ext : Extension.values()) {
+                    String newLink = "https://i.imgur.com/" + url.toString().split("https://imgur.com/")[1]
+                            + "."
+                            + ext.toString();
+                    URL url2 = new URL(newLink);
 
-                    for (Extension ext : Extension.values()) {
-                        String newLink = "https://i.imgur.com/" + url.toString().split("https://imgur.com/")[1]
-                                + "."
-                                + ext.toString();
-                        URL url2 = new URL(newLink);
-
-                        //Try connecting
-                        URLConnection connection = connecting(url2);
-
-                        final InputStream stream = connection.getInputStream();
-
-                        image = ImageIO.read(stream);
-
-                        //valid image
-                        if (image != null) {
-                            break;
-                        }
-
-                    }
-
-                } else {
                     //Try connecting
-                    URLConnection connection = connecting(url);
+                    URLConnection connection = connecting(url2);
 
                     final InputStream stream = connection.getInputStream();
 
                     image = ImageIO.read(stream);
-                }
-                if (image == null) {
-                    throw new IOException(I.t("The given URL is not a valid image"));
-                }
-                // Limits are in place and the player does NOT have rights to avoid them.
-                checkSizeLimit(playerUUID, image);
-                if (scaling != ImageUtils.ScalingType.NONE && height <= 1 && width <= 1) {
-                    ImageMap ret = renderSingle(scaling.resize(image, ImageMap.WIDTH, ImageMap.HEIGHT), playerUUID);
-                    image.flush();//Safe to free
-                    return ret;
-                }
-                final BufferedImage resizedImage =
-                        scaling.resize(image, ImageMap.WIDTH * width, ImageMap.HEIGHT * height);
-                image.flush();//Safe to free
-                return renderPoster(resizedImage, playerUUID);
-            }
-        }, callback);
-    }
 
-    public static void update(final URL url, final ImageUtils.ScalingType scaling, final UUID playerUUID,
-                              final ImageMap map, final int width, final int height,
-                              WorkerCallback<ImageMap> callback) {
-        submitQuery(new WorkerRunnable<ImageMap>() {
-            @Override
-            public ImageMap run() throws Throwable {
+                    //valid image
+                    if (image != null) {
+                        break;
+                    }
 
-                final URLConnection connection = connecting(url);
+                }
+
+            } else {
+                //Try connecting
+                URLConnection connection = connecting(url);
 
                 final InputStream stream = connection.getInputStream();
-                final BufferedImage image = ImageIO.read(stream);
-                stream.close();
 
-                if (image == null) {
-                    throw new IOException(I.t("The given URL is not a valid image"));
-                }
-
-                // Limits are in place and the player does NOT have rights to avoid them.
-                checkSizeLimit(playerUUID, image);
-
-                updateMap(scaling.resize(image, width * 128, height * 128), map.getMapsIDs());
-                return map;
-
+                image = ImageIO.read(stream);
             }
-        }, callback);
+            if (image == null) {
+                throw new IOException(I.t("The given URL is not a valid image"));
+            }
+            // Limits are in place and the player does NOT have rights to avoid them.
+            checkSizeLimit(playerUUID, image);
+            if (scaling != ImageUtils.ScalingType.NONE && height <= 1 && width <= 1) {
+                ImageMap ret = renderSingle(scaling.resize(image, ImageMap.WIDTH, ImageMap.HEIGHT), playerUUID);
+                image.flush();//Safe to free
+                return ret;
+            }
+            final BufferedImage resizedImage =
+                    scaling.resize(image, ImageMap.WIDTH * width, ImageMap.HEIGHT * height);
+            image.flush();//Safe to free
+            return renderPoster(resizedImage, playerUUID);
+        }, executor);
+    }
 
+    public static CompletableFuture<ImageMap> update(final URL url, final ImageUtils.ScalingType scaling, final UUID playerUUID,
+                              final ImageMap map, final int width, final int height) {
+        return supply(() -> {
+            final URLConnection connection = connecting(url);
+
+            final InputStream stream = connection.getInputStream();
+            final BufferedImage image = ImageIO.read(stream);
+            stream.close();
+
+            if (image == null) {
+                throw new IOException(I.t("The given URL is not a valid image"));
+            }
+
+            // Limits are in place and the player does NOT have rights to avoid them.
+            checkSizeLimit(playerUUID, image);
+
+            updateMap(scaling.resize(image, width * 128, height * 128), map.getMapsIDs());
+            return map;
+        }, executor);
     }
 
     private static void updateMap(final BufferedImage image, int[] mapsIDs) {
@@ -195,33 +210,22 @@ public class ImageRendererExecutor extends Worker {
             ImageIOExecutor.saveImage(ImageMap.getFullImageFile(mapsIDs[0], mapsIDs[mapsIDs.length - 1]), image);
         }
 
-        submitToMainThread(new Callable<Void>() {
-            @Override
-            public Void call() {
-                Renderer.installRenderer(poster, mapsIDs);
-                return null;
-            }
-        });
+        supply(() -> {
+            Renderer.installRenderer(poster, mapsIDs);
+            return null;
+        }, getMainThread());
     }
 
     private static ImageMap renderSingle(final BufferedImage image, final UUID playerUUID) throws Throwable {
         MapManager.checkMapLimit(1, playerUUID);
-        final Future<Integer> futureMapID = submitToMainThread(new Callable<Integer>() {
-            @Override
-            public Integer call() {
-                return MapManager.getNewMapsIds(1)[0];
-            }
-        });
+        final CompletableFuture<Integer> futureMapID = supply(() ->  MapManager.getNewMapsIds(1)[0], getMainThread());
 
         final int mapID = futureMapID.get();
         ImageIOExecutor.saveImage(mapID, image);
-        submitToMainThread(new Callable<Void>() {
-            @Override
-            public Void call() {
-                Renderer.installRenderer(image, mapID);
-                return null;
-            }
-        });
+        supply(() -> {
+            Renderer.installRenderer(image, mapID);
+            return null;
+        }, getMainThread());
         return MapManager.createMap(playerUUID, mapID);
     }
 
@@ -229,12 +233,8 @@ public class ImageRendererExecutor extends Worker {
         final PosterImage poster = new PosterImage(image);
         final int mapCount = poster.getImagesCount();
         MapManager.checkMapLimit(mapCount, playerUUID);
-        final Future<int[]> futureMapsIds = submitToMainThread(new Callable<int[]>() {
-            @Override
-            public int[] call() {
-                return MapManager.getNewMapsIds(mapCount);
-            }
-        });
+        
+        final CompletableFuture<int[]> futureMapsIds = supply(() ->  MapManager.getNewMapsIds(mapCount), getMainThread());
         poster.splitImages();
         final int[] mapsIDs = futureMapsIds.get();
 
@@ -242,15 +242,11 @@ public class ImageRendererExecutor extends Worker {
         if (PluginConfiguration.SAVE_FULL_IMAGE.get()) {
             ImageIOExecutor.saveImage(ImageMap.getFullImageFile(mapsIDs[0], mapsIDs[mapsIDs.length - 1]), image);
         }
+        supply(() -> {
+            Renderer.installRenderer(poster, mapsIDs);
+            return null;
+        }, getMainThread());
 
-        submitToMainThread(new Callable<Void>() {
-            @Override
-            public Void call() {
-                Renderer.installRenderer(poster, mapsIDs);
-                return null;
-            }
-
-        });
         poster.getImage().flush();//Safe to free
         return MapManager.createMap(poster, playerUUID, mapsIDs);
     }

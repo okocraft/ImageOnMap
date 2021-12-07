@@ -67,7 +67,7 @@ public class HelpCommand extends Command {
         final List<Command> displayedCommands = new ArrayList<>();
 
         for (Command subCommands : commandGroup.getCommands()) {
-            if (subCommands.canExecute(sender, args)) {
+            if (subCommands.canExecute(sender)) {
                 displayedCommands.add(subCommands);
             }
         }
@@ -89,7 +89,7 @@ public class HelpCommand extends Command {
             return;
         }
 
-        if (!command.canExecute(sender, args)) {
+        if (!command.canExecute(sender)) {
             warning("You do not have the permission to use this command.");
         }
 

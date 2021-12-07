@@ -45,14 +45,14 @@ import fr.moribus.imageonmap.map.MapManager;
 import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.components.worker.WorkerCallback;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.text.ActionBar;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -174,29 +174,27 @@ public class UpdateCommand extends IoMCommand {
                     if (playerSender != null) {
                         ActionBar.sendPermanentMessage(playerSender, ChatColor.DARK_GREEN + I.t("Updating..."));
                     }
-                    ImageRendererExecutor
-                            .update(url1, scaling, uuid, map, width, height, new WorkerCallback<ImageMap>() {
-                                @Override
-                                public void finished(ImageMap result) {
-                                    if (playerSender != null) {
-                                        ActionBar.removeMessage(playerSender);
-                                        playerSender.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                                                TextComponent.fromLegacyText(ChatColor.DARK_GREEN
-                                                        + I.t("The map was updated using the new image!")));
-                                    }
+                    ImageRendererExecutor.update(url1, scaling, uuid, map, width, height)
+                            .exceptionally(exception -> {
+                                if (playerSender != null) {
+                                    playerSender.sendMessage(
+                                            I.t("{ce}Map rendering failed: {0}", exception.getMessage())
+                                    );
                                 }
-
-                                @Override
-                                public void errored(Throwable exception) {
-                                    if (playerSender != null) {
-                                        playerSender
-                                                .sendMessage(
-                                                        I.t("{ce}Map rendering failed: {0}", exception.getMessage()));
-                                    }
-                                    PluginLogger.warning("Rendering from {0} failed: {1}: {2}",
-                                            playerSender.getName(),
-                                            exception.getClass().getCanonicalName(),
-                                            exception.getMessage());
+                                PluginLogger.warning("Rendering from {0} failed: {1}: {2}",
+                                        playerSender.getName(),
+                                        exception.getClass().getCanonicalName(),
+                                        exception.getMessage());
+                                return null;
+                            })
+                            .thenAccept(result -> {
+                                if (playerSender != null) {
+                                    ActionBar.removeMessage(playerSender);
+                                    playerSender.sendActionBar(Component.text()
+                                            .color(NamedTextColor.DARK_GREEN)
+                                            .append(Component.text(I.t("The map was updated using the new image!")))
+                                            .build()
+                                    );
                                 }
                             });
                 } finally {

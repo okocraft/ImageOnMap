@@ -45,17 +45,4 @@ import org.bukkit.Material;
  *                                                       and a {@link ChatColor}.
  */
 public enum ColorableMaterial {
-    BANNER,
-    BED,
-    CARPET,
-    CONCRETE,
-    CONCRETE_POWDER,
-    DYE,
-    GLAZED_TERRACOTTA,
-    SHULKER_BOX,
-    STAINED_GLASS,
-    STAINED_GLASS_PANE,
-    TERRACOTTA,
-    WALL_BANNER,
-    WOOL
 }

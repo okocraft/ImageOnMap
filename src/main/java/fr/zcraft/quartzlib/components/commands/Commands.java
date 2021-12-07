@@ -73,22 +73,6 @@ public class Commands extends QuartzComponent {
     }
 
     /**
-     * Executes a registered command.
-     * @param sender The command sender.
-     * @param commandName The name of the command.
-     * @param args The command's arguments.
-     * @return Whether the command was found.
-     */
-    public static boolean execute(CommandSender sender, String commandName, String[] args) {
-        CommandGroup commandGroup = getMatchingCommandGroup(commandName);
-        if (commandGroup == null) {
-            return false;
-        }
-        commandGroup.executeMatchingCommand(sender, args);
-        return true;
-    }
-
-    /**
      * Gets the command matching the given class.
      * @param commandClass The command class.
      * @return The matching gommand, or null if none were found.

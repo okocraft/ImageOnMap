@@ -38,37 +38,56 @@ package fr.moribus.imageonmap.image;
 
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.map.ImageMap;
-import fr.zcraft.quartzlib.components.worker.Worker;
-import fr.zcraft.quartzlib.components.worker.WorkerAttributes;
-import fr.zcraft.quartzlib.components.worker.WorkerRunnable;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+
 import javax.imageio.ImageIO;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-@WorkerAttributes(name = "Image IO")
-public class ImageIOExecutor extends Worker {
-    public static void loadImage(final Path file, final Renderer mapRenderer) {
-        submitQuery(new WorkerRunnable<Void>() {
-            @Override
-            public Void run() throws Exception {
-                BufferedImage image = ImageIO.read(file.toFile());
-                mapRenderer.setImage(image);
-                image.flush();//Safe to free
-                return null;
+public class ImageIOExecutor {
+
+    private static final ExecutorService executor = Executors.newFixedThreadPool(
+        Math.min(Runtime.getRuntime().availableProcessors(), 4), new ThreadFactoryBuilder()
+                .setDaemon(true)
+                .setNameFormat("Image IO - #%d")
+                .setUncaughtExceptionHandler((thread, throwable) -> {
+                    ImageOnMap.getPlugin().getLogger().log(
+                            Level.SEVERE,
+                            "An exception occurred in the thread " + thread.getName(),
+                            throwable
+                    );
+                })
+                .build()
+    );
+
+    @FunctionalInterface interface ExceptionalRunnable { public void run() throws Throwable; }
+
+    private static void run(ExceptionalRunnable runnable) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                runnable.run();
+            } catch (Throwable t) {
+                throw new IllegalArgumentException("Error occurred in passed runnable.", t);
             }
+        }, executor);
+    }
+
+    public static void loadImage(final Path file, final Renderer mapRenderer) {
+        run(() -> {
+            BufferedImage image = ImageIO.read(file.toFile());
+            mapRenderer.setImage(image);
+            image.flush(); //Safe to free
         });
     }
 
     public static void saveImage(final Path file, final BufferedImage image) {
-        submitQuery(new WorkerRunnable<Void>() {
-            @Override
-            public Void run() throws Throwable {
-                ImageIO.write(image, "png", file.toFile());
-                return null;
-            }
-        });
+        run(() -> ImageIO.write(image, "png", file.toFile()));
     }
 
     public static void saveImage(int mapID, BufferedImage image) {
@@ -84,20 +103,12 @@ public class ImageIOExecutor extends Worker {
     }
 
     public static void deleteImage(ImageMap map) {
-        int[] mapsIDs = map.getMapsIDs();
-
-        for (int mapsID : mapsIDs) {
+        for (int mapsID : map.getMapsIDs()) {
             deleteImage(ImageOnMap.getPlugin().getImageFile(mapsID));
         }
     }
 
     public static void deleteImage(Path file) {
-        submitQuery(new WorkerRunnable<Void>() {
-            @Override
-            public Void run() throws Throwable {
-                Files.delete(file);
-                return null;
-            }
-        });
+        run(() -> Files.delete(file));
     }
 }

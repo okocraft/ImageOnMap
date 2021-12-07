@@ -31,9 +31,7 @@
 package fr.zcraft.quartzlib.components.commands;
 
 import fr.zcraft.quartzlib.components.commands.CommandException.Reason;
-import fr.zcraft.quartzlib.components.rawtext.RawText;
 import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.tools.text.RawMessage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -254,17 +252,6 @@ public abstract class Command {
     }
 
     /**
-     * Checks if a given sender is allowed to execute this command.
-     *
-     * @param sender The sender.
-     * @param args   The arguments passed to the command.
-     * @return {@code true} if the sender can execute the command.
-     */
-    public boolean canExecute(CommandSender sender, String[] args) {
-        return canExecute(sender);
-    }
-
-    /**
      * Tab-completes the command. This command should be overridden.
      *
      * <p>Use protected fields to access data (like {@link #args}).</p>
@@ -287,7 +274,7 @@ public abstract class Command {
         parseArgs(args);
 
         try {
-            if (!canExecute(sender, args)) {
+            if (!canExecute(sender)) {
                 throw new CommandException(this, Reason.SENDER_NOT_AUTHORIZED);
             }
             run();
@@ -313,7 +300,7 @@ public abstract class Command {
         parseArgs(args);
 
         try {
-            if (canExecute(sender, args)) {
+            if (canExecute(sender)) {
                 result = complete();
             }
         } catch (CommandException ignored) { }
@@ -455,15 +442,6 @@ public abstract class Command {
      */
     protected void error() throws CommandException {
         error("");
-    }
-
-    /**
-     * Sends a {@linkplain RawText raw JSON text} to the sender.
-     *
-     * @param text The JSON message.
-     */
-    protected void send(RawText text) {
-        RawMessage.send(sender, text);
     }
 
     ///////////// Methods for flags /////////////

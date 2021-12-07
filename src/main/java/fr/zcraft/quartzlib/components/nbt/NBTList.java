@@ -479,10 +479,9 @@ public class NBTList implements List<Object> {
      * values that cannot be coerced to the specified type.
      *
      * @param <T>   The type the values need to be coerced to.
-     * @param klass The class the values need to be coerced to.
      * @return The filtered iterable.
      */
-    public <T> Iterable<T> filter(Class<T> klass) {
+    public <T> Iterable<T> filter() {
         return new NbtListFilterIterator<>(listIterator());
     }
 
@@ -492,11 +491,10 @@ public class NBTList implements List<Object> {
      * values that cannot be coerced to the specified type.
      *
      * @param <T>   The type the values need to be coerced to.
-     * @param klass The class the values need to be coerced to.
      * @param index The index to start the iteration at.
      * @return The filtered iterator.
      */
-    public <T> ListIterator<T> filter(Class<T> klass, int index) {
+    public <T> ListIterator<T> filter(int index) {
         return new NbtListFilterIterator<>(listIterator(index));
     }
 

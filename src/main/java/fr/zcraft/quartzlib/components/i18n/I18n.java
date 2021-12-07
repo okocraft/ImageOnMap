@@ -91,17 +91,6 @@ public class I18n extends QuartzComponent {
     }
 
     /**
-     * @param addCountToParameters if {@code true}, when a translation method with plurals is called
-     *                             without object parameters (the ones replacing {@code {0}}, {@code
-     *                             {1}}...), the count is added as the first (and only) parameter, as
-     *                             it will likely be used in the string and this avoid giving it twice.
-     *                             Default: {@code true}.
-     */
-    public static void addCountToParameters(boolean addCountToParameters) {
-        I18n.addCountToParameters = addCountToParameters;
-    }
-
-    /**
      * Return the locale used by the player's client.
      *
      * @param player The player
@@ -158,17 +147,6 @@ public class I18n extends QuartzComponent {
                 }
             }
         }
-    }
-
-    /**
-     * Loads a file into the translations system.
-     * <p>If this file is a directory, all files inside will be loaded, recursively.</p>
-     * <p>The locale will be extracted from the file name, and the format, from the file's extension.</p>
-     *
-     * @param file The file to load.
-     */
-    public static void load(final File file) {
-        load(file, 0);
     }
 
 
@@ -381,32 +359,6 @@ public class I18n extends QuartzComponent {
                         ""); // “WORD-JOINER” non-breaking space (zero-width)
     }
 
-    /**
-     * Translates the given string.
-     *
-     * <p> Tries to use the primary locale; fallbacks to the fallback locale if the string cannot be
-     * translated; fallbacks to the input text if the string still cannot be translated. </p>
-     *
-     * <p> The count is likely to be used in the string, so if, for a translation with plurals, only
-     * a count is given, this count is also interpreted as a parameter (the first and only one, {@code
-     * {0}}). If this behavior annoys you, you can disable it using {@link
-     * #addCountToParameters(boolean)}. </p>
-     *
-     * @param context         The translation context. {@code null} if no context defined.
-     * @param messageId       The string to translate.
-     * @param messageIdPlural The plural version of the string to translate. {@code null} if this
-     *                        translation does not have a plural form.
-     * @param count           The count of items to use to choose the singular or plural form.
-     *                        {@code null} if this translation does not have a plural form.
-     * @param parameters      The parameters, replacing values like {@code {0}} in the translated
-     *                        string.
-     * @return The translated text, with the parameters replaced by their values.
-     */
-    public static String translate(String context, String messageId, String messageIdPlural, Integer count,
-                                   Object... parameters) {
-        return translate(null, context, messageId, messageIdPlural, count, parameters);
-    }
-
 
 
     /* **  TRANSLATION METHODS  ** */
@@ -449,13 +401,6 @@ public class I18n extends QuartzComponent {
                 .replace("{ci}", noticeColor)
                 .replace("{cs}", successColor)
                 .replace("{cst}", statusColor);
-    }
-
-    /**
-     * @return the primary locale set, or {@code null} if unset.
-     */
-    public static Locale getPrimaryLocale() {
-        return primaryLocale;
     }
 
     /**

@@ -56,10 +56,6 @@ public class CommandException extends Exception {
         this(command, reason, "");
     }
 
-    public Reason getReason() {
-        return reason;
-    }
-
     /**
      * Builds the "reason" string for this command exception.
      * @return The reason string.

@@ -48,8 +48,6 @@ import fr.moribus.imageonmap.commands.maptool.NewCommand;
 import fr.moribus.imageonmap.commands.maptool.RenameCommand;
 import fr.moribus.imageonmap.commands.maptool.UpdateCommand;
 import fr.moribus.imageonmap.gui.Gui;
-import fr.moribus.imageonmap.image.ImageIOExecutor;
-import fr.moribus.imageonmap.image.ImageRendererExecutor;
 import fr.moribus.imageonmap.image.MapInitEvent;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.migration.MigratorExecutor;
@@ -109,8 +107,7 @@ public final class ImageOnMap extends QuartzPlugin {
         }
 
         saveDefaultConfig();
-        loadComponents(I18n.class, Gui.class, Commands.class, ImageIOExecutor.class,
-                ImageRendererExecutor.class);
+        loadComponents(I18n.class, Gui.class, Commands.class);
 
         //Init all the things !
         I18n.setPrimaryLocale(PluginConfiguration.LANG.get());

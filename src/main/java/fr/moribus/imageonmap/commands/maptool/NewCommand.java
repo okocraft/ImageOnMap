@@ -40,18 +40,17 @@ import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.commands.IoMCommand;
 import fr.moribus.imageonmap.image.ImageRendererExecutor;
 import fr.moribus.imageonmap.image.ImageUtils;
-import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.PosterMap;
 import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.components.worker.WorkerCallback;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.text.ActionBar;
 import java.net.MalformedURLException;
 import java.net.URL;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -105,29 +104,28 @@ public class NewCommand extends IoMCommand {
         }
         try {
             ActionBar.sendPermanentMessage(player, ChatColor.DARK_GREEN + I.t("Rendering..."));
-            ImageRendererExecutor
-                    .render(url, scaling, player.getUniqueId(), width, height, new WorkerCallback<ImageMap>() {
-                        @Override
-                        public void finished(ImageMap result) {
-                            ActionBar.removeMessage(player);
-                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                                    TextComponent.fromLegacyText(ChatColor.DARK_GREEN + I.t("Rendering finished!")));
+            ImageRendererExecutor.render(url, scaling, player.getUniqueId(), width, height)
+                    .exceptionallyAsync((exception) -> {
+                        player.sendMessage(I.t("{ce}Map rendering failed: {0}", exception.getMessage()));
 
-                            if (result.give(player)
-                                    && (result instanceof PosterMap && !((PosterMap) result).hasColumnData())) {
-                                info(I.t("The rendered map was too big to fit in your inventory."));
-                                info(I.t("Use '/maptool getremaining' to get the remaining maps."));
-                            }
-                        }
+                        PluginLogger.warning("Rendering from {0} failed: {1}: {2}",
+                                player.getName(),
+                                exception.getClass().getCanonicalName(),
+                                exception.getMessage());
+                        return null;
+                    })
+                    .thenAccept(result -> {
+                        ActionBar.removeMessage(player);
+                        player.sendActionBar(Component.text()
+                                .color(NamedTextColor.DARK_GREEN)
+                                .append(Component.text(I.t("Rendering finished!")))
+                                .build()
+                        );
 
-                        @Override
-                        public void errored(Throwable exception) {
-                            player.sendMessage(I.t("{ce}Map rendering failed: {0}", exception.getMessage()));
-
-                            PluginLogger.warning("Rendering from {0} failed: {1}: {2}",
-                                    player.getName(),
-                                    exception.getClass().getCanonicalName(),
-                                    exception.getMessage());
+                        if (result.give(player)
+                                && (result instanceof PosterMap && !((PosterMap) result).hasColumnData())) {
+                            info(I.t("The rendered map was too big to fit in your inventory."));
+                            info(I.t("Use '/maptool getremaining' to get the remaining maps."));
                         }
                     });
         } finally {
