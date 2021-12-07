@@ -36,8 +36,11 @@
 
 package fr.moribus.imageonmap.image;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.map.ImageMap;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,27 +49,29 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
-import javax.imageio.ImageIO;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 public class ImageIOExecutor {
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(
-        Math.min(Runtime.getRuntime().availableProcessors(), 4), new ThreadFactoryBuilder()
-                .setDaemon(true)
-                .setNameFormat("Image IO - #%d")
-                .setUncaughtExceptionHandler((thread, throwable) -> {
-                    ImageOnMap.getPlugin().getLogger().log(
-                            Level.SEVERE,
-                            "An exception occurred in the thread " + thread.getName(),
-                            throwable
-                    );
-                })
-                .build()
+            Math.min(Runtime.getRuntime().availableProcessors(), 4),
+            new ThreadFactoryBuilder()
+                    .setDaemon(true)
+                    .setNameFormat("Image IO - #%d")
+                    .setUncaughtExceptionHandler(ImageIOExecutor::exceptionCatcher)
+                    .build()
     );
 
-    @FunctionalInterface interface ExceptionalRunnable { public void run() throws Throwable; }
+    private static void exceptionCatcher(Thread thread, Throwable throwable) {
+        ImageOnMap.getPlugin().getLogger().log(
+                Level.SEVERE,
+                "An exception occurred in the thread " + thread.getName(),
+                throwable
+        );
+    }
+
+    @FunctionalInterface
+    interface ExceptionalRunnable {
+        void run() throws Throwable;
+    }
 
     private static void run(ExceptionalRunnable runnable) {
         CompletableFuture.runAsync(() -> {
