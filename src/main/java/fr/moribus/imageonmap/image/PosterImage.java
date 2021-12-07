@@ -69,8 +69,8 @@ public class PosterImage {
         int originalWidth = originalImage.getWidth();
         int originalHeight = originalImage.getHeight();
 
-        columns = (int) Math.ceil(originalWidth / WIDTH);
-        lines = (int) Math.ceil(originalHeight / HEIGHT);
+        columns = (int) Math.ceil((double) originalWidth / WIDTH);
+        lines = (int) Math.ceil((double) originalHeight / HEIGHT);
 
         remainderX = originalWidth % WIDTH;
         remainderY = originalHeight % HEIGHT;
