@@ -38,7 +38,6 @@ package fr.moribus.imageonmap.migration;
 
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.i18n.I;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 
 
 public class MigratorExecutor {
@@ -46,7 +45,7 @@ public class MigratorExecutor {
 
     public static void migrate() {
         if (isRunning()) {
-            PluginLogger.error(I.t("Migration is already running."));
+            ImageOnMap.getPlugin().getLogger().severe(I.t("Migration is already running."));
             return;
         }
         migratorThread = new Thread(new V3Migrator(ImageOnMap.getPlugin()), "ImageOnMap-Migration");
@@ -59,12 +58,12 @@ public class MigratorExecutor {
 
     public static void waitForMigration() {
         if (isRunning()) {
-            PluginLogger.info(I.t("Waiting for migration to finish..."));
+            ImageOnMap.getPlugin().getLogger().info(I.t("Waiting for migration to finish..."));
 
             try {
                 migratorThread.join();
             } catch (InterruptedException ex) {
-                PluginLogger.error(I.t(
+                ImageOnMap.getPlugin().getLogger().severe(I.t(
                         "Migration thread has been interrupted while waiting to finish."
                                 + " It may not have ended correctly."));
             }

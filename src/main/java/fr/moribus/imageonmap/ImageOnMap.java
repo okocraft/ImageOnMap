@@ -37,6 +37,7 @@
 package fr.moribus.imageonmap;
 
 
+import fr.moribus.imageonmap.commands.Commands;
 import fr.moribus.imageonmap.commands.maptool.DeleteCommand;
 import fr.moribus.imageonmap.commands.maptool.ExploreCommand;
 import fr.moribus.imageonmap.commands.maptool.GetCommand;
@@ -48,12 +49,11 @@ import fr.moribus.imageonmap.commands.maptool.NewCommand;
 import fr.moribus.imageonmap.commands.maptool.RenameCommand;
 import fr.moribus.imageonmap.commands.maptool.UpdateCommand;
 import fr.moribus.imageonmap.gui.Gui;
+import fr.moribus.imageonmap.i18n.I18n;
 import fr.moribus.imageonmap.image.MapInitEvent;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.migration.MigratorExecutor;
 import fr.moribus.imageonmap.ui.MapItemManager;
-import fr.zcraft.quartzlib.components.commands.Commands;
-import fr.zcraft.quartzlib.components.i18n.I18n;
 import fr.zcraft.quartzlib.core.QuartzPlugin;
 import fr.zcraft.quartzlib.tools.UpdateChecker;
 

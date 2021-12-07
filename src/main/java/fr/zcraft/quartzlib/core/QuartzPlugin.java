@@ -87,7 +87,7 @@ public abstract class QuartzPlugin extends JavaPlugin {
             }
             return new JarFile(file);
         } catch (IOException e) {
-            PluginLogger.error("Unable to load JAR file {0}", e, getFile().getAbsolutePath());
+            ImageOnMap.getPlugin().getLogger().error("Unable to load JAR file {0}", e, getFile().getAbsolutePath());
             return null;
         }
     }

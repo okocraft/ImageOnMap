@@ -30,7 +30,7 @@
 
 package fr.moribus.imageonmap.commands;
 
-import fr.zcraft.quartzlib.tools.PluginLogger;
+import fr.moribus.imageonmap.ImageOnMap;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -38,6 +38,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -54,6 +56,7 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
     private final HashMap<String, String> commandsDescriptions = new HashMap<>();
     private String description = "";
 
+    @SuppressWarnings("unchecked")
     CommandGroup(CommandGroup shortcutCommandGroup, Class<? extends Command> commandClass, String... names) {
         this.names = names;
         this.commandsClasses = new Class[] {commandClass};
@@ -61,6 +64,7 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
         initCommands();
     }
 
+    @SuppressWarnings("unchecked")
     CommandGroup(String[] names, Class<? extends Command>... commandsClasses) {
         this.names = names;
         this.commandsClasses = commandsClasses;
@@ -86,7 +90,7 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
         String fileName = "help/" + getUsualName() + ".txt";
         InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName);
         if (stream == null) {
-            PluginLogger.warning("Could not load description file for the " + getUsualName() + " command");
+            ImageOnMap.getPlugin().getLogger().warning("Could not load description file for the " + getUsualName() + " command");
             return;
         }
 
@@ -140,7 +144,7 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
             newCommand.init(isShortcutCommand() ? shortcutCommandGroup : this);
             commands.add(newCommand);
         } catch (Exception ex) {
-            PluginLogger.warning("Exception while initializing command", ex);
+            ImageOnMap.getPlugin().getLogger().log(Level.WARNING, "Exception while initializing command", ex);
         }
     }
 

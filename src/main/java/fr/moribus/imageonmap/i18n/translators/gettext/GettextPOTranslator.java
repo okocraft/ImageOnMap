@@ -37,12 +37,13 @@
 
 package fr.moribus.imageonmap.i18n.translators.gettext;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.i18n.translators.Translation;
 import fr.moribus.imageonmap.i18n.translators.Translator;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.io.File;
 import java.io.Reader;
 import java.util.Locale;
+import java.util.logging.Level;
 
 
 /**
@@ -75,7 +76,7 @@ public class GettextPOTranslator extends Translator {
                 registerTranslation(translation);
             }
         } catch (POFile.CannotParsePOException e) {
-            PluginLogger.error("Cannot parse the {0} translations file.", e, getFilePath());
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Cannot parse the " + getFilePath() + " translations file.", e);
             source = null;
         }
     }

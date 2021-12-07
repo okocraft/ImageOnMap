@@ -30,8 +30,11 @@
 
 package fr.moribus.imageonmap.commands;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.gui.GuiUtils;
-import fr.zcraft.quartzlib.tools.PluginLogger;
+
+import java.util.logging.Level;
+
 import org.bukkit.ChatColor;
 
 
@@ -80,7 +83,7 @@ public class CommandException extends Exception {
             case SENDER_NOT_AUTHORIZED:
                 return "You do not have the permission to use this command.";
             default:
-                PluginLogger.warning("Unknown CommandException caught", this);
+                ImageOnMap.getPlugin().getLogger().log(Level.WARNING, "Unknown CommandException caught", this);
                 return "An unknown error suddenly happened.";
         }
     }

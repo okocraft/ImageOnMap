@@ -69,9 +69,9 @@ public abstract class NBT {
      * @throws NMSException If there was any issue while assigning NBT data.
      */
     public static NBTCompound fromItemStack(ItemStack item) throws NMSException {
-        // PluginLogger.info("fromItemStack");
+        // ImageOnMap.getPlugin().getLogger().info("fromItemStack");
         init();
-        // PluginLogger.info("init ok");
+        // ImageOnMap.getPlugin().getLogger().info("init ok");
         try {
             return new NBTCompound(getMcNBTCompound(item));
         } catch (Exception ex) {
@@ -246,18 +246,18 @@ public abstract class NBT {
     }
 
     private static void init() throws NMSException {
-        // PluginLogger.info("init");
+        // ImageOnMap.getPlugin().getLogger().info("init");
         if (MC_ITEM_STACK != null) {
-            // PluginLogger.info("already initialized");
+            // ImageOnMap.getPlugin().getLogger().info("already initialized");
             return; // Already initialized
         }
-        // PluginLogger.info("ItemStack");
+        // ImageOnMap.getPlugin().getLogger().info("ItemStack");
         MC_ITEM_STACK = getMinecraftClass("world.item.ItemStack");
-        // PluginLogger.info("NBTTagCompound");
+        // ImageOnMap.getPlugin().getLogger().info("NBTTagCompound");
         MC_NBT_TAG_COMPOUND = getMinecraftClass("nbt.NBTTagCompound");
-        // PluginLogger.info("CraftMetaItem");
+        // ImageOnMap.getPlugin().getLogger().info("CraftMetaItem");
         CB_CRAFT_ITEM_META = getCraftBukkitClass("inventory.CraftMetaItem");
-        // PluginLogger.info("done");
+        // ImageOnMap.getPlugin().getLogger().info("done");
     }
 
     /**
@@ -280,9 +280,9 @@ public abstract class NBT {
         try {
             Object tag;
             try {
-                // PluginLogger.info("before");
+                // ImageOnMap.getPlugin().getLogger().info("before");
                 tag = Reflection.call(mcItemStack, "getTag");
-                // PluginLogger.info("got tag");
+                // ImageOnMap.getPlugin().getLogger().info("got tag");
             } catch (NoSuchMethodException ex) {
                 //older than 1.17
                 tag = Reflection.getFieldValue(MC_ITEM_STACK, mcItemStack, "tag");
@@ -291,17 +291,17 @@ public abstract class NBT {
                 tag = Reflection.instantiate(MC_NBT_TAG_COMPOUND);
 
                 try {
-                    // PluginLogger.info("setting tag " + tag);
+                    // ImageOnMap.getPlugin().getLogger().info("setting tag " + tag);
                     Reflection.call(MC_ITEM_STACK, mcItemStack, "setTag", tag);
                 } catch (NoSuchMethodException e) {
                     // If the set method change—more resilient,
                     // as the setTag will only update the field without any kind of callback.
-                    // PluginLogger.info("NoSuchMethodException ");
+                    // ImageOnMap.getPlugin().getLogger().info("NoSuchMethodException ");
                     Reflection.setFieldValue(MC_ITEM_STACK, mcItemStack, "tag", tag);
 
                 }
             }
-            // PluginLogger.info("Fin");
+            // ImageOnMap.getPlugin().getLogger().info("Fin");
             return tag;
         } catch (Exception ex) {
             throw new NMSException("Unable to retrieve NBT tag from item", ex);

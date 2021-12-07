@@ -61,7 +61,7 @@ public abstract class QuartzLib {
         QuartzLib.plugin = plugin;
         QuartzLib.loadedComponents = new CopyOnWriteArraySet<>();
 
-        PluginLogger.init();
+        ImageOnMap.getPlugin().getLogger().init();
 
         for (Class<? extends QuartzComponent> component : componentsToLoad) {
             loadComponent(component);
@@ -108,7 +108,7 @@ public abstract class QuartzLib {
         try {
             return loadComponent(componentClass.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
-            PluginLogger.error("Cannot instantiate QuartzLib component {0}", e, componentClass.getName());
+            ImageOnMap.getPlugin().getLogger().error("Cannot instantiate QuartzLib component {0}", e, componentClass.getName());
             return null;
         } catch (NoClassDefFoundError e) {
             return null;

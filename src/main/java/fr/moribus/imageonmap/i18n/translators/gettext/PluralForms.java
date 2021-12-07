@@ -37,9 +37,11 @@
 
 package fr.moribus.imageonmap.i18n.translators.gettext;
 
-import fr.zcraft.quartzlib.tools.PluginLogger;
+import fr.moribus.imageonmap.ImageOnMap;
 import java.util.Locale;
 import java.util.function.Function;
+import java.util.logging.Level;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -347,7 +349,7 @@ public class PluralForms {
                         (rawPluralIndex instanceof Number ? ((Number) rawPluralIndex).intValue() :
                                 Integer.valueOf(rawPluralIndex.toString()));
             } catch (ScriptException | NumberFormatException e) {
-                PluginLogger.error("Invalid plural forms script “{1}”", e, formsScript);
+                ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Invalid plural forms script “" + formsScript + "”", e);
                 return 0;
             }
         };
@@ -359,12 +361,11 @@ public class PluralForms {
      * @return a Function to compute the plural index from the given count.
      */
     private Function<Long, Integer> formsFunctionFallback() {
-        PluginLogger.warning(
-                "Unknown plural rule “{0}”; without JavaScript engine available, we'll fallback to English "
+        ImageOnMap.getPlugin().getLogger().warning(
+                "Unknown plural rule “" + formsScript + "”; without JavaScript engine available, we'll fallback to English "
                         + "pluralization rules. If you want your language's plural rules supported without JavaScript "
                         + "engine, please open an issue with your language and its plural rules at "
-                        + "https://github.com/zDevelopers/QuartzLib/issues.",
-                formsScript
+                        + "https://github.com/zDevelopers/QuartzLib/issues."
         );
 
         return FORMS_FUNCTION_FALLBACK;

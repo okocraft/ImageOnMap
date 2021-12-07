@@ -96,7 +96,7 @@ public final class FutureEvents {
             }
 
             if (!Event.class.isAssignableFrom(eventClass)) {
-                PluginLogger.error("Cannot register a future event handler with a non-event class ({0})",
+                ImageOnMap.getPlugin().getLogger().error("Cannot register a future event handler with a non-event class ({0})",
                         eventClass.getName());
                 continue;
             }
@@ -157,7 +157,7 @@ public final class FutureEvents {
                             (HandlerList) getEventListeners.invoke(pm, getRegistrationClass.invoke(pm, entry.getKey()));
                     handlerList.registerAll(entry.getValue());
                 } catch (IllegalAccessException e) {
-                    PluginLogger.error("Cannot register future event handler, is your Bukkit version supported?", e);
+                    ImageOnMap.getPlugin().getLogger().error("Cannot register future event handler, is your Bukkit version supported?", e);
                 } catch (InvocationTargetException e) {
                     PluginLogger
                             .error("Error while registering future event handler, is your Bukkit version supported?",
@@ -165,7 +165,7 @@ public final class FutureEvents {
                 }
             }
         } catch (NoSuchMethodException e) {
-            PluginLogger.error("Cannot load methods needed to register future event handlers,"
+            ImageOnMap.getPlugin().getLogger().error("Cannot load methods needed to register future event handlers,"
                             + "is your Bukkit version supported?", e);
         }
     }

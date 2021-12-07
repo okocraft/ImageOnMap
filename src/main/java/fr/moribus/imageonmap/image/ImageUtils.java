@@ -36,7 +36,7 @@
 
 package fr.moribus.imageonmap.image;
 
-import fr.zcraft.quartzlib.tools.PluginLogger;
+import fr.moribus.imageonmap.ImageOnMap;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -116,7 +116,7 @@ public class ImageUtils {
 
             return newImage;
         } catch (final Throwable e) {
-            PluginLogger.warning("Exception/error at drawImage");
+            ImageOnMap.getPlugin().getLogger().warning("Exception/error at drawImage");
             if (newImage != null) {
                 newImage.flush();//Safe to free
             }

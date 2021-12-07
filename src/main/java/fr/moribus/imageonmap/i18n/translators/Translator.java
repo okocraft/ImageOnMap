@@ -30,6 +30,7 @@
 
 package fr.moribus.imageonmap.i18n.translators;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.i18n.translators.gettext.GettextPOTranslator;
 import fr.moribus.imageonmap.i18n.translators.properties.PropertiesTranslator;
 import fr.moribus.imageonmap.i18n.translators.yaml.YAMLTranslator;
@@ -47,6 +48,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -148,8 +151,7 @@ public abstract class Translator {
                                 new FileInputStream(file), StandardCharsets.UTF_8));
 
             } catch (IOException e) {
-                PluginLogger.error("Unable to load file {0} in translator {1}", e, getFilePath(),
-                        getClass().getSimpleName());
+                ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to load file " + getFilePath() + " in translator " + getClass().getSimpleName(), e);
                 return null;
             }
         } else if (resourceReference != null) {

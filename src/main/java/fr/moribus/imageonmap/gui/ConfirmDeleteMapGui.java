@@ -36,6 +36,7 @@
 
 package fr.moribus.imageonmap.gui;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.i18n.I;
 import fr.moribus.imageonmap.map.ImageMap;
@@ -46,6 +47,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
@@ -182,7 +185,7 @@ public class ConfirmDeleteMapGui extends ActionGui {
             MapManager.deleteMap(mapToDelete);
             getPlayer().sendMessage(I.t("{gray}Map successfully deleted."));
         } catch (MapManagerException ex) {
-            PluginLogger.warning("Error while deleting map", ex);
+            ImageOnMap.getPlugin().getLogger().log(Level.WARNING, "Error while deleting map", ex);
             getPlayer().sendMessage(ChatColor.RED + ex.getMessage());
         }
 

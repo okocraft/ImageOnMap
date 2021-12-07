@@ -153,7 +153,7 @@ public class NBTList implements List<Object> {
             try {
                 this.type = NBTType.fromId((byte) Reflection.getFieldValue(nmsNbtTag, "type"));
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                PluginLogger.error("Unable to retrieve NBTTagList's type."
+                ImageOnMap.getPlugin().getLogger().error("Unable to retrieve NBTTagList's type."
                         + " The type will be guessed next time an element is inserted into the list…", e);
             }
         }

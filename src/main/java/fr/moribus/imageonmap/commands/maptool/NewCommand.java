@@ -36,6 +36,7 @@
 
 package fr.moribus.imageonmap.commands.maptool;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.commands.IoMCommand;
 import fr.moribus.imageonmap.i18n.I;
@@ -44,7 +45,6 @@ import fr.moribus.imageonmap.image.ImageUtils;
 import fr.moribus.imageonmap.map.PosterMap;
 import fr.moribus.imageonmap.commands.CommandException;
 import fr.moribus.imageonmap.commands.CommandInfo;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.text.ActionBar;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -107,11 +107,8 @@ public class NewCommand extends IoMCommand {
             ImageRendererExecutor.render(url, scaling, player.getUniqueId(), width, height)
                     .exceptionallyAsync((exception) -> {
                         player.sendMessage(I.t("{ce}Map rendering failed: {0}", exception.getMessage()));
-
-                        PluginLogger.warning("Rendering from {0} failed: {1}: {2}",
-                                player.getName(),
-                                exception.getClass().getCanonicalName(),
-                                exception.getMessage());
+                        ImageOnMap.getPlugin().getLogger().warning("Rendering from " + player.getName() + " failed: "
+                                + exception.getClass().getCanonicalName() + ": " + exception.getMessage());
                         return null;
                     })
                     .thenAccept(result -> {

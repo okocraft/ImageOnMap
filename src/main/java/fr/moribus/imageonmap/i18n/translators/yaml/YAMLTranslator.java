@@ -30,10 +30,10 @@
 
 package fr.moribus.imageonmap.i18n.translators.yaml;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.i18n.I;
 import fr.moribus.imageonmap.i18n.translators.Translation;
 import fr.moribus.imageonmap.i18n.translators.Translator;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.io.File;
 import java.util.Collections;
 import java.util.Locale;
@@ -101,7 +101,7 @@ public class YAMLTranslator extends Translator {
         final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(getReader());
 
         if (configuration.getKeys(false).isEmpty()) {
-            PluginLogger.error("Cannot load the {0} translation file.", getFilePath());
+            ImageOnMap.getPlugin().getLogger().severe("Cannot load the " + getFilePath() + " translation file.");
             return;
         }
 

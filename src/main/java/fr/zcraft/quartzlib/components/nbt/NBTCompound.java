@@ -90,13 +90,13 @@ public class NBTCompound implements Map<String, Object> {
 
     private Map<String, Object> getNbtMap() {
         if (nmsNbtMap == null) {
-            // PluginLogger.info("nmsNbtMap == null");
+            // ImageOnMap.getPlugin().getLogger().info("nmsNbtMap == null");
             nmsNbtMap = new HashMap<>();
             if (nmsNbtTag != null) {
-                // PluginLogger.info("nmsNbtTag != null");
+                // ImageOnMap.getPlugin().getLogger().info("nmsNbtTag != null");
                 NBTType.TAG_COMPOUND.setData(nmsNbtTag, nmsNbtMap);
             } else {
-                // PluginLogger.info("nmsNbtTag == null");
+                // ImageOnMap.getPlugin().getLogger().info("nmsNbtTag == null");
                 nmsNbtTag = NBTType.TAG_COMPOUND.newTag(nmsNbtMap);
                 NBTType.TAG_LIST.setData(nmsNbtTag, nmsNbtTag);
 
@@ -109,8 +109,8 @@ public class NBTCompound implements Map<String, Object> {
                 }
             }
         } else {
-            // PluginLogger.info("nmsNbtMap != null");
-            // PluginLogger.info("nmsNbtMap " + nmsNbtMap.toString());
+            // ImageOnMap.getPlugin().getLogger().info("nmsNbtMap != null");
+            // ImageOnMap.getPlugin().getLogger().info("nmsNbtMap " + nmsNbtMap.toString());
         }
         return nmsNbtMap;
     }
@@ -225,10 +225,10 @@ public class NBTCompound implements Map<String, Object> {
 
     @Override
     public Object put(String key, Object value) {
-        // PluginLogger.info("put nbt value");
-        // PluginLogger.info(getNbtMap().toString());
-        // PluginLogger.info("KEY " + key);
-        // PluginLogger.info("VALUE " + NBT.fromNativeValue(value));
+        // ImageOnMap.getPlugin().getLogger().info("put nbt value");
+        // ImageOnMap.getPlugin().getLogger().info(getNbtMap().toString());
+        // ImageOnMap.getPlugin().getLogger().info("KEY " + key);
+        // ImageOnMap.getPlugin().getLogger().info("VALUE " + NBT.fromNativeValue(value));
         if (!(nmsNbtMap instanceof HashMap)) {
             nmsNbtMap = new HashMap<>(getNbtMap());
         }

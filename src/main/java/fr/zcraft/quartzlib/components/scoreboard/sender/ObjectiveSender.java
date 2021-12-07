@@ -154,7 +154,7 @@ public class ObjectiveSender {
                         + "PacketPlayOutScoreboardScore$EnumScoreboardAction enum");
             }
         } catch (ClassNotFoundException e) {
-            PluginLogger.warning("Unable to get the required classes to send scoreboard packets", e);
+            ImageOnMap.getPlugin().getLogger().warning("Unable to get the required classes to send scoreboard packets", e);
         }
     }
 

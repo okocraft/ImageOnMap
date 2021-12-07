@@ -151,7 +151,7 @@ enum NBTType {
             final Object tag;
             switch (this) {
                 case TAG_COMPOUND -> {
-                    // PluginLogger.info("Tag_compound");
+                    // ImageOnMap.getPlugin().getLogger().info("Tag_compound");
                     tag = Reflection.instantiate(getNmsClass());
                     if (value instanceof NBTCompound) {
                         setData(tag, ((NBTCompound) value).nmsNbtMap);
@@ -160,7 +160,7 @@ enum NBTType {
                     }
                 }
                 case TAG_LIST -> {
-                    // PluginLogger.info("Tag_list");
+                    // ImageOnMap.getPlugin().getLogger().info("Tag_list");
                     tag = Reflection.instantiate(getNmsClass());
                     if (value instanceof NBTList) {
                         setData(tag, ((NBTList) value).nmsNbtList);
@@ -173,7 +173,7 @@ enum NBTType {
                     NBTList.guessAndWriteTypeToNbtTagList(tag);
                 }
                 default -> {
-                    // PluginLogger.info("default");
+                    // ImageOnMap.getPlugin().getLogger().info("default");
                     Constructor cons = Reflection.findConstructor(getNmsClass(), 1);
                     cons.setAccessible(true);
                     tag = cons.newInstance(value);
@@ -207,7 +207,7 @@ enum NBTType {
 
         } catch (Exception ex) {
             try {
-                // PluginLogger.info(getNmsTagFieldName() + " value: " + value);
+                // ImageOnMap.getPlugin().getLogger().info(getNmsTagFieldName() + " value: " + value);
                 Class nbtBaseClass = Reflection.getMinecraftClassByName(
                         "nbt.NBTBase");
                 //Todo Maybe an issue here with older naming that used NBTbase instead of NBTBase
@@ -218,13 +218,13 @@ enum NBTType {
                     ArrayList<Object> valueList = ((ArrayList<Object>) value);
                     for (Object val : valueList) {
 
-                        // PluginLogger.info(value + " " + val.getClass().getName());
+                        // ImageOnMap.getPlugin().getLogger().info(value + " " + val.getClass().getName());
                     }
                 } else {
                     Map<String, Object> valueMap = ((Map<String, Object>) value);
                     for (Map.Entry<String, Object> entry : valueMap.entrySet()) {
-                        // PluginLogger.info("key " + entry.getKey() + " Value: " + entry.getValue());
-                        // PluginLogger.info("" + entry.getValue().getClass().getName());
+                        // ImageOnMap.getPlugin().getLogger().info("key " + entry.getKey() + " Value: " + entry.getValue());
+                        // ImageOnMap.getPlugin().getLogger().info("" + entry.getValue().getClass().getName());
                     }
                 }
                 //Reflection.call(Reflection.getMinecraftClassByName("nbt.NBTTagCompound"), nmsNbtTag, "set",

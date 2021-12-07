@@ -103,7 +103,7 @@ public class GlowEffect extends QuartzComponent {
             Enchantment.registerEnchantment(glowEnchantment);
             Enchantment.stopAcceptingRegistrations();
         } catch (Exception e) {
-            PluginLogger.error("Unable to re-enable enchantments registrations", e);
+            ImageOnMap.getPlugin().getLogger().error("Unable to re-enable enchantments registrations", e);
         }
 
 

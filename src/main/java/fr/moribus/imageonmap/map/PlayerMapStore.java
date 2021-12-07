@@ -39,7 +39,6 @@ package fr.moribus.imageonmap.map;
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.PluginConfiguration;
 import fr.moribus.imageonmap.map.MapManagerException.Reason;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,6 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -205,6 +206,7 @@ public class PlayerMapStore implements ConfigurationSerializable {
         if (section == null) {
             return;
         }
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> list = (List<Map<String, Object>>) section.getList("mapList");
         if (list == null) {
             return;
@@ -217,15 +219,15 @@ public class PlayerMapStore implements ConfigurationSerializable {
                     add_Map(newMap);
                 }
             } catch (InvalidConfigurationException ex) {
-                PluginLogger.warning("Could not load map data : ", ex);
+                ImageOnMap.getPlugin().getLogger().log(Level.WARNING, "Could not load map data : ", ex);
             }
         }
 
         try {
             checkMapLimit(0);
         } catch (MapManagerException ex) {
-            PluginLogger.warning("Map limit exceeded for player {0} ({1} maps loaded)",
-                    playerUUID.toString(), mapList.size());
+            ImageOnMap.getPlugin().getLogger().log(Level.WARNING,
+                    "Map limit exceeded for player " + playerUUID.toString() + " (" + mapList.size() + " maps loaded)");
         }
     }
 
@@ -257,7 +259,7 @@ public class PlayerMapStore implements ConfigurationSerializable {
             getToolConfig().save(mapsFile.toFile());
 
         } catch (IOException ex) {
-            PluginLogger.error("Could not save maps file for player '{0}'", ex, playerUUID.toString());
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Could not save maps file for player '" + playerUUID.toString() + "'", ex);
         }
     }
 }

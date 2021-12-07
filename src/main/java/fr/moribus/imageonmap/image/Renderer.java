@@ -36,7 +36,7 @@
 
 package fr.moribus.imageonmap.image;
 
-import fr.zcraft.quartzlib.tools.PluginLogger;
+import fr.moribus.imageonmap.ImageOnMap;
 import java.awt.image.BufferedImage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -76,7 +76,7 @@ public class Renderer extends MapRenderer {
     public static void installRenderer(BufferedImage image, int mapID) {
         MapView map = Bukkit.getMap(mapID);
         if (map == null) {
-            PluginLogger.warning("Could not install renderer for map {0}: the Minecraft map does not exist", mapID);
+            ImageOnMap.getPlugin().getLogger().warning("Could not install renderer for map " + mapID + ": the Minecraft map does not exist");
         } else {
             installRenderer(map).setImage(image);
         }

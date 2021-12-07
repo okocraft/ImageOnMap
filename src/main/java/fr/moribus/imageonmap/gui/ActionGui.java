@@ -30,14 +30,14 @@
 
 package fr.moribus.imageonmap.gui;
 
-import fr.zcraft.quartzlib.tools.PluginLogger;
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.zcraft.quartzlib.tools.items.ItemStackBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import org.bukkit.Material;
+import java.util.logging.Level;
+
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -222,10 +222,11 @@ public abstract class ActionGui extends InventoryGui {
                 action.callback.invoke(this);
             }
         } catch (IllegalAccessException | IllegalArgumentException ex) {
-            PluginLogger.error("Could not invoke GUI action handler", ex);
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Could not invoke GUI action handler", ex);
         } catch (InvocationTargetException ex) {
-            PluginLogger.error("Error while invoking action handler {0} of GUI {1}",
-                    ex.getCause(), action.name, guiClass.getName());
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE,
+                    "Error while invoking action handler " + action.name + " of GUI " + guiClass.getName(),
+                    ex.getCause());
         }
     }
 
