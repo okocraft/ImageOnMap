@@ -33,7 +33,6 @@ package fr.zcraft.quartzlib.components.scoreboard.sender;
 
 import fr.zcraft.quartzlib.components.scoreboard.Sidebar;
 import fr.zcraft.quartzlib.exceptions.IncompatibleMinecraftVersionException;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.reflection.NMSNetwork;
 import fr.zcraft.quartzlib.tools.reflection.Reflection;
 import java.lang.reflect.InvocationTargetException;

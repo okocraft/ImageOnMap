@@ -30,14 +30,16 @@
 
 package fr.zcraft.quartzlib.components.events;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -96,8 +98,7 @@ public final class FutureEvents {
             }
 
             if (!Event.class.isAssignableFrom(eventClass)) {
-                ImageOnMap.getPlugin().getLogger().error("Cannot register a future event handler with a non-event class ({0})",
-                        eventClass.getName());
+                ImageOnMap.getPlugin().getLogger().severe("Cannot register a future event handler with a non-event class (" + eventClass.getName() + ")");
                 continue;
             }
 
@@ -157,15 +158,13 @@ public final class FutureEvents {
                             (HandlerList) getEventListeners.invoke(pm, getRegistrationClass.invoke(pm, entry.getKey()));
                     handlerList.registerAll(entry.getValue());
                 } catch (IllegalAccessException e) {
-                    ImageOnMap.getPlugin().getLogger().error("Cannot register future event handler, is your Bukkit version supported?", e);
+                    ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Cannot register future event handler, is your Bukkit version supported?", e);
                 } catch (InvocationTargetException e) {
-                    PluginLogger
-                            .error("Error while registering future event handler, is your Bukkit version supported?",
-                                    e.getCause());
+                    ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Error while registering future event handler, is your Bukkit version supported?", e.getCause());
                 }
             }
         } catch (NoSuchMethodException e) {
-            ImageOnMap.getPlugin().getLogger().error("Cannot load methods needed to register future event handlers,"
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Cannot load methods needed to register future event handlers,"
                             + "is your Bukkit version supported?", e);
         }
     }

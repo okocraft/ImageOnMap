@@ -30,13 +30,14 @@
 
 package fr.zcraft.quartzlib.tools.items;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.zcraft.quartzlib.core.QuartzComponent;
 import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import io.papermc.paper.enchantments.EnchantmentRarity;
 import net.kyori.adventure.text.Component;
@@ -103,7 +104,7 @@ public class GlowEffect extends QuartzComponent {
             Enchantment.registerEnchantment(glowEnchantment);
             Enchantment.stopAcceptingRegistrations();
         } catch (Exception e) {
-            ImageOnMap.getPlugin().getLogger().error("Unable to re-enable enchantments registrations", e);
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to re-enable enchantments registrations", e);
         }
 
 

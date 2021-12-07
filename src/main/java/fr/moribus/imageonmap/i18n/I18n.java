@@ -34,7 +34,6 @@ import fr.moribus.imageonmap.i18n.translators.Translator;
 import fr.zcraft.quartzlib.core.QuartzComponent;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.core.QuartzPlugin;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Comparator;

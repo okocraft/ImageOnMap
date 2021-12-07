@@ -30,6 +30,7 @@
 
 package fr.zcraft.quartzlib.tools;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.i18n.I;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.tools.runners.RunAsyncTask;
@@ -52,6 +53,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -155,14 +158,14 @@ public final class UpdateChecker implements Listener {
         try {
             resourceURI = new URI("https://www.spigotmc.org/resources/" + spigotIdentifier);
         } catch (URISyntaxException e) {
-            ImageOnMap.getPlugin().getLogger().error("Unable to boot update checker: invalid resource URI", e);
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to boot update checker: invalid resource URI", e);
             return;
         }
 
         try {
             checkUri = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceID);
         } catch (MalformedURLException e) {
-            ImageOnMap.getPlugin().getLogger().error("Unable to boot update checker: invalid resource URI", e);
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to boot update checker: invalid resource URI", e);
             return;
         }
 
@@ -203,10 +206,11 @@ public final class UpdateChecker implements Listener {
 
     private static ConsoleNotificationSender getDefaultConsoleNotificationSender() {
         return (version, link) -> {
-            ImageOnMap.getPlugin().getLogger().warning("A new version of " + QuartzLib.getPlugin().getDescription().getName()
+            ImageOnMap pl = ImageOnMap.getPlugin();
+            pl.getLogger().warning("A new version of " + QuartzLib.getPlugin().getDescription().getName()
                     + " is available! Latest version is " + version + ", and you're running "
                     + QuartzLib.getPlugin().getDescription().getVersion());
-            ImageOnMap.getPlugin().getLogger().warning("Download the new version here: " + link);
+            pl.getLogger().warning("Download the new version here: " + link);
         };
     }
 

@@ -35,7 +35,6 @@ import fr.moribus.imageonmap.i18n.translators.gettext.GettextPOTranslator;
 import fr.moribus.imageonmap.i18n.translators.properties.PropertiesTranslator;
 import fr.moribus.imageonmap.i18n.translators.yaml.YAMLTranslator;
 import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -158,8 +157,7 @@ public abstract class Translator {
             final InputStream stream = QuartzLib.getPlugin().getResource(resourceReference);
 
             if (stream == null) {
-                PluginLogger
-                        .error("Unable to load file {0} in translator {1}", getFilePath(), getClass().getSimpleName());
+                ImageOnMap.getPlugin().getLogger().severe("Unable to load file " + getFilePath() + " in translator " + getClass().getSimpleName());
                 return null;
             }
 

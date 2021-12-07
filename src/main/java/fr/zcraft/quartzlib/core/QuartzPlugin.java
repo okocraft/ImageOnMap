@@ -30,11 +30,14 @@
 
 package fr.zcraft.quartzlib.core;
 
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.io.File;
 import java.io.IOException;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+
 import org.bukkit.plugin.java.JavaPlugin;
+
+import fr.moribus.imageonmap.ImageOnMap;
 
 /**
  * The base class of any plugin using QuartzLib.
@@ -87,7 +90,7 @@ public abstract class QuartzPlugin extends JavaPlugin {
             }
             return new JarFile(file);
         } catch (IOException e) {
-            ImageOnMap.getPlugin().getLogger().error("Unable to load JAR file {0}", e, getFile().getAbsolutePath());
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to load JAR file " + getFile().getAbsolutePath(), e);
             return null;
         }
     }

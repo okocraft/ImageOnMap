@@ -30,11 +30,13 @@
 
 package fr.zcraft.quartzlib.core;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.zcraft.quartzlib.components.events.FutureEvents;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -60,8 +62,6 @@ public abstract class QuartzLib {
     public static void init(JavaPlugin plugin) {
         QuartzLib.plugin = plugin;
         QuartzLib.loadedComponents = new CopyOnWriteArraySet<>();
-
-        ImageOnMap.getPlugin().getLogger().init();
 
         for (Class<? extends QuartzComponent> component : componentsToLoad) {
             loadComponent(component);
@@ -108,7 +108,7 @@ public abstract class QuartzLib {
         try {
             return loadComponent(componentClass.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
-            ImageOnMap.getPlugin().getLogger().error("Cannot instantiate QuartzLib component {0}", e, componentClass.getName());
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Cannot instantiate QuartzLib component " + componentClass.getName(), e);
             return null;
         } catch (NoClassDefFoundError e) {
             return null;

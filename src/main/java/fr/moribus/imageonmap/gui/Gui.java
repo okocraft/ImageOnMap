@@ -31,14 +31,9 @@
 package fr.moribus.imageonmap.gui;
 
 import fr.zcraft.quartzlib.core.QuartzComponent;
-import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 public final class Gui extends QuartzComponent {
     /**

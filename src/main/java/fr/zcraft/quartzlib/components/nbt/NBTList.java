@@ -30,7 +30,7 @@
 
 package fr.zcraft.quartzlib.components.nbt;
 
-import fr.zcraft.quartzlib.tools.PluginLogger;
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.zcraft.quartzlib.tools.reflection.Reflection;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -39,6 +39,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+
 import org.jetbrains.annotations.NotNull;
 
 
@@ -114,8 +116,7 @@ public class NBTList implements List<Object> {
                     }
                 }
             } catch (NoSuchFieldException | IllegalAccessException ex) {
-                PluginLogger
-                        .error("Unable to set NBTTagList's type."
+                ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to set NBTTagList's type."
                                 + " Such malformed lists cannot be read by Minecraft most of the time.", e);
             }
         }
@@ -153,7 +154,7 @@ public class NBTList implements List<Object> {
             try {
                 this.type = NBTType.fromId((byte) Reflection.getFieldValue(nmsNbtTag, "type"));
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                ImageOnMap.getPlugin().getLogger().error("Unable to retrieve NBTTagList's type."
+                ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to retrieve NBTTagList's type."
                         + " The type will be guessed next time an element is inserted into the list…", e);
             }
         }
@@ -170,8 +171,7 @@ public class NBTList implements List<Object> {
             try {
                 Reflection.setFieldValue(nmsNbtTag, "type", (byte) type.getId());
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                PluginLogger
-                        .error("Unable to set NBTTagList's type."
+                ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to set NBTTagList's type."
                                 + " Such malformed lists cannot be read by Minecraft most of the time.", e);
             }
         }
