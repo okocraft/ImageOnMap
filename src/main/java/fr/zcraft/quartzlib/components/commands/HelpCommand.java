@@ -31,10 +31,13 @@
 package fr.zcraft.quartzlib.components.commands;
 
 import fr.moribus.imageonmap.gui.GuiUtils;
-import fr.zcraft.quartzlib.components.rawtext.RawText;
 import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.tools.commands.PaginatedTextView;
-import fr.zcraft.quartzlib.tools.text.RawMessage;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -183,16 +186,16 @@ public class HelpCommand extends Command {
             }
 
             final String formattedHelpMessage = receiver instanceof Player
-                    ?
-                    GuiUtils.generatePrefixedFixedLengthString(ChatColor.GOLD + Commands.CHAT_PREFIX + " ", helpMessage)
+                    ? GuiUtils.generatePrefixedFixedLengthString(ChatColor.GOLD + Commands.CHAT_PREFIX + " ", helpMessage)
                     : helpMessage;
+            
+            Component helpLine = Component.text()
+                    .append(LegacyComponentSerializer.legacySection().deserialize(formattedHelpMessage))
+                    .hoverEvent(HoverEvent.showText(Component.text(command.getUsageString())))
+                    .clickEvent(ClickEvent.suggestCommand(commandName + " "))
+                    .build();
 
-            RawText helpLine = RawText.fromFormattedString(
-                    formattedHelpMessage,
-                    new RawText().suggest(commandName + " ").hover(new RawText(command.getUsageString()))
-            );
-
-            RawMessage.send(receiver, helpLine);
+            receiver.sendMessage(helpLine);
         }
 
         @Override

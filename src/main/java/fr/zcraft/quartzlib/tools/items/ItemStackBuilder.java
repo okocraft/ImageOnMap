@@ -31,12 +31,11 @@
 package fr.zcraft.quartzlib.tools.items;
 
 import fr.moribus.imageonmap.gui.GuiUtils;
-import fr.zcraft.quartzlib.components.nbt.NBT;
 import fr.zcraft.quartzlib.components.nbt.NBTCompound;
-import fr.zcraft.quartzlib.components.rawtext.RawText;
-import fr.zcraft.quartzlib.components.rawtext.RawTextPart;
-import fr.zcraft.quartzlib.tools.PluginLogger;
-import fr.zcraft.quartzlib.tools.reflection.NMSException;
+import io.papermc.paper.text.PaperComponents;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -123,14 +122,13 @@ public class ItemStackBuilder {
     private Material material;
     private int amount = 1;
     @Nullable
-    private RawTextPart<?> title = null;
+    private Component title = null;
     private boolean resetLore = false;
     private boolean glowing = false;
     @Nullable
     private Set<ItemFlag> itemFlags = null;
     @Nullable
     private Map<String, Object> nbt = null;
-    private boolean replaceNbt = false;
 
     /**
      * Creates a new ItemStackBuilder.
@@ -214,7 +212,7 @@ public class ItemStackBuilder {
         final ItemMeta meta = Objects.requireNonNull(newItemStack.getItemMeta());
 
         if (title != null) {
-            meta.setDisplayName(ChatColor.RESET + title.build().toFormattedText());
+            meta.displayName(Component.text().resetStyle().append(title).build());
         }
 
         if (!loreLines.isEmpty() || resetLore) {
@@ -235,33 +233,6 @@ public class ItemStackBuilder {
         }
 
         return newItemStack;
-    }
-
-    /**
-     * Creates (or updates) the ItemStack, with all the previously provided
-     * parameters, and returns it as a CraftItemStack (the Bukkit internal
-     * ItemStack representation).
-     * <p>Unlike ItemStacks, CraftItemStacks are registered into NMS, and therefore
-     * will be able to hold NBT data (such as attributes and such).</p>
-     * <p>Note that the returned ItemStack WILL be a copy of the previously
-     * provided one (if any).</p>
-     *
-     * @return The new CraftItemStack.
-     */
-    public ItemStack craftItem() {
-        final ItemStack bukkitItem = item();
-        try {
-            ItemStack craftCopy = (ItemStack) ItemUtils.asCraftCopy(bukkitItem);
-
-            if (nbt != null && !nbt.isEmpty()) {
-                craftCopy = NBT.addToItemStack(craftCopy, nbt, replaceNbt);
-            }
-
-            return craftCopy;
-        } catch (NMSException ex) {
-            PluginLogger.warning("CraftItem failed", ex);
-            return bukkitItem;
-        }
     }
 
     /**
@@ -293,7 +264,7 @@ public class ItemStackBuilder {
      * @param text The text of the title.
      * @return The current ItemStackBuilder instance, for methods chaining.
      */
-    public ItemStackBuilder title(RawTextPart<?> text) {
+    public ItemStackBuilder title(Component text) {
         if (this.title != null) {
             throw new IllegalStateException("Title has already been defined.");
         }
@@ -311,13 +282,13 @@ public class ItemStackBuilder {
      *              concatenated.
      * @return The current ItemStackBuilder instance, for methods chaining.
      */
-    public ItemStackBuilder title(ChatColor color, String... texts) {
+    public ItemStackBuilder title(TextColor color, String... texts) {
         String text = String.join("", texts);
 
         if (this.title == null) {
-            this.title = new RawText(text);
+            this.title = Component.text(text);
         } else {
-            this.title = this.title.then(text);
+            this.title = this.title.append(Component.text(text));
         }
 
         if (color != null) {
@@ -396,8 +367,8 @@ public class ItemStackBuilder {
      * @param rawText The line of lore.
      * @return The current ItemStackBuilder instance, for methods chaining.
      */
-    public ItemStackBuilder loreLine(RawTextPart<?> rawText) {
-        return loreLine(rawText.toFormattedText());
+    public ItemStackBuilder loreLine(Component rawText) {
+        return loreLine(PaperComponents.legacySectionSerializer().serialize(rawText));
     }
 
     /**
@@ -601,20 +572,6 @@ public class ItemStackBuilder {
      */
     public ItemStackBuilder nbt(Map<String, Object> compound) {
         this.nbt = compound;
-        return this;
-    }
-
-    /**
-     * Sets the NBT data to replace the whole data in the item stack. If not called,
-     * NBT data will be appended to the existing data, overriding conflicting keys only.
-     * If this is called, the whole NBT data will be the data set in {@link #nbt(Map)},
-     * clearing any existing data.
-     *
-     * @return The current ItemStackBuilder instance, for methods chaining.
-     * @see #nbt(Map) The method to set NBT data.
-     */
-    public ItemStackBuilder replaceNBT() {
-        this.replaceNbt = true;
         return this;
     }
 }

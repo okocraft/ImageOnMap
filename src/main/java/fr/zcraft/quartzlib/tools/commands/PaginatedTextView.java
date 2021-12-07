@@ -32,10 +32,13 @@
 
 package fr.zcraft.quartzlib.tools.commands;
 
-import fr.zcraft.quartzlib.components.rawtext.RawText;
-import fr.zcraft.quartzlib.components.rawtext.RawTextPart;
-import fr.zcraft.quartzlib.tools.text.RawMessage;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -230,35 +233,38 @@ public abstract class PaginatedTextView<T> {
             return;
         }
 
-        RawTextPart<?> footer = new RawText("");
+        TextComponent.Builder footer = Component.text();
+
+        //RawTextPart<?> footer = new RawText("");
 
         if (currentPage > 1) {
             String command = getCommandToPage(currentPage - 1);
             if (command != null) {
-                footer = footer.then("« Previous")
-                        .color(ChatColor.GRAY)
-                        .command(command)
-                        .hover(new RawText("Go to page " + (currentPage - 1)))
-
-                        .then(" ⋅ ").color(ChatColor.GRAY);
+                footer = footer.append(Component.text("« Previous"))
+                        .color(NamedTextColor.GRAY)
+                        .clickEvent(ClickEvent.runCommand(command))
+                        .hoverEvent(HoverEvent.showText(Component.text("Go to page " + (currentPage - 1))))
+                        .append(Component.text(" ⋅ "))
+                        .color(NamedTextColor.GRAY);
             }
         }
 
-        footer.then("Page " + currentPage + " of " + pagesCount).color(ChatColor.GRAY).style(ChatColor.BOLD);
+        footer.append(Component.text("Page " + currentPage + " of " + pagesCount))
+                .color(NamedTextColor.GRAY).decorate(TextDecoration.BOLD);
 
         if (currentPage < pagesCount) {
             String command = getCommandToPage(currentPage + 1);
             if (command != null) {
-                footer = footer.then(" ⋅ ").color(ChatColor.GRAY)
-
-                        .then("Next »")
-                        .color(ChatColor.GRAY)
-                        .command(command)
-                        .hover(new RawText("Go to page " + (currentPage + 1)));
+                footer = footer.append(Component.text(" ⋅ "))
+                        .color(NamedTextColor.GRAY)
+                        .append(Component.text("Next »"))
+                        .color(NamedTextColor.GRAY)
+                        .clickEvent(ClickEvent.runCommand(command))
+                        .hoverEvent(HoverEvent.showText(Component.text("Go to page " + (currentPage + 1))));
             }
         }
 
-        RawMessage.send(receiver, footer.build());
+        receiver.sendMessage(footer.build());
     }
 
     /**
