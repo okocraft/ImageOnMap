@@ -30,9 +30,8 @@
 
 package fr.zcraft.quartzlib.tools.runners;
 
-import fr.zcraft.quartzlib.core.QuartzLib;
+import fr.moribus.imageonmap.ImageOnMap;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -59,7 +58,7 @@ public final class RunAsyncTask {
      * @return The BukkitTask that will run.
      */
     public static BukkitTask timer(Runnable runnable, long wait, long period) {
-        return scheduler.runTaskTimerAsynchronously(QuartzLib.getPlugin(), runnable, wait, period);
+        return scheduler.runTaskTimerAsynchronously(ImageOnMap.getPlugin(), runnable, wait, period);
     }
 
 }

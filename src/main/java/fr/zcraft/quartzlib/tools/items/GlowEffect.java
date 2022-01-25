@@ -31,8 +31,6 @@
 package fr.zcraft.quartzlib.tools.items;
 
 import fr.moribus.imageonmap.ImageOnMap;
-import fr.zcraft.quartzlib.core.QuartzComponent;
-import fr.zcraft.quartzlib.core.QuartzLib;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -67,14 +65,14 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Amaury Carrade
  */
-public class GlowEffect extends QuartzComponent {
+public class GlowEffect {
     private static final String ENCHANTMENT_NAME = "____gloweffect____";
     @Nullable
     private static Enchantment glowEnchantment = null;
 
-    @Override
-    protected void onEnable() {
-        QuartzLib.registerEvents(new GlowEnchantEventListener());
+    public static void onEnable() {
+        ImageOnMap plugin = ImageOnMap.getPlugin();
+        plugin.getServer().getPluginManager().registerEvents(new GlowEnchantEventListener(), plugin);
         getGlow();
     }
 
@@ -97,7 +95,7 @@ public class GlowEffect extends QuartzComponent {
         try {
             // We change this to force Bukkit to accept a new enchantment.
             // Thanks to Cybermaxke on BukkitDev.
-            Field acceptingNewField =  Enchantment.class.getField("acceptingNew");
+            Field acceptingNewField =  Enchantment.class.getDeclaredField("acceptingNew");
             acceptingNewField.setAccessible(true);
             acceptingNewField.set(null, true);
             glowEnchantment = new GlowEffectEnchantment();
@@ -112,7 +110,7 @@ public class GlowEffect extends QuartzComponent {
     }
 
     private static NamespacedKey getEnchantmentKey() {
-        return new NamespacedKey(QuartzLib.getPlugin(), ENCHANTMENT_NAME);
+        return new NamespacedKey(ImageOnMap.getPlugin(), ENCHANTMENT_NAME);
     }
 
     /**
@@ -248,6 +246,7 @@ public class GlowEffect extends QuartzComponent {
             return false;
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public @NotNull EnchantmentTarget getItemTarget() {
             return EnchantmentTarget.ALL;

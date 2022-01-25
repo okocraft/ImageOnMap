@@ -30,8 +30,8 @@
 
 package fr.moribus.imageonmap.commands;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.commands.CommandException.Reason;
-import fr.zcraft.quartzlib.core.QuartzLib;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -247,7 +247,7 @@ public abstract class Command {
      * @return {@code true} if the sender can execute the command.
      */
     public boolean canExecute(CommandSender sender) {
-        String permissionPrefix = QuartzLib.getPlugin().getName().toLowerCase() + ".";
+        String permissionPrefix = ImageOnMap.getPlugin().getName().toLowerCase() + ".";
         return sender.hasPermission(permissionPrefix + commandGroup.getUsualName());
     }
 

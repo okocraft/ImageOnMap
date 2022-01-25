@@ -30,7 +30,7 @@
 
 package fr.zcraft.quartzlib.tools.text;
 
-import fr.zcraft.quartzlib.core.QuartzLib;
+import fr.moribus.imageonmap.ImageOnMap;
 import net.kyori.adventure.text.Component;
 
 import java.util.Map;
@@ -130,7 +130,7 @@ public final class ActionBar {
             actionMessagesUpdaterTask = null;
         } else if (messagesCount > 0 && actionMessagesUpdaterTask == null) {
             actionMessagesUpdaterTask =
-                    Bukkit.getScheduler().runTaskTimer(QuartzLib.getPlugin(), actionMessagesUpdater, 20, 30);
+                    Bukkit.getScheduler().runTaskTimer(ImageOnMap.getPlugin(), actionMessagesUpdater, 20, 30);
         }
     }
 }

@@ -30,13 +30,9 @@
 
 package fr.zcraft.quartzlib.tools.items;
 
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
+import java.util.Arrays;
+
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * This class provides various utilities for inventory management.
@@ -59,95 +55,7 @@ public abstract class InventoryUtils {
             return false;
         }
 
-        if (inventory1.getSize() != inventory2.getSize()
-                || inventory1.getType() != inventory2.getType()) {
-            return false;
-        }
-
-        for (int slot = 0; slot < inventory1.getSize(); slot++) {
-            ItemStack item1 = inventory1.getItem(slot);
-            ItemStack item2 = inventory2.getItem(slot);
-
-            if (item1 == null || item2 == null) {
-                if (item1 == item2) {
-                    continue;
-                } else {
-                    return false;
-                }
-            }
-
-            if (!item1.equals(item2)) {
-                return false;
-            }
-        }
-
-        return true;
-
-    }
-
-    /**
-     * Returns which player's hand is holding the specific item.
-     * If dual-wielding is not available, the item is tested against the
-     * player's only hand.
-     *
-     * @param player The player
-     * @param item   The item
-     * @return The hand holding the given item, or null if neither of them is holding it.
-     */
-    public static @Nullable DualWielding getHoldingHand(@NotNull Player player, @NotNull ItemStack item) {
-        if (player.getInventory().getItemInOffHand().equals(item)) {
-            return DualWielding.OFF_HAND;
-        }
-
-        if (player.getInventory().getItemInMainHand().equals(item)) {
-            return DualWielding.MAIN_HAND;
-        }
-
-        return null;
-    }
-
-    /**
-     * Breaks the item currently in the hand of the player.
-     *
-     * @param player The player.
-     * @param hand   The hand to retrieve the item from. This will always be the main hand if
-     *               the Bukkit build don't support dual-wielding.
-     */
-    public static void breakItemInHand(Player player, @NotNull InventoryUtils.DualWielding hand) {
-        final ItemStack item = new ItemStack(Material.AIR);
-
-        switch (hand) {
-            case MAIN_HAND -> player.getInventory().setItemInMainHand(item);
-            case OFF_HAND -> player.getInventory().setItemInOffHand(item);
-        }
-
-        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 0.8f, 1);
-    }
-
-    /**
-     * Breaks the given item if it is found in one of the player's hands.
-     *
-     * @param player The player.
-     * @param item   The item to break.
-     */
-    public static void breakItemInHand(Player player, ItemStack item) {
-        DualWielding hand = getHoldingHand(player, item);
-        if (hand != null) {
-            breakItemInHand(player, hand);
-        }
-    }
-
-    /**
-     * This class provides various utilities for handling dual-wielding.
-     */
-    public enum DualWielding {
-        /**
-         * Represents the main hand of the player.
-         */
-        MAIN_HAND,
-        /**
-         * Represents the off hand of the player.
-         */
-        OFF_HAND
+        return inventory1.getType() == inventory2.getType()
+                && Arrays.equals(inventory1.getContents(), inventory2.getContents());
     }
 }

@@ -30,33 +30,17 @@
 
 package fr.zcraft.quartzlib.tools.items;
 
-import fr.zcraft.quartzlib.tools.reflection.NMSException;
-import fr.zcraft.quartzlib.tools.reflection.Reflection;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Utility class for dealing with items and inventories.
  */
 public abstract class ItemUtils {
-    private static String getI18nNameMethodName = null;
-    private static Method registryLookupMethod = null;
 
     private ItemUtils() {
     }
@@ -95,9 +79,12 @@ public abstract class ItemUtils {
 
         // Not everything fit.
         if (!leftover.isEmpty()) {
+            ItemStack handItem = player.getInventory().getItemInMainHand();
             for (final ItemStack leftOverItem : leftover.values()) {
-                drop(player.getLocation(), leftOverItem);
+                player.getInventory().setItemInMainHand(leftOverItem);
+                player.dropItem(true);
             }
+            player.getInventory().setItemInMainHand(handItem);
 
             return false;
         } else {
@@ -105,318 +92,5 @@ public abstract class ItemUtils {
             //player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 0.2f, 1.8f);
             return true;
         }
-    }
-
-    /**
-     * Shortcut method to set the display name of an item.
-     *
-     * @param item        The item
-     * @param displayName The new display name of the item
-     * @return The same item.
-     */
-    public static ItemStack setDisplayName(ItemStack item, String displayName) {
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(displayName);
-        item.setItemMeta(meta);
-        return item;
-    }
-
-    /**
-     * Returns the name of the method used to retrieve the I18N key of the name
-     * of an item from a NMS ItemStack.
-     *
-     * @param item An item stack.
-     * @return The name of the method. This result is cached.
-     * @throws NMSException if the operation cannot be executed.
-     */
-    private static String getI18nNameMethod(ItemStack item) throws NMSException {
-        if (getI18nNameMethodName != null) {
-            return getI18nNameMethodName;
-        }
-
-        try {
-            Class<?> minecraftItemClass = Reflection.getMinecraftClassByName("world.item.Item");
-            Class<?> minecraftItemStackClass = Reflection.getMinecraftClassByName("world.item.ItemStack");
-            Class<?> craftItemStackClass = Reflection.getBukkitClassByName("inventory.CraftItemStack");
-            Object itemStackHandle = craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, item);
-            Object minecraftItem = Reflection.getFieldValue(itemStackHandle, "item");
-            List<Method> allMethods = Reflection.findAllMethods(
-                    minecraftItemClass, null, String.class, 0, minecraftItemStackClass);
-
-            for (Method method : allMethods) {
-                String result = (String) Reflection.call(minecraftItem, method.getName(), itemStackHandle);
-                if (result == null) {
-                    continue;
-                }
-                if (!(result.startsWith("item.") || result.startsWith("tile.") || result.startsWith("potion."))) {
-                    continue;
-                }
-
-                getI18nNameMethodName = method.getName();
-                return getI18nNameMethodName;
-            }
-
-            throw new NMSException("Unable to retrieve Minecraft I18n name: no method found");
-        } catch (Exception ex) {
-            throw new NMSException("Unable to retrieve Minecraft I18n name", ex);
-        }
-    }
-
-    /**
-     * Retrieves the method used to lookup the Minecraft internal item registry,
-     * used to get the internal names of the Minecraft items (like {@code minecraft.stone}.
-     *
-     * @return The method. This result is cached.
-     * @throws NMSException if the operation cannot be executed.
-     */
-    private static Method getRegistryLookupMethod() throws NMSException {
-        if (registryLookupMethod != null) {
-            return registryLookupMethod;
-        }
-
-        try {
-            Class minecraftItem = Reflection.getMinecraftClassByName("world.item.Item");
-            Object materialsRegistry = Reflection.getFieldValue(minecraftItem, null, "REGISTRY");
-
-            Method getMethod = Reflection.findMethod(materialsRegistry.getClass(), "get", (Type) null);
-
-            if (getMethod == null) {
-                throw new NMSException("Method RegistryMaterials.get() not found.");
-            }
-
-            registryLookupMethod = Reflection.findMethod(
-                    materialsRegistry.getClass(),
-                    "!get",
-                    getMethod.getGenericParameterTypes()[0],
-                    0,
-                    getMethod.getGenericReturnType());
-
-            if (registryLookupMethod == null) {
-                throw new NMSException("Method RegistryMaterials.lookup() not found.");
-            }
-
-            return registryLookupMethod;
-        } catch (Exception ex) {
-            throw new NMSException("Unable to retreive Minecraft ID", ex);
-        }
-    }
-
-    /**
-     * Returns the Minecraft internal ID of an ItemStack.
-     * <p>
-     * As example, the ID of a {@link Material#STONE Material.STONE} item is {@code minecraft.stone}.
-     * This ID is needed to include items in JSON-formatted messages.
-     * </p>
-     *
-     * @param item An item.
-     * @return The Minecraft name of this item, or null if the item's material
-     *         is invalid.
-     * @throws NMSException if the operation cannot be executed.
-     */
-    public static String getMinecraftId(ItemStack item) throws NMSException {
-        try {
-            Object craftItemStack = asNMSCopy(item);
-            if (craftItemStack == null) {
-                return null;
-            }
-
-            Object minecraftItem = Reflection.getFieldValue(craftItemStack, "item");
-            Class<?> minecraftItemClass = Reflection.getMinecraftClassByName("world.item.Item");
-            Object itemsRegistry = Reflection.getFieldValue(minecraftItemClass, null, "REGISTRY");
-
-            Object minecraftKey = getRegistryLookupMethod().invoke(itemsRegistry, minecraftItem);
-
-            return minecraftKey.toString();
-        } catch (Exception ex) {
-            throw new NMSException("Unable to retrieve Minecraft ID for an ItemStack", ex);
-        }
-    }
-
-    /**
-     * Retrieves the key to use in the {@code translate} property of a JSON message to translate
-     * the name of the given ItemStack.
-     *
-     * @param item An item.
-     * @return The I18N key for this item.
-     * @throws NMSException if the operation cannot be executed.
-     */
-    public static String getI18nName(ItemStack item) throws NMSException {
-        if (item.getItemMeta() instanceof PotionMeta) {
-            return getI18nPotionName(item);
-        }
-
-        try {
-            Object craftItemStack = asNMSCopy(item);
-            Object minecraftItem = Reflection.getFieldValue(craftItemStack, "item");
-            return Reflection.call(minecraftItem, getI18nNameMethod(item), craftItemStack) + ".name";
-        } catch (Exception ex) {
-            throw new NMSException("Unable to retrieve Minecraft I18n name", ex);
-        }
-    }
-
-    /**
-     * Copies the ItemStack in a new net.minecraft.server.ItemStack.
-     *
-     * @param item An item.
-     * @return A copy of this item as a net.minecraft.server.ItemStack object.
-     * @throws NMSException if the operation cannot be executed.
-     */
-    public static Object asNMSCopy(ItemStack item) throws NMSException {
-        try {
-            Class<?> craftItemStack = Reflection.getBukkitClassByName("inventory.CraftItemStack");
-            return craftItemStack.getMethod("asNMSCopy", ItemStack.class).invoke(null, item);
-        } catch (Exception ex) {
-            throw new NMSException("Unable to retreive NMS copy", ex);
-        }
-    }
-
-    /**
-     * Copies the ItemStack in a new CraftItemStack.
-     *
-     * @param item An item.
-     * @return A copy of this item in a CraftItemStack object.
-     * @throws NMSException if the operation cannot be executed.
-     */
-    public static Object asCraftCopy(ItemStack item) throws NMSException {
-        try {
-            Class<?> craftItemStack = Reflection.getBukkitClassByName("inventory.CraftItemStack");
-            return craftItemStack.getMethod("asCraftCopy", ItemStack.class).invoke(null, item);
-        } catch (Exception ex) {
-            throw new NMSException("Unable to retreive Craft copy", ex);
-        }
-    }
-
-    /**
-     * Returns a NMS ItemStack for the given item.
-     *
-     * @param item An item.
-     * @return A NMS ItemStack for this item. If the item was a CraftItemStack,
-     *         this will be the item's handle directly; in the other cases, a copy in a
-     *         NMS ItemStack object.
-     * @throws NMSException if the operation cannot be executed.
-     */
-    public static Object getNMSItemStack(ItemStack item) throws NMSException {
-        try {
-            Class<?> craftItemStack = Reflection.getBukkitClassByName("inventory.CraftItemStack");
-            return craftItemStack.isAssignableFrom(item.getClass())
-                    ? Reflection.getFieldValue(craftItemStack, item, "handle")
-                    : craftItemStack.getMethod("asNMSCopy", ItemStack.class).invoke(null, item);
-        } catch (Exception ex) {
-            throw new NMSException("Unable to retrieve NMS copy", ex);
-        }
-    }
-
-    /**
-     * Returns a CraftItemStack for the given item.
-     *
-     * @param item An item.
-     * @return A CraftItemStack for this item. If the item was initially a
-     *         CraftItemStack, it is returned directly. In the other cases,
-     *         a copy in a new CraftItemStack will be returned.
-     * @throws NMSException if the operation cannot be executed.
-     */
-    public static Object getCraftItemStack(ItemStack item) throws NMSException {
-        try {
-            Class<?> craftItemStack = Reflection.getBukkitClassByName("inventory.CraftItemStack");
-            return craftItemStack.isAssignableFrom(item.getClass()) ? craftItemStack.cast(item) : asCraftCopy(item);
-        } catch (Exception ex) {
-            throw new NMSException("Unable to retrieve CraftItemStack copy", ex);
-        }
-    }
-
-    private static String getI18nPotionName(ItemStack item) throws NMSException {
-        String potionKey = getI18nPotionKey(item);
-
-        try {
-            Class<?> potionUtil = Reflection.getMinecraftClassByName("world.item.alchemy.PotionUtil");
-            Class<?> potionRegistry = Reflection.getMinecraftClassByName("world.item.alchemy.PotionRegistry");
-            Class<?> itemStackClass = Reflection.getMinecraftClassByName("world.item.ItemStack");
-            Object registry = Reflection.findMethod(potionUtil, null, potionRegistry, 0, itemStackClass)
-                    .invoke(null, asNMSCopy(item));
-
-            return (String) Reflection.findMethod(potionRegistry, null, String.class, 0, String.class)
-                    .invoke(registry, potionKey);
-        } catch (Exception ex) {
-            throw new NMSException("Unable to retrieve Minecraft I18n name", ex);
-        }
-    }
-
-    private static String getI18nPotionKey(ItemStack item) {
-        return switch (item.getType()) {
-            case SPLASH_POTION -> "splash_potion.effect.";
-            case LINGERING_POTION -> "lingering_potion.effect.";
-            default -> "potion.effect";
-        };
-    }
-
-    /**
-     * Drops the item at the given location.
-     *
-     * @param location The location to drop the item at.
-     * @param item     The item to drop.
-     */
-    public static void drop(Location location, ItemStack item) {
-        location.getWorld().dropItem(location, item);
-    }
-
-    /**
-     * Converts a chat color to its dye equivalent.
-     *
-     * <p>The transformation is not perfect as there is no 1:1
-     * correspondence between dyes and chat colors.</p>
-     *
-     * @param color The chat color.
-     * @return The corresponding dye, or an empty value if none match (e.g. for formatting codes, of for {@code null}).
-     */
-    @Contract(pure = true)
-    public static Optional<DyeColor> asDye(@Nullable final ChatColor color) {
-        if (color == null) {
-            return Optional.empty();
-        }
-
-        return switch (color) {
-            case BLACK -> Optional.of(DyeColor.BLACK);
-            case BLUE, DARK_BLUE -> Optional.of(DyeColor.BLUE);
-            case DARK_GREEN -> Optional.of(DyeColor.GREEN);
-            case DARK_AQUA -> Optional.of(DyeColor.CYAN);
-            case DARK_RED -> Optional.of(DyeColor.RED);
-            case DARK_PURPLE -> Optional.of(DyeColor.PURPLE);
-            case GOLD, YELLOW -> Optional.of(DyeColor.YELLOW);
-            case GRAY -> Optional.of(DyeColor.LIGHT_GRAY);
-            case DARK_GRAY -> Optional.of(DyeColor.GRAY);
-            case GREEN -> Optional.of(DyeColor.LIME);
-            case AQUA -> Optional.of(DyeColor.LIGHT_BLUE);
-            case RED -> Optional.of(DyeColor.ORANGE);
-            case LIGHT_PURPLE -> Optional.of(DyeColor.PINK);
-            case WHITE -> Optional.of(DyeColor.WHITE);
-
-            // White, reset & formatting
-            default -> Optional.empty();
-        };
-    }
-
-    /**
-     * Converts a dye color to a dyeable material.
-     *
-     * @param material The colorable material to colorize.
-     * @param color    The dye color.
-     * @return The corresponding material.
-     */
-    @Contract(pure = true)
-    public static Material colorize(@NotNull final ColorableMaterial material, @NotNull final DyeColor color) {
-        return Material.valueOf(color.name() + "_" + material.name());
-    }
-
-    /**
-     * Converts a chat color to a dyeable material.
-     *
-     * @param material The colorable material to colorize.
-     * @param color    The chat color.
-     * @return The corresponding material. If the chat color was not convertible to a dye, {@code ChatColor#WHITE} is
-     *         used.
-     */
-    @Contract(pure = true)
-    public static Material colorize(@NotNull final ColorableMaterial material, @NotNull final ChatColor color) {
-        return colorize(material, asDye(color).orElse(DyeColor.WHITE));
     }
 }

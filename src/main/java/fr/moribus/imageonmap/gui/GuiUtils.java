@@ -30,7 +30,6 @@
 
 package fr.moribus.imageonmap.gui;
 
-import fr.zcraft.quartzlib.tools.items.InventoryUtils;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,6 +112,7 @@ public final class GuiUtils {
      * @param loreLines A list containing the stack's lines.
      * @return The same {@link ItemStack}, but with an updated {@link ItemMeta}.
      */
+    @SuppressWarnings("deprecation")
     public static ItemStack makeItem(ItemStack itemStack, String title, List<String> loreLines) {
         ItemMeta meta = Objects.requireNonNull(itemStack.getItemMeta());
 
@@ -218,20 +218,4 @@ public final class GuiUtils {
 
         return result.toString().trim();
     }
-
-
-    /**
-     * Checks if these inventories are equal.
-     *
-     * @param inventory1 The first inventory.
-     * @param inventory2 The other inventory.
-     * @return {@code true} if the two inventories are the same one.
-     * @deprecated Use InventoryUtils.sameInventories() instead.
-     */
-    @Deprecated
-    public static boolean sameInventories(Inventory inventory1, Inventory inventory2) {
-        return InventoryUtils.sameInventories(inventory1, inventory2);
-    }
-
-
 }

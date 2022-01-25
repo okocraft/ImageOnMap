@@ -32,7 +32,6 @@ package fr.zcraft.quartzlib.tools;
 
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.i18n.I;
-import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.tools.runners.RunAsyncTask;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import net.kyori.adventure.text.Component;
@@ -144,11 +143,13 @@ public final class UpdateChecker implements Listener {
     public static void boot(final String spigotIdentifier, final ConsoleNotificationSender onUpdateSentToConsole,
                             final PlayerNotificationSender onUpdateSentToPlayer,
                             final PlayerNotificationFilter filter) {
-        consoleNotificationSender =
-                onUpdateSentToConsole != null ? consoleNotificationSender : getDefaultConsoleNotificationSender();
+        consoleNotificationSender = onUpdateSentToConsole != null
+                ? consoleNotificationSender
+                : getDefaultConsoleNotificationSender();
         playerNotificationFilter = filter != null ? filter : ServerOperator::isOp;
-        playerNotificationSender =
-                onUpdateSentToPlayer != null ? onUpdateSentToPlayer : getDefaultPlayerNotificationSender();
+        playerNotificationSender = onUpdateSentToPlayer != null
+                ? onUpdateSentToPlayer
+                : getDefaultPlayerNotificationSender();
 
         final List<String> identifierParts = Arrays.asList(spigotIdentifier.split("\\."));
 
@@ -178,7 +179,7 @@ public final class UpdateChecker implements Listener {
                     // Then, we register the events in this class to notify other allowed players when they
                     // log in.
                     // Finally, we stop the check task, as there is no point in checking again and again.
-                    if (!version.equalsIgnoreCase(QuartzLib.getPlugin().getDescription().getVersion().trim())) {
+                    if (!version.equalsIgnoreCase(ImageOnMap.getPlugin().getDescription().getVersion().trim())) {
                         newVersion = version;
 
                         // To send the notifications, we go back to the main thread.
@@ -193,7 +194,8 @@ public final class UpdateChecker implements Listener {
                             }
                         });
 
-                        QuartzLib.registerEvents(new UpdateChecker());
+                        ImageOnMap plugin = ImageOnMap.getPlugin();
+                        plugin.getServer().getPluginManager().registerEvents(new UpdateChecker(), plugin);
 
                         checkTask.cancel();
                         checkTask = null;
@@ -207,9 +209,9 @@ public final class UpdateChecker implements Listener {
     private static ConsoleNotificationSender getDefaultConsoleNotificationSender() {
         return (version, link) -> {
             ImageOnMap pl = ImageOnMap.getPlugin();
-            pl.getLogger().warning("A new version of " + QuartzLib.getPlugin().getDescription().getName()
+            pl.getLogger().warning("A new version of " + ImageOnMap.getPlugin().getDescription().getName()
                     + " is available! Latest version is " + version + ", and you're running "
-                    + QuartzLib.getPlugin().getDescription().getVersion());
+                    + ImageOnMap.getPlugin().getDescription().getVersion());
             pl.getLogger().warning("Download the new version here: " + link);
         };
     }
@@ -229,12 +231,12 @@ public final class UpdateChecker implements Listener {
                             link.toString().replaceFirst("https://", "").replaceFirst("www\\.", ""))))
                     .append(Component.text("✦ "))
                     .append(Component.text(
-                            I.t("{0} {1} is available!", QuartzLib.getPlugin().getDescription().getName(), version)))
+                            I.t("{0} {1} is available!", ImageOnMap.getPlugin().getDescription().getName(), version)))
                     .decorate(TextDecoration.BOLD).build());
 
             player.sendMessage(Component.text()
                     .append(Component.text(I.t("You're still running {0}. Click here to update.",
-                            QuartzLib.getPlugin().getDescription().getVersion())))
+                            ImageOnMap.getPlugin().getDescription().getVersion())))
                     .color(NamedTextColor.YELLOW)
                     .clickEvent(ClickEvent.openUrl(url))
                     .build());

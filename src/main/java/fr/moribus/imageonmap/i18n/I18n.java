@@ -30,10 +30,8 @@
 
 package fr.moribus.imageonmap.i18n;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.i18n.translators.Translator;
-import fr.zcraft.quartzlib.core.QuartzComponent;
-import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.core.QuartzPlugin;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Comparator;
@@ -51,7 +49,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class I18n extends QuartzComponent {
+public class I18n {
     private static final Map<Locale, Set<Translator>> translators = new ConcurrentHashMap<>();
 
     private static final Comparator<Translator> TRANSLATORS_COMPARATOR = new Comparator<Translator>() {
@@ -95,6 +93,7 @@ public class I18n extends QuartzComponent {
      * @param player The player
      * @return The player's client locale.
      */
+    @SuppressWarnings("deprecation")
     public static Locale getPlayerLocale(Player player) {
         if (player == null) {
             return null;
@@ -432,10 +431,9 @@ public class I18n extends QuartzComponent {
         }
     }
 
-    @Override
-    protected void onEnable() {
-        if (QuartzLib.getPlugin() instanceof QuartzPlugin && jarFile == null) {
-            jarFile = ((QuartzPlugin) QuartzLib.getPlugin()).getJarFile();
+    public static void onEnable() {
+        if (jarFile == null) {
+            jarFile = ImageOnMap.getPlugin().getJarFile();
         }
 
         setPrimaryLocale(Locale.getDefault());
@@ -445,6 +443,6 @@ public class I18n extends QuartzComponent {
             loadFromJar(i18nDirectory);
         }
 
-        load(new File(QuartzLib.getPlugin().getDataFolder(), i18nDirectory), 100);
+        load(new File(ImageOnMap.getPlugin().getDataFolder(), i18nDirectory), 100);
     }
 }

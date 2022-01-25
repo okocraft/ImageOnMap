@@ -30,9 +30,8 @@
 
 package fr.zcraft.quartzlib.tools.runners;
 
-import fr.zcraft.quartzlib.core.QuartzLib;
+import fr.moribus.imageonmap.ImageOnMap;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -52,7 +51,7 @@ public final class RunTask {
      * @param runnable The task to be run.
      */
     public static void nextTick(Runnable runnable) {
-        scheduler.runTask(QuartzLib.getPlugin(), runnable);
+        scheduler.runTask(ImageOnMap.getPlugin(), runnable);
     }
 
     /**
@@ -62,7 +61,7 @@ public final class RunTask {
      * @param delay    The ticks to wait before running the task.
      */
     public static void later(Runnable runnable, long delay) {
-        scheduler.runTaskLater(QuartzLib.getPlugin(), runnable, delay);
+        scheduler.runTaskLater(ImageOnMap.getPlugin(), runnable, delay);
     }
 
     /**
@@ -75,7 +74,7 @@ public final class RunTask {
      * @return The BukkitTask that will run.
      */
     public static BukkitTask timer(Runnable runnable, long wait, long period) {
-        return scheduler.runTaskTimer(QuartzLib.getPlugin(), runnable, wait, period);
+        return scheduler.runTaskTimer(ImageOnMap.getPlugin(), runnable, wait, period);
     }
 
 }

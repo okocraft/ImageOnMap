@@ -108,6 +108,7 @@ public class ConfirmDeleteMapGui extends ActionGui {
         this.mapToDelete = mapToDelete;
     }
 
+    @SuppressWarnings("deprecation")
     protected void onUpdate() {
         /// The title of the map deletion GUI. {0}: map name.
         setTitle(I.t(getPlayerLocale(), "{0} » {black}Confirm deletion", mapToDelete.getName()));
@@ -152,6 +153,7 @@ public class ConfirmDeleteMapGui extends ActionGui {
         return createSubButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN + "Cancel", CANCEL_MESSAGES);
     }
 
+    @SuppressWarnings("deprecation")
     private ItemStack createSubButton(Material color, String title, String[] messages) {
         ItemStack item = new ItemStack(color);
         ItemMeta meta = item.getItemMeta();

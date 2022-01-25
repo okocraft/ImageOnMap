@@ -44,7 +44,6 @@ import fr.moribus.imageonmap.commands.maptool.GetCommand;
 import fr.moribus.imageonmap.commands.maptool.GetRemainingCommand;
 import fr.moribus.imageonmap.commands.maptool.GiveCommand;
 import fr.moribus.imageonmap.commands.maptool.ListCommand;
-import fr.moribus.imageonmap.commands.maptool.MigrateCommand;
 import fr.moribus.imageonmap.commands.maptool.NewCommand;
 import fr.moribus.imageonmap.commands.maptool.RenameCommand;
 import fr.moribus.imageonmap.commands.maptool.UpdateCommand;
@@ -52,17 +51,20 @@ import fr.moribus.imageonmap.gui.Gui;
 import fr.moribus.imageonmap.i18n.I18n;
 import fr.moribus.imageonmap.image.MapInitEvent;
 import fr.moribus.imageonmap.map.MapManager;
-import fr.moribus.imageonmap.migration.MigratorExecutor;
 import fr.moribus.imageonmap.ui.MapItemManager;
-import fr.zcraft.quartzlib.core.QuartzPlugin;
 import fr.zcraft.quartzlib.tools.UpdateChecker;
+import fr.zcraft.quartzlib.tools.items.GlowEffect;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-public final class ImageOnMap extends QuartzPlugin {
+import org.bukkit.plugin.java.JavaPlugin;
+
+public final class ImageOnMap extends JavaPlugin {
 
     private static ImageOnMap PLUGIN;
 
@@ -107,7 +109,10 @@ public final class ImageOnMap extends QuartzPlugin {
         }
 
         saveDefaultConfig();
-        loadComponents(I18n.class, Gui.class, Commands.class);
+
+        GlowEffect.onEnable();
+        Gui.clearOpenGuis();
+        I18n.onEnable();
 
         //Init all the things !
         I18n.setPrimaryLocale(PluginConfiguration.LANG.get());
@@ -127,7 +132,6 @@ public final class ImageOnMap extends QuartzPlugin {
                 GiveCommand.class,
                 GetRemainingCommand.class,
                 ExploreCommand.class,
-                MigrateCommand.class,
                 UpdateCommand.class
         );
 
@@ -144,14 +148,29 @@ public final class ImageOnMap extends QuartzPlugin {
     public void onDisable() {
         MapManager.exit();
         MapItemManager.exit();
-        MigratorExecutor.waitForMigration();
 
-        super.onDisable();
+        Gui.clearOpenGuis();
     }
 
     private void checkPluginDirectory(Path directory) throws IOException {
         if (!Files.isDirectory(directory)) {
             Files.createDirectories(directory);
+        }
+    }
+
+    /**
+     * Gets the .jar file this plugin is loaded by, or null if it wasn't found.
+     */
+    public JarFile getJarFile() {
+        try {
+            File file = getFile();
+            if (file == null) {
+                return null;
+            }
+            return new JarFile(file);
+        } catch (IOException e) {
+            ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to load JAR file " + getFile().getAbsolutePath(), e);
+            return null;
         }
     }
 }

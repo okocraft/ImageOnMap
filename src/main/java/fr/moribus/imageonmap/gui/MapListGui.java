@@ -67,6 +67,7 @@ public class MapListGui extends ExplorerGui<ImageMap> {
         this.name = name;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected ItemStack getViewItem(ImageMap map) {
         String mapDescription;
@@ -107,6 +108,7 @@ public class MapListGui extends ExplorerGui<ImageMap> {
         return mapItem;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected ItemStack getEmptyViewItem() {
         ItemStack item = new ItemStack(Material.FILLED_MAP);
@@ -166,6 +168,7 @@ public class MapListGui extends ExplorerGui<ImageMap> {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onUpdate() {
         ImageMap[] maps = MapManager.getMaps(offplayer.getUniqueId());

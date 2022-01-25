@@ -31,7 +31,6 @@
 package fr.moribus.imageonmap.gui;
 
 import fr.moribus.imageonmap.ImageOnMap;
-import fr.zcraft.quartzlib.tools.items.ItemStackBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -105,10 +104,8 @@ public abstract class ActionGui extends InventoryGui {
      * @param name The identifier of the action.
      * @param slot The slot the action will be placed on.
      * @param item The item used to represent the action.
-     * @return an {@link ItemStackBuilder} ItemStackBuilder to build the representing
-     *     item, or null if it was already specified.
      */
-    protected ItemStackBuilder action(String name, int slot, ItemStack item) {
+    protected void action(String name, int slot, ItemStack item) {
         if (slot > getSize() || slot < 0) {
             throw new IllegalArgumentException("Illegal slot ID");
         }
@@ -116,11 +113,6 @@ public abstract class ActionGui extends InventoryGui {
         Action action = new Action(name, slot, item, getActionHandler(guiClass, name));
 
         action(action);
-
-        if (item == null) {
-            return action.updateItem();
-        }
-        return null;
     }
 
     /**
@@ -331,8 +323,6 @@ public abstract class ActionGui extends InventoryGui {
          */
         public ItemStack item;
 
-        public ItemStackBuilder builder;
-
         /**
          * The callback this action will call when triggered.
          */
@@ -343,24 +333,14 @@ public abstract class ActionGui extends InventoryGui {
             this.slot = slot;
             this.item = item;
             this.callback = callback;
-            this.builder = null;
         }
 
         public ItemStack getItem() {
             if (item == null) {
-                item = builder.item();
+                item = null;
             }
 
-            return item;
-        }
-
-        public ItemStackBuilder updateItem() {
-            if (builder == null) {
-                builder = new ItemStackBuilder(item);
-            }
-
-            item = null;
-            return builder;
+            return item.clone();
         }
     }
 }

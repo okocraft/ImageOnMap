@@ -30,10 +30,13 @@
 
 package fr.moribus.imageonmap.gui;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.i18n.I18n;
-import fr.zcraft.quartzlib.core.QuartzLib;
 import java.util.Locale;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 public abstract class GuiBase {
@@ -107,7 +110,7 @@ public abstract class GuiBase {
         Gui.registerGuiClose(this);
 
         if (listener != null) {
-            QuartzLib.unregisterEvents(listener);
+            HandlerList.unregisterAll(listener);
         }
 
         onClose();
@@ -145,7 +148,7 @@ public abstract class GuiBase {
             listener = getEventListener();
         }
         if (listener != null) {
-            QuartzLib.registerEvents(listener);
+            Bukkit.getPluginManager().registerEvents(listener, ImageOnMap.getPlugin());
         }
         open = true;
     }

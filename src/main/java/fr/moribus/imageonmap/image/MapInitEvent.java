@@ -38,7 +38,6 @@ package fr.moribus.imageonmap.image;
 
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.map.MapManager;
-import fr.zcraft.quartzlib.core.QuartzLib;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -59,7 +58,7 @@ import org.bukkit.map.MapView;
 
 public class MapInitEvent implements Listener {
     public static void init() {
-        QuartzLib.registerEvents(new MapInitEvent());
+        Bukkit.getPluginManager().registerEvents(new MapInitEvent(), ImageOnMap.getPlugin());
 
         for (World world : Bukkit.getWorlds()) {
             for (ItemFrame frame : world.getEntitiesByClass(ItemFrame.class)) {
@@ -78,6 +77,7 @@ public class MapInitEvent implements Listener {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static void initMap(int id) {
         initMap(Bukkit.getServer().getMap(id));
     }

@@ -72,6 +72,7 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         this.name = name;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected ItemStack getViewItem(int x, int y) {
         final Material partMaterial = y % 2 == x % 2 ? Material.MAP : Material.PAPER;
@@ -94,6 +95,7 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         return item;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected ItemStack getViewItem(Integer mapId) {
         final int index = ((PosterMap) map).getIndex(mapId);
@@ -150,6 +152,7 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onUpdate() {
         /// Title of the map details GUI

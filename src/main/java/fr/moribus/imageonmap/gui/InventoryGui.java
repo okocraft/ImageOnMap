@@ -32,7 +32,6 @@ package fr.moribus.imageonmap.gui;
 
 import fr.zcraft.quartzlib.tools.items.InventoryUtils;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
-import java.lang.reflect.InvocationTargetException;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -167,6 +166,7 @@ public abstract class InventoryGui extends GuiBase {
      * Asks the GUI to update its data, and refresh its view accordingly.
      * The inventory may be regenerated when calling this method.
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void update() {
         super.update();

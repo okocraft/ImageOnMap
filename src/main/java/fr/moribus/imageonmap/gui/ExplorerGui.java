@@ -474,6 +474,7 @@ public abstract class ExplorerGui<T> extends ActionGui {
      *                             its kind.
      * @return The item.
      */
+    @SuppressWarnings("deprecation")
     protected ItemStack getPageItem(String paginationButtonType, boolean canUse) {
         ItemStack icon = new ItemStack(canUse ? Material.ARROW : Material.STICK);
         ItemMeta meta = icon.getItemMeta();
@@ -678,7 +679,7 @@ public abstract class ExplorerGui<T> extends ActionGui {
 
         public final boolean isValid;
 
-        public ExplorerGuiEvent(ExplorerGui gui, InventoryClickEvent event) {
+        public ExplorerGuiEvent(ExplorerGui<?> gui, InventoryClickEvent event) {
             if (gui.isData2D) {
                 dataX = gui.currentPageX * gui.viewWidth + event.getSlot() % INVENTORY_ROW_SIZE;
                 dataY = gui.currentPageY * gui.viewHeight + event.getSlot() / INVENTORY_ROW_SIZE;

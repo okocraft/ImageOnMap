@@ -67,6 +67,7 @@ public abstract class SplatterMapManager {
     private SplatterMapManager() {
     }
 
+    @SuppressWarnings("deprecation")
     public static ItemStack makeSplatterMap(PosterMap map) {
 
         ItemStack splatter = new ItemStack(Material.FILLED_MAP);
@@ -172,6 +173,7 @@ public abstract class SplatterMapManager {
      * @param player     Player placing map
      * @return true if the map was correctly placed
      */
+    @SuppressWarnings("deprecation")
     public static boolean placeSplatterMap(ItemFrame startFrame, Player player) {
         ImageMap map = MapManager.getMap(player.getInventory().getItemInMainHand());
 

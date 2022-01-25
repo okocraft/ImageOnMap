@@ -59,6 +59,7 @@ public class Commands {
      * @param names The names of the commands
      * @param commandsClasses The matching classes for the commands
      */
+    @SuppressWarnings("unchecked")
     public static void register(String[] names, Class<? extends Command>... commandsClasses) {
         final CommandGroup commandGroup = new CommandGroup(names, commandsClasses);
         commandGroup.register(ImageOnMap.getPlugin());
@@ -66,6 +67,7 @@ public class Commands {
         commandGroups.add(commandGroup);
     }
 
+    @SuppressWarnings("unchecked")
     public static void register(String name, Class<? extends Command>... commandsClasses) {
         register(new String[] {name}, commandsClasses);
     }

@@ -36,19 +36,21 @@
 
 package fr.moribus.imageonmap.ui;
 
+import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.Permissions;
 import fr.moribus.imageonmap.i18n.I;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.map.PosterMap;
 import fr.moribus.imageonmap.map.SingleMap;
-import fr.zcraft.quartzlib.core.QuartzLib;
 import fr.zcraft.quartzlib.tools.items.ItemUtils;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Queue;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
@@ -75,7 +77,7 @@ public class MapItemManager implements Listener {
 
     public static void init() {
         mapItemCache = new HashMap<>();
-        QuartzLib.registerEvents(new MapItemManager());
+        Bukkit.getPluginManager().registerEvents(new MapItemManager(), ImageOnMap.getPlugin());
     }
 
     public static void exit() {
@@ -157,6 +159,7 @@ public class MapItemManager implements Listener {
         return createMapItem(mapID, text, isMapPart, false);
     }
 
+    @SuppressWarnings("deprecation")
     public static ItemStack createMapItem(int mapID, String text, boolean isMapPart, boolean goldTitle) {
         ItemStack mapItem = new ItemStack(Material.FILLED_MAP);
         MapMeta meta = (MapMeta) mapItem.getItemMeta();
@@ -208,6 +211,7 @@ public class MapItemManager implements Listener {
         return cache;
     }
 
+    @SuppressWarnings("deprecation")
     private static void onItemFramePlace(ItemFrame frame, Player player, PlayerInteractEntityEvent event) {
         final ItemStack mapItem = player.getInventory().getItemInMainHand();
 
@@ -268,6 +272,7 @@ public class MapItemManager implements Listener {
         ItemUtils.consumeItem(player, mapItem);
     }
 
+    @SuppressWarnings("deprecation")
     private static void onItemFrameRemove(ItemFrame frame, Player player, EntityDamageByEntityEvent event) {
         ItemStack item = frame.getItem();
         if (item.getType() != Material.FILLED_MAP) {

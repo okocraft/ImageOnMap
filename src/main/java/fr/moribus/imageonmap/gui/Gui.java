@@ -30,12 +30,11 @@
 
 package fr.moribus.imageonmap.gui;
 
-import fr.zcraft.quartzlib.core.QuartzComponent;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import java.util.HashMap;
 import org.bukkit.entity.Player;
 
-public final class Gui extends QuartzComponent {
+public final class Gui {
     /**
      * A map of all the currently open GUIs, associated to the HumanEntity
      * that requested it.
@@ -128,13 +127,10 @@ public final class Gui extends QuartzComponent {
         openGuis.remove(gui.getPlayer());
     }
 
-    @Override
-    protected void onEnable() {
-        openGuis.clear();
-    }
-
-    @Override
-    protected void onDisable() {
+    /**
+     * Clears opened GUIs. Invoked on plugin enabled and disabled.
+     */
+    public static void clearOpenGuis() {
         openGuis.clear();
     }
 }
