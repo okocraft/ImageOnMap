@@ -91,7 +91,7 @@ public class MapInitEvent implements Listener {
         }
 
         Path imageFile = ImageOnMap.getPlugin().getImageFile(map.getId());
-        if (!Files.isRegularFile(imageFile)) {
+        if (Files.isRegularFile(imageFile)) {
             ImageIOExecutor.loadImage(imageFile, Renderer.installRenderer(map));
         }
     }
