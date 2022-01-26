@@ -337,7 +337,7 @@ public abstract class ActionGui extends InventoryGui {
 
         public ItemStack getItem() {
             if (item == null) {
-                item = null;
+                return null;
             }
 
             return item.clone();

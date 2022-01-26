@@ -300,6 +300,7 @@ public class MapItemManager implements Listener {
         }
         ItemStack mapItem = new ItemStack(Material.FILLED_MAP);
         MapMeta meta = (MapMeta) mapItem.getItemMeta();
+        meta.setMapView(((MapMeta)item.getItemMeta()).getMapView());
         meta.setDisplayName(getMapTitle(item));
         meta.addItemFlags(ItemFlag.values());
         mapItem.setItemMeta(meta);

@@ -111,7 +111,7 @@ public class MapListGui extends ExplorerGui<ImageMap> {
     @SuppressWarnings("deprecation")
     @Override
     protected ItemStack getEmptyViewItem() {
-        ItemStack item = new ItemStack(Material.FILLED_MAP);
+        ItemStack item = new ItemStack(Material.MAP);
         ItemMeta meta = item.getItemMeta();
         if (offplayer.getUniqueId().equals(getPlayer().getUniqueId())) {
             meta.setDisplayName(I.tl(getPlayerLocale(), "{red}You don't have any map."));

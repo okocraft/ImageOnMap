@@ -45,6 +45,7 @@ import fr.moribus.imageonmap.map.MapManagerException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -53,6 +54,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.MapMeta;
 
 
 public class ConfirmDeleteMapGui extends ActionGui {
@@ -118,7 +120,7 @@ public class ConfirmDeleteMapGui extends ActionGui {
         /* ** Item representation of the image being deleted ** */
 
         ItemStack item = new ItemStack(Material.FILLED_MAP);
-        ItemMeta meta = item.getItemMeta();
+        MapMeta meta = (MapMeta) item.getItemMeta();
         meta.setDisplayName(I.t(getPlayerLocale(), "{red}You're about to destroy this map..."));
         meta.setLore(new ArrayList<>(Arrays.asList(
                 I.t(getPlayerLocale(), "{red}...{italic}forever{red}."),
@@ -128,6 +130,7 @@ public class ConfirmDeleteMapGui extends ActionGui {
                 I.t(getPlayerLocale(), "{gray}Maps inside: {white}{0}", mapToDelete.getMapsIDs().length)
         )));
         meta.addItemFlags(ItemFlag.values());
+        meta.setMapId(0);
         item.setItemMeta(meta);
 
         action("", 13, item);
