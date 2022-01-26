@@ -1,7 +1,13 @@
 ImageOnMap
 ==========
 
-Repo for ImageOnMap, a bukkit plugin.
+Repo for ImageOnMap, a paper plugin.
+
+This is okocraft hard forked repository.
+- Migration feature from older than version v3 is removed.
+- Only supports Paper servers.
+
+These are all for normal admin.
 
 
 ## Features
@@ -208,6 +214,15 @@ This version fixes some small console spam bugs and improves the performance of 
 
 - Updates to [QuartzLib 0.0.4](https://github.com/zDevelopers/QuartzLib/blob/master/CHANGELOG.md#quartzlib-004),
   where all these improvements were made.
+
+### 5.0.1 — Hard Forked by Okocraft Team
+
+This version removed NMS dependence code and old stuff. And, now only supports paper server.
+
+- Removed QuartzLib dependency and copied it in src directly to maintain easily.
+- Removed MANY redundant code and nms code in copied QuartzLib.
+- Removed migration feature from v3
+- Fixed bug that maps already placed in world do not render image.
 
 ## Data collection
 
