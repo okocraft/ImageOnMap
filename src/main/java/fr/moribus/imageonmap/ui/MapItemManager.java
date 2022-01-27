@@ -59,18 +59,23 @@ import org.bukkit.Rotation;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
+import org.jetbrains.annotations.Nullable;
 
 public class MapItemManager implements Listener {
     private static HashMap<UUID, Queue<ItemStack>> mapItemCache;
@@ -159,6 +164,38 @@ public class MapItemManager implements Listener {
         return createMapItem(mapID, text, isMapPart, false);
     }
 
+    /**
+     * Gets formatted new map part itemstack from original item containing minecraft mapid
+     *
+     * @param originalMap original map item containing minecraft map id.
+     * @return new map part item
+     */
+    public static ItemStack createMapItem(ItemStack originalMap) {
+        ItemMeta meta = originalMap.getItemMeta();
+        if (meta instanceof MapMeta && ((MapMeta) meta).hasMapId()) {
+            return createMapItem(((MapMeta) meta).getMapId());
+        }
+        return null;
+    }
+
+    /**
+     * Gets new map part itemstack.
+     *
+     * @param mapID minecraft mapid
+     * @return new map part item
+     */
+    public static ItemStack createMapItem(int mapID) {
+        ImageMap map = MapManager.getMap(mapID);
+        if (map instanceof SingleMap) {
+            return createMapItem((SingleMap) map, true);
+        } else if (map instanceof PosterMap){
+            PosterMap poster = (PosterMap) map;
+            return createMapItem(poster, poster.getIndex(mapID));
+        } else {
+            return null;
+        }
+    }
+
     @SuppressWarnings("deprecation")
     public static ItemStack createMapItem(int mapID, String text, boolean isMapPart, boolean goldTitle) {
         ItemStack mapItem = new ItemStack(Material.FILLED_MAP);
@@ -177,8 +214,9 @@ public class MapItemManager implements Listener {
     }
 
     public static String getMapTitle(PosterMap map, int index) {
+        return getMapTitle(map, map.getRowAt(index), map.getColumnAt(index));
         /// The name of a map item given to a player, if splatter maps are not used. 0 = map name; 1 = index.
-        return I.t("{0} (part {1})", map.getName(), index + 1);
+        //return I.t("{0} (part {1})", map.getName(), index + 1);
     }
 
     private static String getMapTitle(ItemStack item) {
@@ -272,40 +310,35 @@ public class MapItemManager implements Listener {
         ItemUtils.consumeItem(player, mapItem);
     }
 
-    @SuppressWarnings("deprecation")
-    private static void onItemFrameRemove(ItemFrame frame, Player player, EntityDamageByEntityEvent event) {
+    private static void onItemFrameRemove(ItemFrame frame, @Nullable Player player, Cancellable event) {
         ItemStack item = frame.getItem();
-        if (item.getType() != Material.FILLED_MAP) {
+        ImageMap map = MapManager.getMap(item);
+        if (map == null) {
             return;
         }
 
-        if (Permissions.REMOVE_SPLATTER_MAP.grantedTo(player)) {
+        if (map instanceof PosterMap && player != null) {
+            if (!Permissions.REMOVE_SPLATTER_MAP.grantedTo(player)) {
+                event.setCancelled(true);
+                return;
+            }
             if (player.isSneaking()) {
                 PosterMap poster = SplatterMapManager.removeSplatterMap(frame, player);
-                if (poster != null) {
-                    event.setCancelled(true);
-
-                    if (player.getGameMode() != GameMode.CREATIVE
-                            || !SplatterMapManager.hasSplatterMap(player, poster)) {
-                        poster.give(player);
-                    }
-
+                if (poster == null) {
                     return;
                 }
+                event.setCancelled(true);
+
+                if (player.getGameMode() != GameMode.CREATIVE
+                        || !SplatterMapManager.hasSplatterMap(player, poster)) {
+                    poster.give(player);
+                }
+
+                return;
             }
         }
 
-        if (!MapManager.managesMap(frame.getItem())) {
-            return;
-        }
-        ItemStack mapItem = new ItemStack(Material.FILLED_MAP);
-        MapMeta meta = (MapMeta) mapItem.getItemMeta();
-        meta.setMapView(((MapMeta)item.getItemMeta()).getMapView());
-        meta.setDisplayName(getMapTitle(item));
-        meta.addItemFlags(ItemFlag.values());
-        mapItem.setItemMeta(meta);
-        frame.setItem(mapItem);
-
+        frame.setItem(createMapItem(item));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -313,11 +346,24 @@ public class MapItemManager implements Listener {
         if (!(event.getEntity() instanceof ItemFrame)) {
             return;
         }
-        if (!(event.getDamager() instanceof Player)) {
-            return;
+
+        Entity damager = event.getDamager();
+        Player player;
+        if (damager instanceof Player) {
+            player = (Player) damager;
+        } else {
+            player = null;
         }
 
-        onItemFrameRemove((ItemFrame) event.getEntity(), (Player) event.getDamager(), event);
+        onItemFrameRemove((ItemFrame) event.getEntity(), player, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public static void onItemFrameBreak(HangingBreakEvent event) {
+        Hanging hanging = event.getEntity();
+        if (hanging instanceof ItemFrame) {
+            onItemFrameRemove((ItemFrame) hanging, null, event);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

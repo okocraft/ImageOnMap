@@ -47,7 +47,13 @@ import fr.zcraft.quartzlib.tools.runners.RunTask;
 import fr.zcraft.quartzlib.tools.world.FlatLocation;
 import fr.zcraft.quartzlib.tools.world.WorldUtils;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -60,6 +66,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.MapMeta;
 
 
@@ -129,7 +136,7 @@ public abstract class SplatterMapManager {
      * @return True if the attribute was detected.
      */
     public static boolean hasSplatterAttributes(ItemStack itemStack) {
-        return !itemStack.getEnchantments().isEmpty();
+        return GlowEffect.hasGlow(itemStack);
     }
 
     /**
@@ -329,12 +336,66 @@ public abstract class SplatterMapManager {
             return null;
         }
 
-        for (ItemFrame frame : matchingFrames) {
-            if (frame != null) {
-                frame.setItem(null);
-            }
-        }
+        PlayerInventory inv = player.getInventory();
 
-        return poster;
+        List<Integer> maps = Arrays.stream(poster.getMapsIDs()).boxed().collect(Collectors.toList());
+
+        Map<Integer, Integer> invMapSlots = toMapIdSlotMap(player.getInventory());
+        invMapSlots.keySet().removeIf(Predicate.not(maps::contains));
+
+        List<Integer> matchingFrameMapIds = Arrays.stream(matchingFrames)
+                .filter(Objects::nonNull)
+                .map(ItemFrame::getItem)
+                .filter(MapManager::managesMap)
+                .map(MapManager::getMapIdFromItemStack)
+                .collect(Collectors.toList());
+
+        matchingFrameMapIds.addAll(invMapSlots.keySet());
+
+        if (matchingFrameMapIds.containsAll(maps)) {
+            for (ItemFrame frame : matchingFrames) {
+                if (frame != null) {
+                    maps.remove(Integer.valueOf(MapManager.getMapIdFromItemStack(frame.getItem())));
+                    frame.setItem(null);
+                }
+            }
+
+            for (int mapId : maps) {
+                int invMapSlot = invMapSlots.get(mapId);
+                ItemStack invMap = inv.getItem(invMapSlot);
+                if (invMap == null) {
+                    // will not reach.
+                    continue;
+                }
+                invMap.setAmount(invMap.getAmount() - 1);
+                inv.setItem(invMapSlot, invMap);
+            }
+
+            return poster;
+        } else {
+            for (ItemFrame frame : matchingFrames) {
+                if (frame != null) {
+                    ItemStack drop = MapItemManager.createMapItem(frame.getItem());
+                    if (drop != null) {
+                        frame.getWorld().dropItemNaturally(frame.getLocation(), drop);
+                    }
+                    frame.setItem(null);
+                }
+            }
+            return null;
+        }
+    }
+
+    private static Map<Integer, Integer> toMapIdSlotMap(Inventory inv) {
+        Map<Integer /* :mapId */, Integer /* :slot */> invMapSlots = new HashMap<>();
+        for (int slot = 0; slot < inv.getSize(); slot++) {
+            ItemStack invItem = inv.getItem(slot);
+            if (!MapManager.managesMap(invItem)) {
+                continue;
+            }
+            int id = MapManager.getMapIdFromItemStack(invItem);
+            invMapSlots.put(id, slot);
+        }
+        return invMapSlots;
     }
 }
