@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -310,7 +309,7 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
             return "§cUsage: " + commands.get(0).getUsageString();
         }
         return "§cUsage: /" + getUsualName()
-                + " <" + StringUtils.join(getCommandsNames(), "|") + ">";
+                + " <"  + String.join("|", getCommandsNames()) + ">";
     }
 
     public String getUsualName() {

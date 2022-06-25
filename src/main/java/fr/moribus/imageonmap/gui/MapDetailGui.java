@@ -47,7 +47,6 @@ import fr.zcraft.quartzlib.tools.runners.RunTask;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.conversations.ConversationContext;
@@ -168,7 +167,7 @@ public class MapDetailGui extends ExplorerGui<Integer> {
             if (poster.hasColumnData()) {
                 setDataShape(poster.getColumnCount(), poster.getRowCount());
             } else {
-                setData(ArrayUtils.toObject(poster.getMapsIDs()));
+                setData(Arrays.stream(map.getMapsIDs()).boxed().toArray(Integer[]::new));
             }
         } else {
             setDataShape(1, 1);

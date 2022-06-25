@@ -32,6 +32,9 @@ package fr.moribus.imageonmap.i18n;
 
 import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.i18n.translators.Translator;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Comparator;
@@ -39,15 +42,12 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 public class I18n {
     private static final Map<Locale, Set<Translator>> translators = new ConcurrentHashMap<>();
@@ -124,8 +124,7 @@ public class I18n {
             throw new IllegalStateException("I18n.jarFile must be set to use the loadFromJar method.");
         }
 
-        final String normalizedDirectory =
-                StringUtils.removeEnd(StringUtils.removeStart(directory.trim(), "/"), "/") + "/";
+        final String normalizedDirectory = normalizeDirectory(directory);
 
         final Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
@@ -147,6 +146,22 @@ public class I18n {
         }
     }
 
+    private static String normalizeDirectory(String directory) {
+        var result = directory.trim();
+        int length = result.length();
+
+        int startIndex = result.indexOf('/') == 0 ? 1 : 0;
+        boolean appendSlash = result.lastIndexOf('/') != length - 1;
+
+        result = directory.substring(startIndex, length);
+
+        if (appendSlash) {
+            result = result + "/";
+        }
+
+        return result;
+    }
+
 
     /* **  TRANSLATIONS LOADING METHODS  ** */
 
@@ -160,7 +175,7 @@ public class I18n {
      *                 a higher priority will be called first for a translation.
      */
     public static void load(final File file, int priority) {
-        Validate.notNull(file, "The File to load into the i18n component cannot be null.");
+        Objects.requireNonNull(file, "The File to load into the i18n component cannot be null.");
 
         if (!file.exists()) {
             return;
@@ -203,7 +218,7 @@ public class I18n {
      *
      * @param locale The locale.
      * @return The chain, in an ordered {@link TreeSet}. Will never be {@code null}, but can
-     *      be empty if no translator was registered for that locale.
+     * be empty if no translator was registered for that locale.
      */
     private static Set<Translator> getTranslatorsChain(final Locale locale) {
         Set<Translator> translators = I18n.translators.get(locale);
@@ -228,7 +243,7 @@ public class I18n {
      * @param count           The count of items to use to choose the singular or plural form.
      *                        {@code null} if this translation does not have a plural form.
      * @return The non-formatted translated string, if one of the translators was able to
-     *      translate it; else, {@code null}.
+     * translate it; else, {@code null}.
      */
     private static String translateFromChain(Set<Translator> chain, String context, String messageId,
                                              String messageIdPlural, Integer count) {
@@ -251,8 +266,7 @@ public class I18n {
      *
      * <p> The count is likely to be used in the string, so if, for a translation with plurals, only
      * a count is given, this count is also interpreted as a parameter (the first and only one, {@code
-     * {0}}). If this behavior annoys you, you can disable it using {@link
-     * #addCountToParameters(boolean)}. </p>
+     * {0}}).</p>
      *
      * @param locale          The locale to use to translate the string.
      * @param context         The translation context. {@code null} if no context defined.
@@ -274,7 +288,7 @@ public class I18n {
         // for a translation with plurals, only a count is given, this count is also interpreted as
         // a parameter (the first and only one, {0}).
         if (addCountToParameters && count != null && (parameters == null || parameters.length == 0)) {
-            parameters = new Object[] {count};
+            parameters = new Object[]{count};
         }
 
 
@@ -366,7 +380,6 @@ public class I18n {
      *
      * @param text The input text.
      * @return The text with formatters replaced.
-     * @see #setUserFriendlyFormatting(boolean) for details about the codes.
      */
     private static String replaceFormattingCodes(String text) {
         return text.replace("{black}", ChatColor.BLACK.toString())

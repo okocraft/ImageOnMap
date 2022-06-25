@@ -44,12 +44,10 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 
 
 /**
@@ -325,28 +323,16 @@ public abstract class Translator {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final Translator that = (Translator) o;
-
-        return new EqualsBuilder()
-                .append(priority, that.priority)
-                .append(locale, that.locale)
-                .append(getFilePath(), that.getFilePath())
-                .isEquals();
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Translator that = (Translator) o;
+        return priority == that.priority &&
+                Objects.equals(locale, that.locale) &&
+                Objects.equals(getFilePath(), that.getFilePath());
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(locale)
-                .append(getFilePath())
-                .append(priority)
-                .toHashCode();
+        return Objects.hash(locale, getFilePath(), priority);
     }
 }

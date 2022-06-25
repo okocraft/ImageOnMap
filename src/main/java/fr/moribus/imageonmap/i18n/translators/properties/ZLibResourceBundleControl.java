@@ -37,7 +37,6 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import org.apache.commons.lang.StringUtils;
 
 
 public class ZLibResourceBundleControl extends ResourceBundle.Control {
@@ -68,7 +67,7 @@ public class ZLibResourceBundleControl extends ResourceBundle.Control {
             nameParts[nameParts.length - 1] = "";
         }
 
-        return baseName + "." + StringUtils.join(nameParts, ".");
+        return baseName + "." + String.join(".", nameParts);
     }
 
     /**
