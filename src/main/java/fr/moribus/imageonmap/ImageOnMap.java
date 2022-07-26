@@ -52,7 +52,6 @@ import fr.moribus.imageonmap.i18n.I18n;
 import fr.moribus.imageonmap.image.MapInitEvent;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.ui.MapItemManager;
-import fr.zcraft.quartzlib.tools.UpdateChecker;
 import fr.zcraft.quartzlib.tools.items.GlowEffect;
 
 import java.io.File;
@@ -138,10 +137,6 @@ public final class ImageOnMap extends JavaPlugin {
         Commands.registerShortcut("maptool", NewCommand.class, "tomap");
         Commands.registerShortcut("maptool", ExploreCommand.class, "maps");
         Commands.registerShortcut("maptool", GiveCommand.class, "givemap");
-
-        if (PluginConfiguration.CHECK_FOR_UPDATES.get()) {
-            UpdateChecker.boot("imageonmap.26585");
-        }
     }
 
     @Override
