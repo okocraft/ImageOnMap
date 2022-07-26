@@ -36,16 +36,33 @@
 
 package fr.moribus.imageonmap.ui;
 
+import fr.moribus.imageonmap.gui.GuiUtils;
+import fr.moribus.imageonmap.i18n.I;
 import fr.moribus.imageonmap.image.MapInitEvent;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.map.PosterMap;
-import fr.moribus.imageonmap.gui.GuiUtils;
-import fr.moribus.imageonmap.i18n.I;
-import fr.zcraft.quartzlib.tools.items.GlowEffect;
 import fr.zcraft.quartzlib.tools.runners.RunTask;
 import fr.zcraft.quartzlib.tools.world.FlatLocation;
 import fr.zcraft.quartzlib.tools.world.WorldUtils;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Rotation;
+import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.persistence.PersistentDataType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,23 +71,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.Rotation;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.MapMeta;
 
 
 public abstract class SplatterMapManager {
+
+    private static final NamespacedKey SPLATTER_KEY = new NamespacedKey("imageonmap", "splatter");
+
     private SplatterMapManager() {
     }
 
@@ -124,7 +130,14 @@ public abstract class SplatterMapManager {
      * @return The modified item stack. The instance may be different if the passed item stack is not a craft itemstack.
      */
     public static ItemStack addSplatterAttribute(final ItemStack itemStack) {
-        GlowEffect.addGlow(itemStack);
+        var meta = itemStack.getItemMeta();
+
+        meta.getPersistentDataContainer().set(SPLATTER_KEY, PersistentDataType.BYTE, (byte) 1);
+
+        meta.addEnchant(Enchantment.DURABILITY, 1, false);
+
+        itemStack.setItemMeta(meta);
+
         return itemStack;
     }
 
@@ -136,7 +149,8 @@ public abstract class SplatterMapManager {
      * @return True if the attribute was detected.
      */
     public static boolean hasSplatterAttributes(ItemStack itemStack) {
-        return GlowEffect.hasGlow(itemStack);
+        var value = itemStack.getItemMeta().getPersistentDataContainer().getOrDefault(SPLATTER_KEY, PersistentDataType.BYTE, (byte) 0);
+        return value == 1;
     }
 
     /**

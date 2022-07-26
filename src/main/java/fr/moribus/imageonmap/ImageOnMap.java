@@ -52,7 +52,6 @@ import fr.moribus.imageonmap.i18n.I18n;
 import fr.moribus.imageonmap.image.MapInitEvent;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.ui.MapItemManager;
-import fr.zcraft.quartzlib.tools.items.GlowEffect;
 
 import java.io.File;
 import java.io.IOException;
@@ -108,8 +107,6 @@ public final class ImageOnMap extends JavaPlugin {
         }
 
         saveDefaultConfig();
-
-        GlowEffect.onEnable();
         Gui.clearOpenGuis();
         I18n.onEnable();
 
