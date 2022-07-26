@@ -38,7 +38,6 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -50,18 +49,14 @@ import org.bukkit.entity.Player;
  */
 public abstract class PaginatedTextView<T> {
     public static final int DEFAULT_LINES_IN_NON_EXPANDED_CHAT_VIEW = 10;
-    public static final int DEFAULT_LINES_IN_EXPANDED_CHAT_VIEW = 20;
+
+    // items minus one header line minus pagination links
+    private final int itemsPerPage = DEFAULT_LINES_IN_NON_EXPANDED_CHAT_VIEW - 2;
+    private final boolean doNotPaginateForConsole = true;
 
     private T[] data;
-    // items minus one header line minus pagination links
-    private int itemsPerPage = DEFAULT_LINES_IN_NON_EXPANDED_CHAT_VIEW - 2;
-
     private int currentPage;
     private int pagesCount;
-
-    private boolean doNotPaginateForConsole = true;
-
-
 
     /* ========== User configuration ========== */
 
@@ -80,21 +75,6 @@ public abstract class PaginatedTextView<T> {
     }
 
     /**
-     * Sets the amount of items per page.
-     * <p>The default is the number of lines visible in a non-expanded chat window, by default, minus
-     * 2 (for header and footer).</p>
-     *
-     * @param itemsPerPage The amount of items displayed per page.
-     * @return Instance for chaining.
-     */
-    public PaginatedTextView<T> setItemsPerPage(final int itemsPerPage) {
-        this.itemsPerPage = itemsPerPage;
-        recalculatePagination();
-
-        return this;
-    }
-
-    /**
      * Sets the current page to be displayed.
      *
      * @param page The page.
@@ -107,17 +87,6 @@ public abstract class PaginatedTextView<T> {
             currentPage = Math.min(page, pagesCount);
         }
 
-        return this;
-    }
-
-    /**
-     * Sets if the console should receive a paginated view too. Defaults to true (displays the whole list at once).
-     *
-     * @param noPaginationForConsole {@code true} to disable pagination for console.
-     * @return Instance for chaining.
-     */
-    public PaginatedTextView<T> setDoNotPaginateForConsole(boolean noPaginationForConsole) {
-        this.doNotPaginateForConsole = noPaginationForConsole;
         return this;
     }
 
@@ -154,34 +123,11 @@ public abstract class PaginatedTextView<T> {
 
     /**
      * Gets the data.
+     *
      * @return The data, for use in the overridden methods.
      */
     protected T[] data() {
         return data;
-    }
-
-    /**
-     * Gets the amount of items per page.
-     * @return The amount of items per page, for use in the overridden methods.
-     */
-    protected int itemsPerPage() {
-        return itemsPerPage;
-    }
-
-    /**
-     * Gets the current page.
-     * @return The current page, for use in the overridden methods.
-     */
-    protected int currentPage() {
-        return currentPage;
-    }
-
-    /**
-     * Gets the pages count.
-     * @return The pages count, for use in the overridden methods.
-     */
-    protected int pagesCount() {
-        return pagesCount;
     }
 
     /**
@@ -198,9 +144,7 @@ public abstract class PaginatedTextView<T> {
 
     /**
      * Displays a header.
-     * <p>This method is called on every page before the items are displayed.
-     * You can access the view's properties through the protected methods like
-     * {@link #currentPage()} or {@link #pagesCount()}.</p>
+     *
      * <p>If this method is not overridden, no header will be displayed.</p>
      *
      * @param receiver The receiver of the paginated view.
@@ -219,9 +163,7 @@ public abstract class PaginatedTextView<T> {
 
     /**
      * Displays a footer.
-     * <p>This method is called on every page when the items are displayed, so anything displayed inside will be shown
-     * after. You can access the view's properties through the protected methods like {@link #currentPage()} or
-     * {@link #pagesCount()}.</p>
+     *
      * <p>If this method is not overridden, the default implementation will print pagination links: a “previous” link,
      * if we're not in the first page, the current page, and a “next” link if we're not on the last page.</p>
      *
