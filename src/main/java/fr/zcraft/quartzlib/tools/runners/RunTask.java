@@ -63,18 +63,4 @@ public final class RunTask {
     public static void later(Runnable runnable, long delay) {
         scheduler.runTaskLater(ImageOnMap.getPlugin(), runnable, delay);
     }
-
-    /**
-     * Returns a task that will repeatedly run until cancelled, starting after the specified number
-     * of server ticks.
-     *
-     * @param runnable The task to be run.
-     * @param wait     The ticks to wait before running the task.
-     * @param period   The ticks to wait between runs
-     * @return The BukkitTask that will run.
-     */
-    public static BukkitTask timer(Runnable runnable, long wait, long period) {
-        return scheduler.runTaskTimer(ImageOnMap.getPlugin(), runnable, wait, period);
-    }
-
 }
