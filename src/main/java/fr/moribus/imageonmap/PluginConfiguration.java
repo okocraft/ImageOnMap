@@ -49,8 +49,6 @@ public final class PluginConfiguration {
 
     public static final Supplier<Locale> LANG = () -> I18n.localeFromString(PLUGIN.getConfig().getString("lang"));
 
-    public static final Supplier<Boolean> CHECK_FOR_UPDATES = () -> PLUGIN.getConfig().getBoolean("check-for-updates");
-
     public static final Supplier<Integer> MAP_GLOBAL_LIMIT = () -> {
         FileConfiguration config = PLUGIN.getConfig();
         if (config.isInt("map-global-limit")) {
