@@ -240,8 +240,7 @@ public abstract class PaginatedTextView<T> {
         if (currentPage > 1) {
             String command = getCommandToPage(currentPage - 1);
             if (command != null) {
-                footer = footer.append(Component.text("« Previous"))
-                        .color(NamedTextColor.GRAY)
+                footer.append(Component.text("« Previous"))
                         .clickEvent(ClickEvent.runCommand(command))
                         .hoverEvent(HoverEvent.showText(Component.text("Go to page " + (currentPage - 1))))
                         .append(Component.text(" ⋅ "))
@@ -255,8 +254,7 @@ public abstract class PaginatedTextView<T> {
         if (currentPage < pagesCount) {
             String command = getCommandToPage(currentPage + 1);
             if (command != null) {
-                footer = footer.append(Component.text(" ⋅ "))
-                        .color(NamedTextColor.GRAY)
+                footer.append(Component.text(" ⋅ "))
                         .append(Component.text("Next »"))
                         .color(NamedTextColor.GRAY)
                         .clickEvent(ClickEvent.runCommand(command))
