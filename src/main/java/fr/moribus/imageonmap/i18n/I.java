@@ -114,8 +114,7 @@ public class I {
      * Translates the string with a plural.
      *
      * <p>The count is likely to be used in the string, so if only a count is given, this count is
-     * also interpreted as a parameter (the first and only one, {@code {0}}). If this behavior annoys
-     * you, you can disable it using {@link I18n#addCountToParameters(boolean)}.</p>
+     * also interpreted as a parameter (the first and only one, {@code {0}}).</p>
      *
      * @param singular   The singular version of the string.
      * @param plural     The plural version of the string.
@@ -133,8 +132,7 @@ public class I {
      * Translates the string with a plural using the given locale.
      *
      * <p>The count is likely to be used in the string, so if only a count is given, this count is
-     * also interpreted as a parameter (the first and only one, {@code {0}}). If this behavior annoys
-     * you, you can disable it using {@link I18n#addCountToParameters(boolean)}.</p>
+     * also interpreted as a parameter (the first and only one, {@code {0}}).</p>
      *
      * @param locale     The locale to use to translate the string.
      * @param singular   The singular version of the string.
@@ -144,57 +142,9 @@ public class I {
      * @param parameters The parameters. See the class description for details.
      * @return The translated string, with parameters incorporated, chosen according to the language
      *     plural rules.
-     * @deprecated Use {@link #tln(Locale, String, String, Integer, Object...)} for the gettext
-     *     extractor to be able to read the strings.
      */
-    @Deprecated
     public static String tn(Locale locale, String singular, String plural, Integer count, Object... parameters) {
         return I18n.translate(locale, null, singular, plural, count, parameters);
-    }
-
-    /**
-     * Translates the string in the given context using the given locale.
-     *
-     * <p>The context is used when you have two identical strings to translate that may be
-     * translated differently according to the context.</p>
-     *
-     * @param locale     The locale to use to translate the string.
-     * @param context    The context.
-     * @param text       The string to translate.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated.
-     * @deprecated Use {@link #tlc(Locale, String, String, Object...)} for the gettext
-     *     extractor to be able to read the strings.
-     */
-    public static String tc(Locale locale, String context, String text, Object... parameters) {
-        return I18n.translate(locale, context, text, null, null, parameters);
-    }
-
-    /**
-     * Translates the string in the given context, with a plural using the given locale.
-     *
-     * <p>The context is used when you have two identical strings to translate that may be
-     * translated differently according to the context.</p>
-     *
-     * <p>The count is likely to be used in the string, so if only a count is given, this count is
-     * also interpreted as a parameter (the first and only one, {@code {0}}). If this behavior annoys
-     * you, you can disable it using {@link I18n#addCountToParameters(boolean)}.</p>
-     *
-     * @param locale     The locale to use to translate the string.
-     * @param context    The context.
-     * @param singular   The singular version of the string.
-     * @param plural     The plural version of the string.
-     * @param count      The items count, used to choose the plural form according to the language
-     *                   plural rules.
-     * @param parameters The parameters. See the class description for details.
-     * @return The translated string, with parameters incorporated, chosen according to the language
-     *     plural rules.
-     * @deprecated Use {@link #tlcn(Locale, String, String, String, Integer, Object...)} for the gettext
-     *     extractor to be able to read the strings.
-     */
-    public static String tcn(Locale locale, String context, String singular, String plural, Integer count,
-                             Object... parameters) {
-        return I18n.translate(locale, context, singular, plural, count, parameters);
     }
 
     /**

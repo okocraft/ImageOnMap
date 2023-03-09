@@ -52,24 +52,21 @@ import java.util.jar.JarFile;
 public class I18n {
     private static final Map<Locale, Set<Translator>> translators = new ConcurrentHashMap<>();
 
-    private static final Comparator<Translator> TRANSLATORS_COMPARATOR = new Comparator<Translator>() {
-        @Override
-        public int compare(Translator translator1, Translator translator2) {
-            if (translator1.equals(translator2)) {
-                return 0;
-            } else if (translator1.getPriority() == translator2.getPriority()) {
-                return translator1.getFilePath().compareTo(translator2.getFilePath());
-            } else {
-                return Integer.compare(translator2.getPriority(), translator1.getPriority());
-            }
-        }
-    };
+    private static final Comparator<Translator> TRANSLATORS_COMPARATOR =
+            (translator1, translator2) -> {
+                if (translator1.equals(translator2)) {
+                    return 0;
+                } else if (translator1.getPriority() == translator2.getPriority()) {
+                    return translator1.getFilePath().compareTo(translator2.getFilePath());
+                } else {
+                    return Integer.compare(translator2.getPriority(), translator1.getPriority());
+                }
+            };
 
     private static Locale primaryLocale = null;
     private static Locale fallbackLocale = null;
 
     private static final String i18nDirectory = "i18n";
-    private static JarFile jarFile = null;
 
     private static final boolean userFriendlyFormatting = true;
     private static final String errorColor = ChatColor.RED.toString();
@@ -77,8 +74,6 @@ public class I18n {
     private static final String successColor = ChatColor.GREEN.toString();
     private static final String statusColor = ChatColor.GRAY.toString();
     private static final String commandColor = ChatColor.GOLD.toString();
-
-    private static boolean addCountToParameters = true;
 
     /**
      * @return The name of the subdirectory where the translations are stored. Default: "i18n".
@@ -107,19 +102,7 @@ public class I18n {
      *
      * @param directory The directory to scan inside the plugin's JAR.
      */
-    public static void loadFromJar(final String directory) {
-        loadFromJar(directory, 0);
-    }
-
-    /**
-     * Loads the translations from the plugin's JAR file under the
-     * given directory (recursively).
-     *
-     * @param directory The directory to scan inside the plugin's JAR.
-     * @param priority  The priority to set for this translator. Translators with
-     *                  a higher priority will be called first for a translation.
-     */
-    public static void loadFromJar(final String directory, final int priority) {
+    public static void loadFromJar(final JarFile jarFile, final String directory) {
         if (jarFile == null) {
             throw new IllegalStateException("I18n.jarFile must be set to use the loadFromJar method.");
         }
@@ -139,7 +122,7 @@ public class I18n {
                     final Translator translator = Translator.getInstance(locale, name);
 
                     if (translator != null) {
-                        registerTranslator(locale, translator, priority);
+                        registerTranslator(locale, translator, 0);
                     }
                 }
             }
@@ -221,14 +204,7 @@ public class I18n {
      * be empty if no translator was registered for that locale.
      */
     private static Set<Translator> getTranslatorsChain(final Locale locale) {
-        Set<Translator> translators = I18n.translators.get(locale);
-
-        if (translators == null) {
-            translators = new TreeSet<>(TRANSLATORS_COMPARATOR);
-            I18n.translators.put(locale, translators);
-        }
-
-        return translators;
+        return I18n.translators.computeIfAbsent(locale, k -> new TreeSet<>(TRANSLATORS_COMPARATOR));
     }
 
     /**
@@ -238,17 +214,14 @@ public class I18n {
      *                        in order, until one yields a translation.
      * @param context         The translation context. {@code null} if no context defined.
      * @param messageId       The string to translate.
-     * @param messageIdPlural The plural version of the string to translate. {@code null} if this
-     *                        translation does not have a plural form.
      * @param count           The count of items to use to choose the singular or plural form.
      *                        {@code null} if this translation does not have a plural form.
      * @return The non-formatted translated string, if one of the translators was able to
      * translate it; else, {@code null}.
      */
-    private static String translateFromChain(Set<Translator> chain, String context, String messageId,
-                                             String messageIdPlural, Integer count) {
+    private static String translateFromChain(Set<Translator> chain, String context, String messageId, Integer count) {
         for (Translator translator : chain) {
-            final String translated = translator.translate(context, messageId, messageIdPlural, count);
+            final String translated = translator.translate(context, messageId, count);
             if (translated != null) {
                 return translated;
             }
@@ -287,15 +260,14 @@ public class I18n {
         // Simplifies the programmer's work. The count is likely to be used in the string, so if,
         // for a translation with plurals, only a count is given, this count is also interpreted as
         // a parameter (the first and only one, {0}).
-        if (addCountToParameters && count != null && (parameters == null || parameters.length == 0)) {
+        if (count != null && (parameters == null || parameters.length == 0)) {
             parameters = new Object[]{count};
         }
-
 
         // We first try the given locale, or a close one, if non-null.
         if (locale != null) {
             // We first try the given locale
-            translated = translateFromChain(getTranslatorsChain(locale), context, messageId, messageIdPlural, count);
+            translated = translateFromChain(getTranslatorsChain(locale), context, messageId, count);
             if (translated != null) {
                 usedLocale = locale;
             } else {
@@ -314,13 +286,12 @@ public class I18n {
                 }
 
                 if (perfect != null && (translated =
-                        translateFromChain(getTranslatorsChain(perfect), context, messageId, messageIdPlural, count))
+                        translateFromChain(getTranslatorsChain(perfect), context, messageId, count))
                         != null) {
                     usedLocale = perfect;
                 } else {
                     for (Locale closeLocale : close) {
-                        if ((translated = translateFromChain(getTranslatorsChain(closeLocale), context, messageId,
-                                messageIdPlural, count)) != null) {
+                        if ((translated = translateFromChain(getTranslatorsChain(closeLocale), context, messageId, count)) != null) {
                             usedLocale = closeLocale;
                             break;
                         }
@@ -331,12 +302,12 @@ public class I18n {
 
         // If we still don't have anything, we try the primary then fallback locales
         if (translated == null && primaryLocale != null && (translated =
-                translateFromChain(getTranslatorsChain(primaryLocale), context, messageId, messageIdPlural, count))
+                translateFromChain(getTranslatorsChain(primaryLocale), context, messageId, count))
                 != null) {
             usedLocale = primaryLocale;
         }
         if (translated == null && fallbackLocale != null && (translated =
-                translateFromChain(getTranslatorsChain(fallbackLocale), context, messageId, messageIdPlural, count))
+                translateFromChain(getTranslatorsChain(fallbackLocale), context, messageId, count))
                 != null) {
             usedLocale = fallbackLocale;
         }
@@ -444,16 +415,12 @@ public class I18n {
         }
     }
 
-    public static void onEnable() {
-        if (jarFile == null) {
-            jarFile = ImageOnMap.getPlugin().getJarFile();
-        }
-
+    public static void onEnable(final JarFile jarFile) {
         setPrimaryLocale(Locale.getDefault());
         setFallbackLocale(Locale.US);
 
         if (jarFile != null) {
-            loadFromJar(i18nDirectory);
+            loadFromJar(jarFile, i18nDirectory);
         }
 
         load(new File(ImageOnMap.getPlugin().getDataFolder(), i18nDirectory), 100);

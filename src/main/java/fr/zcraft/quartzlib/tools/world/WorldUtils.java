@@ -45,10 +45,8 @@ public class WorldUtils {
      * @param loc2 The second location
      * @return True if the two given locations point to the same block.
      */
-    public static boolean blockEquals(Location loc1, Location loc2) {
-        return loc1.getBlockX() == loc2.getBlockX()
-                && loc1.getBlockY() == loc2.getBlockY()
-                && loc1.getBlockZ() == loc2.getBlockZ();
+    public static boolean differentLocation(Location loc1, Location loc2) {
+        return loc1.getBlockX() != loc2.getBlockX() || loc1.getBlockY() != loc2.getBlockY() || loc1.getBlockZ() != loc2.getBlockZ();
     }
 
     /**
@@ -74,7 +72,7 @@ public class WorldUtils {
             return BlockFace.SOUTH;
         }
 
-        if (yaw <= 135 && yaw > 45) {
+        if (yaw <= 135) {
             return BlockFace.EAST;
         }
 

@@ -76,7 +76,7 @@ public class DeleteCommand extends IoMCommand {
     @Override
     protected void run() throws CommandException {
         ArrayList<String> arguments = getArgs();
-        final boolean confirm = hasFlag("confirm");
+        final boolean confirm = isConfirmed();
 
         if (arguments.size() > 3 || (arguments.size() > 2 && !confirm)) {
             throwInvalidArgument(I.t("Too many parameters!"));
@@ -114,7 +114,7 @@ public class DeleteCommand extends IoMCommand {
             if (!confirm) {
                 sender.sendMessage(deleteMsg(playerName, map));
             } else {
-                if (sender != null && sender.isOnline() && sender.getInventory() != null) {
+                if (sender.isOnline()) {
                     MapManager.clear(sender.getInventory(), map);
                 }
 

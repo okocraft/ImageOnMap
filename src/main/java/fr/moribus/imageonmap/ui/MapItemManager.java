@@ -170,6 +170,7 @@ public class MapItemManager implements Listener {
      * @param originalMap original map item containing minecraft map id.
      * @return new map part item
      */
+    @SuppressWarnings("deprecation")
     public static ItemStack createMapItem(ItemStack originalMap) {
         ItemMeta meta = originalMap.getItemMeta();
         if (meta instanceof MapMeta && ((MapMeta) meta).hasMapId()) {
@@ -188,8 +189,7 @@ public class MapItemManager implements Listener {
         ImageMap map = MapManager.getMap(mapID);
         if (map instanceof SingleMap) {
             return createMapItem((SingleMap) map, true);
-        } else if (map instanceof PosterMap){
-            PosterMap poster = (PosterMap) map;
+        } else if (map instanceof PosterMap poster){
             return createMapItem(poster, poster.getIndex(mapID));
         } else {
             return null;
@@ -218,23 +218,6 @@ public class MapItemManager implements Listener {
         /// The name of a map item given to a player, if splatter maps are not used. 0 = map name; 1 = index.
         //return I.t("{0} (part {1})", map.getName(), index + 1);
     }
-
-    private static String getMapTitle(ItemStack item) {
-        ImageMap map = MapManager.getMap(item);
-        if (map instanceof SingleMap) {
-            return map.getName();
-        } else {
-            PosterMap poster = (PosterMap) map;
-            int index = poster.getIndex(MapManager.getMapIdFromItemStack(item));
-            if (poster.hasColumnData()) {
-                return getMapTitle(poster, poster.getRowAt(index), poster.getColumnAt(index));
-            }
-
-            return getMapTitle(poster, index);
-        }
-    }
-
-    //
 
     public static int getCacheSize(Player player) {
         return getCache(player).size();
@@ -295,16 +278,11 @@ public class MapItemManager implements Listener {
                     frame.setItem(frameItem);
                     frame.setRotation(Rotation.NONE);
                 }, 5L);
-
             } else {
                 final ItemStack frameItem = mapItem.clone();
                 frame.setRotation(Rotation.NONE);
-                RunTask.later(() -> {
-                    frame.setItem(frameItem);
-                }, 5L);
-
+                RunTask.later(() -> frame.setItem(frameItem), 5L);
             }
-
         }
 
         ItemUtils.consumeItem(player, mapItem);

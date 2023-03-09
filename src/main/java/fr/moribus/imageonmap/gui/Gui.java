@@ -76,31 +76,6 @@ public final class Gui {
     }
 
     /**
-     * Closes any open GUI for a given player.
-     *
-     * @param owner The player.
-     */
-    public static void close(Player owner) {
-        GuiBase openGui = openGuis.get(owner);
-        if (openGui != null) {
-            openGui.close();
-        }
-    }
-
-    /**
-     * Closes any GUI of this type (or subclass of it).
-     *
-     * @param guiClass The GUI class.
-     */
-    public static void close(Class<? extends GuiBase> guiClass) {
-        for (GuiBase openGui : openGuis.values()) {
-            if (guiClass.isAssignableFrom(openGui.getClass())) {
-                openGui.close();
-            }
-        }
-    }
-
-    /**
      * Updates any GUI of this type (or subclass of it).
      *
      * @param guiClass The GUI class.

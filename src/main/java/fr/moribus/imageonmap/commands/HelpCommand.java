@@ -38,7 +38,6 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,7 @@ public class HelpCommand extends Command {
         } else {
             if (args.length == 1 && args[0].startsWith("--page=")) {
                 try {
-                    groupHelp(Integer.valueOf(args[0].split("=")[1]));
+                    groupHelp(Integer.parseInt(args[0].split("=")[1]));
                     return;
                 } catch (NumberFormatException ignored) {
                 }
@@ -103,23 +102,17 @@ public class HelpCommand extends Command {
         message += GuiUtils.generatePrefixedFixedLengthString("§6" + Commands.CHAT_PREFIX + " ",
                 "Usage: §r" + command.getUsageString()) + "\n";
 
-        try {
-
-            String help = getHelpText(command);
-            if (help.isEmpty()) {
-                message += "§c" + Commands.CHAT_PREFIX + " There is no help message for this command.";
-            } else {
-                message += help;
-            }
-
-            sender.sendMessage(message);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        String help = getHelpText(command);
+        if (help.isEmpty()) {
+            message += "§c" + Commands.CHAT_PREFIX + " There is no help message for this command.";
+        } else {
+            message += help;
         }
+
+        sender.sendMessage(message);
     }
 
-    private String getHelpText(Command command) throws IOException {
+    private String getHelpText(Command command) {
         String fileName = "help/" + commandGroup.getUsualName()
                 + "/" + command.getName() + ".txt";
 

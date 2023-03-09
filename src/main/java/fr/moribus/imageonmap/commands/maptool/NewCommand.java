@@ -59,21 +59,15 @@ import org.bukkit.entity.Player;
 public class NewCommand extends IoMCommand {
 
     private ImageUtils.ScalingType resizeMode() throws CommandException {
-        switch (args[1]) {
-            case "resize":
-                return ImageUtils.ScalingType.CONTAINED;
-            case "stretch":
-            case "stretched":
-            case "resize-stretched":
-                return ImageUtils.ScalingType.STRETCHED;
-            case "cover":
-            case "covered":
-            case "resize-covered":
-                return ImageUtils.ScalingType.COVERED;
-            default:
+        return switch (args[1]) {
+            case "resize" -> ImageUtils.ScalingType.CONTAINED;
+            case "stretch", "stretched", "resize-stretched" -> ImageUtils.ScalingType.STRETCHED;
+            case "cover", "covered", "resize-covered" -> ImageUtils.ScalingType.COVERED;
+            default -> {
                 throwInvalidArgument(I.t("Invalid Stretching mode."));
-                return ImageUtils.ScalingType.NONE;
-        }
+                yield  ImageUtils.ScalingType.NONE;
+            }
+        };
     }
 
     @Override

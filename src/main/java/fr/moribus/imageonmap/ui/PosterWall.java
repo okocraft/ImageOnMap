@@ -86,13 +86,12 @@ public class PosterWall {
         Entity[] entities = location.getChunk().getEntities();
 
         for (Entity entity : entities) {
-            if (!(entity instanceof ItemFrame)) {
+            if (!(entity instanceof ItemFrame frame)) {
                 continue;
             }
-            if (!WorldUtils.blockEquals(location, entity.getLocation())) {
+            if (WorldUtils.differentLocation(location, entity.getLocation())) {
                 continue;
             }
-            ItemFrame frame = (ItemFrame) entity;
             if (frame.getFacing() != location.getFacing()) {
                 continue;
             }
@@ -113,13 +112,12 @@ public class PosterWall {
         Entity[] entities = location.getChunk().getEntities();
 
         for (Entity entity : entities) {
-            if (!(entity instanceof ItemFrame)) {
+            if (!(entity instanceof ItemFrame frame)) {
                 continue;
             }
-            if (!WorldUtils.blockEquals(location, entity.getLocation())) {
+            if (WorldUtils.differentLocation(location, entity.getLocation())) {
                 continue;
             }
-            ItemFrame frame = (ItemFrame) entity;
             if (frame.getFacing() != facing) {
                 continue;
             }

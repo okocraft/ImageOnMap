@@ -39,9 +39,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Adds this annotation to a command class to make it accept flags,
- * i.e. parameters prefixed with - or -- extracted from the args
- * array and made available through {@link Command#hasFlag(String)}.
+ * Adds this annotation to a command class to make it accept flags.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

@@ -81,6 +81,7 @@ public class GiveCommand extends IoMCommand {
         } catch (CommandException ignored) {
             if (arguments.size() == 2) {
                 throwInvalidArgument(I.t("Player name is required from the console"));
+                return;
             }
             playerSender1 = null;
         }
@@ -112,14 +113,13 @@ public class GiveCommand extends IoMCommand {
             }
 
             retrieveUUID(playerName, uuid2 -> {
-                if (Bukkit.getPlayer((uuid2)) != null && Bukkit.getPlayer((uuid2)).isOnline()
-                        && map.give(Bukkit.getPlayer(uuid2))) {
+                var player = Bukkit.getPlayer(uuid2);
+                if (player != null && player.isOnline() && map.give(Bukkit.getPlayer(uuid2))) {
                     info(I.t("The requested map was too big to fit in your inventory."));
                     info(I.t("Use '/maptool getremaining' to get the remaining maps."));
                 }
             });
         });
-
     }
 
     @Override

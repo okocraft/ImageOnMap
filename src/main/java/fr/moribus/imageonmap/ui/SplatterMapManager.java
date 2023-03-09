@@ -69,6 +69,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -198,10 +199,9 @@ public abstract class SplatterMapManager {
     public static boolean placeSplatterMap(ItemFrame startFrame, Player player) {
         ImageMap map = MapManager.getMap(player.getInventory().getItemInMainHand());
 
-        if (!(map instanceof PosterMap)) {
+        if (!(map instanceof PosterMap poster)) {
             return false;
         }
-        PosterMap poster = (PosterMap) map;
         PosterWall wall = new PosterWall();
 
         if (startFrame.getFacing().equals(BlockFace.DOWN) || startFrame.getFacing().equals(BlockFace.UP)) {
@@ -325,14 +325,13 @@ public abstract class SplatterMapManager {
      *
      * @param startFrame Frame clicked by the player
      * @param player     The player removing the map
-     * @return
+     * @return the {@link PosterMap}
      **/
     public static PosterMap removeSplatterMap(ItemFrame startFrame, Player player) {
         final ImageMap map = MapManager.getMap(startFrame.getItem());
-        if (!(map instanceof PosterMap)) {
+        if (!(map instanceof PosterMap poster)) {
             return null;
         }
-        PosterMap poster = (PosterMap) map;
         if (!poster.hasColumnData()) {
             return null;
         }
@@ -357,12 +356,12 @@ public abstract class SplatterMapManager {
         Map<Integer, Integer> invMapSlots = toMapIdSlotMap(player.getInventory());
         invMapSlots.keySet().removeIf(Predicate.not(maps::contains));
 
-        List<Integer> matchingFrameMapIds = Arrays.stream(matchingFrames)
+        Set<Integer> matchingFrameMapIds = Arrays.stream(matchingFrames)
                 .filter(Objects::nonNull)
                 .map(ItemFrame::getItem)
                 .filter(MapManager::managesMap)
                 .map(MapManager::getMapIdFromItemStack)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         matchingFrameMapIds.addAll(invMapSlots.keySet());
 

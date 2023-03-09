@@ -61,7 +61,6 @@ public abstract class ExplorerGui<T> extends ActionGui {
     private int viewHeight;
     private int viewWidth;
     private boolean keepHorizontalScrollingSpace = false;
-    private final boolean keepVerticalScrollingSpace = false;
     private int currentPageX = 0;
     private int currentPageY = 0;
     private int dataHeight = 0;
@@ -76,31 +75,14 @@ public abstract class ExplorerGui<T> extends ActionGui {
     }
 
     /**
-     * Sets the displayed data.
-     *
-     * @param data      The data.
-     * @param dataWidth The data's width, if this data is in two dimensions.
-     *                  In this case the data array will be read like a matrix, with
-     *                  lines stored in a consecutive way; the height is automatically
-     *                  calculated.
-     */
-    protected void setData(T[] data, int dataWidth) {
-        this.data = data;
-        int dataLength = data == null ? 0 : data.length;
-        if (dataWidth > 0) {
-            setDataShape(dataWidth, (int) Math.ceil((double) dataLength / (double) dataWidth));
-        } else {
-            setDataShape(0, dataLength);
-        }
-    }
-
-    /**
      * Sets the displayed data, assuming this data is in one dimension.
      *
      * @param data The data.
      */
     protected void setData(T[] data) {
-        setData(data, 0);
+        this.data = data;
+        int dataLength = data == null ? 0 : data.length;
+        setDataShape(0, dataLength);
     }
 
     /**
@@ -255,9 +237,6 @@ public abstract class ExplorerGui<T> extends ActionGui {
         if (mode.equals(Mode.READONLY)) {
             return;
         }
-        if (!onPutItem()) {
-            return;
-        }
 
         event.setCursor(new ItemStack(Material.AIR));
     }
@@ -296,9 +275,7 @@ public abstract class ExplorerGui<T> extends ActionGui {
         if (mode.equals(Mode.READONLY)) {
             return;
         }
-        if (!onPutItem()) {
-            return;
-        }
+
         event.getView().setCursor(new ItemStack(Material.AIR));
     }
 
@@ -312,16 +289,13 @@ public abstract class ExplorerGui<T> extends ActionGui {
         if (mode.equals(Mode.READONLY)) {
             return;
         }
-        if (!onPutItem()) {
-            return;
-        }
         event.setCurrentItem(new ItemStack(Material.AIR));
     }
 
     @Override
     protected void onAfterUpdate() {
         //Calculating page count
-        if (data != null && data.length <= 0) {
+        if (data != null && data.length == 0) {
             viewWidth = INVENTORY_ROW_SIZE;
             viewHeight = 1;
             viewSize = viewWidth;
@@ -335,7 +309,7 @@ public abstract class ExplorerGui<T> extends ActionGui {
             viewHeight = Math.min((int) Math.ceil((double) dataLength / (double) viewWidth),
                     MAX_INVENTORY_COLUMN_SIZE);
 
-            if (viewHeight >= MAX_INVENTORY_COLUMN_SIZE) {
+            if (viewHeight == MAX_INVENTORY_COLUMN_SIZE) {
                 if (hasActions() || dataLength > MAX_INVENTORY_SIZE || keepHorizontalScrollingSpace) {
                     viewHeight--;
                 }
@@ -352,14 +326,14 @@ public abstract class ExplorerGui<T> extends ActionGui {
             pageCountX = (int) Math.ceil((double) dataWidth / (double) viewWidth);
             pageCountY = (int) Math.ceil((double) dataHeight / (double) viewHeight);
 
-            if (viewWidth >= INVENTORY_ROW_SIZE) {
-                if ((pageCountY > 1 && viewWidth == INVENTORY_ROW_SIZE) || keepVerticalScrollingSpace) {
+            if (viewWidth == INVENTORY_ROW_SIZE) {
+                if (pageCountY > 1) {
                     viewWidth--;
                 }
             }
 
-            if (viewHeight >= MAX_INVENTORY_COLUMN_SIZE) {
-                if ((pageCountX > 1 && viewHeight == MAX_INVENTORY_COLUMN_SIZE) || keepHorizontalScrollingSpace) {
+            if (viewHeight == MAX_INVENTORY_COLUMN_SIZE) {
+                if (pageCountX > 1 || keepHorizontalScrollingSpace) {
                     viewHeight--;
                 }
             }
@@ -484,36 +458,29 @@ public abstract class ExplorerGui<T> extends ActionGui {
         int lastPage;
 
         switch (paginationButtonType) {
-            case "next":
+            case "next" -> {
                 title = canUse ? "Next page" : "No next page";
-
                 newPage = currentPageX + 1;
                 lastPage = getPageCount();
-                break;
-
-            case "previous":
+            }
+            case "previous" -> {
                 title = canUse ? "Previous page" : "No previous page";
-
                 newPage = currentPageX - 1;
                 lastPage = getPageCount();
-                break;
-
-            case "up":
+            }
+            case "up" -> {
                 title = canUse ? "Go up" : "Top page";
-
                 newPage = currentPageY - 1;
                 lastPage = getVerticalPageCount();
-                break;
-
-            case "down":
+            }
+            case "down" -> {
                 title = canUse ? "Go down" : "Bottom page";
-
                 newPage = currentPageY + 1;
                 lastPage = getVerticalPageCount();
-                break;
-
-            default:
+            }
+            default -> {
                 return null; // invalid page type
+            }
         }
 
         meta.setDisplayName((canUse ? ChatColor.WHITE : ChatColor.GRAY) + title);
@@ -533,18 +500,9 @@ public abstract class ExplorerGui<T> extends ActionGui {
         if (!event.isValid) {
             return;
         }
-        if (isData2D) {
-            onRightClick();
-        } else {
+        if (!isData2D) {
             onRightClick(getData(event.posData));
         }
-    }
-
-    /**
-     * Triggered when the player right-clicks an item on the GUI.
-     *
-     */
-    protected void onRightClick() {
     }
 
     /**
@@ -553,18 +511,6 @@ public abstract class ExplorerGui<T> extends ActionGui {
      * @param data The right-clicked piece of data.
      */
     protected void onRightClick(T data) {
-    }
-
-    /**
-     * Triggered when the player tries to place an item inside the GUI.
-     *
-     * <p> This will not place the item in the GUI, it's up to you to update the data and refresh
-     * the GUI if you need so.</p>
-     *
-     * @return {@code false} to cancel the placement; {@code true} to accept it.
-     */
-    protected boolean onPutItem() {
-        return true;
     }
 
     /**

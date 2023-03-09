@@ -162,8 +162,7 @@ public class MapDetailGui extends ExplorerGui<Integer> {
         }
         setKeepHorizontalScrollingSpace(true);
 
-        if (map instanceof PosterMap) {
-            PosterMap poster = (PosterMap) map;
+        if (map instanceof PosterMap poster) {
             if (poster.hasColumnData()) {
                 setDataShape(poster.getColumnCount(), poster.getRowCount());
             } else {

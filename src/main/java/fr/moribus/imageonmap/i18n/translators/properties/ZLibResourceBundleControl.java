@@ -35,9 +35,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-
 
 public class ZLibResourceBundleControl extends ResourceBundle.Control {
     private final File bundleFile;
@@ -61,7 +61,7 @@ public class ZLibResourceBundleControl extends ResourceBundle.Control {
      */
     @Override
     public String toBundleName(String baseName, Locale locale) {
-        final String[] nameParts = (bundleFile != null ? bundleFile.getName() : resourceReference).split("\\.");
+        final String[] nameParts = (bundleFile != null ? bundleFile.getName() : Objects.requireNonNull(resourceReference)).split("\\."); // if bundleFile is null, resourceReference should not be null. See constructors.
 
         if (nameParts.length >= 2) {
             nameParts[nameParts.length - 1] = "";

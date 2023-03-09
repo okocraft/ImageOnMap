@@ -33,7 +33,6 @@ package fr.zcraft.quartzlib.tools.runners;
 import fr.moribus.imageonmap.ImageOnMap;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.scheduler.BukkitTask;
 
 
 /**

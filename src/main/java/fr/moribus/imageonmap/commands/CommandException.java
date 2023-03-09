@@ -30,10 +30,7 @@
 
 package fr.moribus.imageonmap.commands;
 
-import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.gui.GuiUtils;
-
-import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 
@@ -64,12 +61,11 @@ public class CommandException extends Exception {
      * @return The reason string.
      */
     public String getReasonString() {
-        switch (reason) {
-            case COMMANDSENDER_EXPECTED_PLAYER:
-                return "You must be a player to use this command.";
-            case INVALID_PARAMETERS:
+        return switch (reason) {
+            case COMMANDSENDER_EXPECTED_PLAYER ->  "You must be a player to use this command.";
+            case INVALID_PARAMETERS -> {
                 final String prefix = ChatColor.GOLD + Commands.CHAT_PREFIX + " " + ChatColor.RESET;
-                return "\n"
+                yield "\n"
                         + ChatColor.RED + Commands.CHAT_PREFIX + ' ' + ChatColor.BOLD + "Invalid argument" + '\n'
                         + GuiUtils.generatePrefixedFixedLengthString(ChatColor.RED + Commands.CHAT_PREFIX + " ", extra)
                         + '\n'
@@ -78,14 +74,10 @@ public class CommandException extends Exception {
                         + GuiUtils.generatePrefixedFixedLengthString(prefix,
                         "For more information, use /" + command.getCommandGroup().getUsualName()
                                 + " help " + command.getName());
-            case COMMAND_ERROR:
-                return extra.isEmpty() ? "An unknown error suddenly happened." : extra;
-            case SENDER_NOT_AUTHORIZED:
-                return "You do not have the permission to use this command.";
-            default:
-                ImageOnMap.getPlugin().getLogger().log(Level.WARNING, "Unknown CommandException caught", this);
-                return "An unknown error suddenly happened.";
-        }
+            }
+            case COMMAND_ERROR -> extra.isEmpty() ? "An unknown error suddenly happened." : extra;
+            case SENDER_NOT_AUTHORIZED -> "You do not have the permission to use this command.";
+        };
     }
 
     public enum Reason {

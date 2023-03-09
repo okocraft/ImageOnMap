@@ -65,12 +65,6 @@ public abstract class GuiBase {
      */
     private boolean open = false;
 
-    /**
-     * If the GUI is immune to close events.
-     * Useful to filter out excessive InventoryCloseEvents Bukkit sends ...
-     */
-    private boolean immune = false;
-
     /* ===== Public API ===== */
 
     /**
@@ -85,20 +79,10 @@ public abstract class GuiBase {
      * Closes this inventory.
      */
     public void close() {
-        close(false);
-    }
-
-    /**
-     * Closes this inventory.
-     * (Dirty hack edition)
-     *
-     * @param immune if true, the parent of this GUI will be set immune when opened
-     */
-    protected void close(boolean immune) {
         registerClose();
 
         if (parent != null) {
-            Gui.open(player, parent).setImmune(immune);
+            Gui.open(player, parent);
         }
     }
 
@@ -113,7 +97,6 @@ public abstract class GuiBase {
             HandlerList.unregisterAll(listener);
         }
 
-        onClose();
     }
 
     /* ===== Protected API ===== */
@@ -134,9 +117,6 @@ public abstract class GuiBase {
 
     protected Listener getEventListener() {
         return null;
-    }
-
-    protected void onClose() {
     }
 
     protected void open(Player player) {
@@ -193,19 +173,5 @@ public abstract class GuiBase {
     protected final Locale getPlayerLocale() {
         return playerLocale;
     }
-
-    protected boolean checkImmune() {
-        if (!immune) {
-            return false;
-        }
-        immune = false;
-        return true;
-    }
-
-    private void setImmune(boolean immune) {
-        this.immune = immune;
-    }
-
-    /* ===== Static API ===== */
 
 }

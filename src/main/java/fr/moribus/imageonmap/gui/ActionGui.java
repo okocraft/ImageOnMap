@@ -95,7 +95,7 @@ public abstract class ActionGui extends InventoryGui {
      * @param slot The slot the action will be placed on.
      */
     protected void action(String name, int slot) {
-        action(name, slot, (ItemStack) null);
+        action(name, slot, null);
     }
 
     /**
@@ -158,14 +158,6 @@ public abstract class ActionGui extends InventoryGui {
     @Override
     protected abstract void onUpdate();
 
-    /**
-     * Raised when an action without any event handler has been triggered.
-     *
-     */
-    protected void unknown_action() {
-    }
-
-
     @Override
     public void update() {
         actions.clear();
@@ -203,7 +195,6 @@ public abstract class ActionGui extends InventoryGui {
         }
 
         if (action.callback == null) {
-            unknown_action();
             return;
         }
 

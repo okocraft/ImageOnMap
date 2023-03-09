@@ -57,7 +57,7 @@ public class PosterOnASurface {
     /**
      * Return the list of map Frames associated with a specific map
      */
-    public static ItemFrame[] getMatchingMapFrames(PosterMap map, FlatLocation location, int mapId, BlockFace bf) {
+    public static ItemFrame[] getMatchingMapFrames(PosterMap map, FlatLocation location, int ignored, BlockFace bf) {
         //int x = map.getColumnAt(mapIndex), y = map.getRowAt(mapIndex);
         int x = 0;
         int y = switch (bf) {
@@ -112,13 +112,12 @@ public class PosterOnASurface {
         Entity[] entities = location.getChunk().getEntities();
 
         for (Entity entity : entities) {
-            if (!(entity instanceof ItemFrame)) {
+            if (!(entity instanceof ItemFrame frame)) {
                 continue;
             }
-            if (!WorldUtils.blockEquals(location, entity.getLocation())) {
+            if (WorldUtils.differentLocation(location, entity.getLocation())) {
                 continue;
             }
-            ItemFrame frame = (ItemFrame) entity;
             if (frame.getFacing() != location.getFacing()) {
                 continue;
             }
@@ -139,13 +138,12 @@ public class PosterOnASurface {
         Entity[] entities = location.getChunk().getEntities();
 
         for (Entity entity : entities) {
-            if (!(entity instanceof ItemFrame)) {
+            if (!(entity instanceof ItemFrame frame)) {
                 continue;
             }
-            if (!WorldUtils.blockEquals(location, entity.getLocation())) {
+            if (WorldUtils.differentLocation(location, entity.getLocation())) {
                 continue;
             }
-            ItemFrame frame = (ItemFrame) entity;
             if (frame.getFacing() != facing) {
                 continue;
             }

@@ -83,7 +83,7 @@ public class PluralForms {
      */
     public PluralForms(int formsCount, @Nullable String formsScript) {
         this.formsCount = formsCount;
-        this.formsScript = formsScript.trim();
+        this.formsScript = formsScript != null ? formsScript.trim() : "";
 
         this.formsFunction = computeFormsFunction();
     }
@@ -96,7 +96,7 @@ public class PluralForms {
      * If you can use them, it's always better.
      *
      * <p>This method can only work correctly with Plural-Forms listed at:
-     * http://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html#Plural-forms,
+     * <a href="http://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html#Plural-forms">...</a>,
      * as well as POEdit-generated plural forms.
      *
      * @param count The count to compute plural for.
@@ -123,7 +123,7 @@ public class PluralForms {
      * @see #computePluralForm(long) Method to use the computed function.
      */
     private Function<Long, Integer> computeFormsFunction() {
-        if (formsScript == null || formsScript.isEmpty()) {
+        if (formsScript.isEmpty()) {
             return formsFunctionFallback();
         }
 
@@ -172,7 +172,7 @@ public class PluralForms {
      * We then do not depend on a JavaScript engine, and it's order of magnitude faster.
      *
      * <p>This evaluate method can only work correctly with Plural-Forms listed at:
-     * http://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html#Plural-forms as
+     * <a href="http://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html#Plural-forms">...</a> as
      * well as POEdit-generated plural forms.
      *
      * @return a Function to compute the plural index from the given count.
@@ -248,7 +248,7 @@ public class PluralForms {
 
             // Lithuanian
             case "n%10==1&&(n%100<11||n%100>19)?0:n%10>=2&&n%10<=9&&(n%100<11||n%100>19)?1:2" -> n -> n % 10 == 1 && (n % 100 < 11 || n % 100 > 19) ? 0 :
-                    n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19) ? 1 : 2;
+                    n % 10 >= 2 && (n % 100 < 11 || n % 100 > 19) ? 1 : 2;
 
             // Latvian
             case "n%10==0||(n%100>=11&&n%100<=19)?0:n%10==1&&n%100!=11?1:2" -> n -> n % 10 == 0 || (n % 100 >= 11 && n % 100 <= 19) ? 0 : n % 10 == 1 && n % 100 != 11 ? 1 : 2;
@@ -284,9 +284,7 @@ public class PluralForms {
                     + "<=4)||n%10==9)&&(n%100<10||n%100>19)&&(n%100<70||n%100>79)&&(n%100<90||n%100>99)?2:n!=0&&n%10000"
                     + "00==0?3:4" -> n -> n % 10 == 1 && n % 100 != 11 && n % 100 != 71 && n % 100 != 91 ? 0 :
                     n % 10 == 2 && n % 100 != 12 && n % 100 != 72 && n % 100 != 92 ? 1 :
-                            ((n % 10 >= 3 && n % 10 <= 4) || n % 10 == 9) && (n % 100 < 10 || n % 100 > 19)
-                                    && (n % 100 < 70 || n % 100 > 79) && (n % 100 < 90 || n % 100 > 99) ? 2 :
-                                    n != 0 && n % 1000000 == 0 ? 3 : 4;
+                            (n % 10 >= 3 && n % 10 <= 4 || n % 10 == 9) && (n % 100 < 10 || n % 100 > 19) && (n % 100 < 70 || n % 100 > 79) && n % 100 < 90 ? 2 : n != 0 && n % 1000000 == 0 ? 3 : 4;
 
             // Irish
             case "n==1?0:n==2?1:n>=3&&n<=6?2:n>=7&&n<=10?3:4" -> n -> n == 1 ? 0 : n == 2 ? 1 : n >= 3 && n <= 6 ? 2 : n >= 7 && n <= 10 ? 3 : 4;
@@ -297,8 +295,7 @@ public class PluralForms {
             case "n==0?0:n==1?1:n==2?2:n%100>=3&&n%100<=10?3:n%100>=11?4:5" -> n -> n == 0 ? 0 :
                     (n == 1 ? 1 : (n == 2 ? 2 : (n % 100 >= 3 && n % 100 <= 10 ? 3 : (n % 100 >= 11 ? 4 : 5))));
             case "n==0?0:n==1?1:n==2?2:n%100>=3&&n%100<=10?3:n%100>=11&&n%100<=99?4:5" -> n -> n == 0 ? 0 :
-                    (n == 1 ? 1 : (n == 2 ? 2 :
-                            (n % 100 >= 3 && n % 100 <= 10 ? 3 : (n % 100 >= 11 && n % 100 <= 99 ? 4 : 5))));
+                    n == 1 ? 1 : n == 2 ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 ? 4 : 5;
             case "n==0?0:n==1?1:n==2?2:n==3?3:n==6?4:5" -> n -> n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n == 3 ? 3 : n == 6 ? 4 : 5;
             default -> null;
         };
@@ -346,8 +343,7 @@ public class PluralForms {
                 // into the appropriate numbers.
                 // Else, we try to convert the output to an integer.
                 return rawPluralIndex instanceof Boolean ? (((Boolean) rawPluralIndex) ? 1 : 0) :
-                        (rawPluralIndex instanceof Number ? ((Number) rawPluralIndex).intValue() :
-                                Integer.valueOf(rawPluralIndex.toString()));
+                        (rawPluralIndex instanceof Number ? ((Number) rawPluralIndex).intValue() : Integer.parseInt(rawPluralIndex.toString()));
             } catch (ScriptException | NumberFormatException e) {
                 ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Invalid plural forms script “" + formsScript + "”", e);
                 return 0;

@@ -60,22 +60,9 @@ import fr.moribus.imageonmap.i18n.translators.Translation;
 public class POFile {
     private final Set<Translation> translations = new HashSet<>();
     private BufferedReader rawReader;
-    private String lastTranslator = null;
-    private String translationTeam = null;
-    private String reportErrorsTo = null;
-
     private Integer pluralCount = 2;
     private String pluralFormScript = "";
     private PluralForms pluralForms = null;
-
-
-    /**
-     * Creates a new PO file parser.
-     * @param reader The string this parser will have to parse.
-     */
-    public POFile(BufferedReader reader) {
-        this.rawReader = reader;
-    }
 
     /**
      * Creates a new PO file parser.
@@ -84,7 +71,6 @@ public class POFile {
     public POFile(Reader reader) {
         this.rawReader = new BufferedReader(reader);
     }
-
 
     /**
      * Parses the string and extracts translations and metadata.
@@ -121,7 +107,9 @@ public class POFile {
                     // Comments
                     if (line.startsWith("#")) {
                         continue;
-                    } else if (line.startsWith("\"")) { // Continued values of tokens on another line
+                    }
+
+                    if (line.startsWith("\"")) { // Continued values of tokens on another line
                         if (lastToken == null) {
                             throw new CannotParsePOException("Unnamed token value", lineNumber);
                         }
@@ -178,9 +166,9 @@ public class POFile {
         boolean inString = false;
 
         for (int i = 0; i < raw.length(); i++) {
-            char character = raw.charAt(i);
+            int character = raw.codePointAt(i);
             if (character == '"') {
-                if (i == 0 || raw.charAt(i - 1) != '\\') {
+                if (i == 0 || raw.codePointAt(i - 1) != '\\') {
                     inString = !inString;
                     if (!inString) {
                         break;
@@ -188,8 +176,8 @@ public class POFile {
                 } else {
                     extracted.append('"');
                 }
-            } else if (inString && !(character == '\\' && i != raw.length() - 1 && raw.charAt(i + 1) == '"')) {
-                extracted.append(character);
+            } else if (inString && !(character == '\\' && i != raw.length() - 1 && raw.codePointAt(i + 1) == '"')) {
+                extracted.appendCodePoint(character);
             }
         }
 
@@ -206,7 +194,6 @@ public class POFile {
 
         // Translation entry
         if (!msgid.isEmpty()) {
-            String msgidPlural = tokens.get("msgid_plural");  // Null if unset—that's exactly what we want.
             String msgctxt = tokens.get("msgctxt");       // Same.
 
             // msgstr can be in two different formats:
@@ -234,7 +221,7 @@ public class POFile {
                 return;
             }
 
-            translations.add(new Translation(msgctxt, msgid, msgidPlural, msgstr));
+            translations.add(new Translation(msgctxt, msgid, msgstr));
         } else { // Metadata
             String rawMetadata = tokens.get("msgstr");
             if (rawMetadata == null) {
@@ -251,33 +238,26 @@ public class POFile {
 
                 String value = metaParts[1].trim();
 
-                switch (metaParts[0].trim().toLowerCase()) {
-                    case "last-translator" -> lastTranslator = value;
-                    case "language-team" -> translationTeam = value;
-                    case "report-msgid-bugs-to" -> reportErrorsTo = value;
-                    case "plural-forms" -> {
-                        String[] parts = value.split(";", 2);
-                        if (parts.length < 2) {
-                            break;
-                        }
-                        try {
-                            pluralCount = Integer.valueOf(parts[0].split("=")[1]);
-                            pluralFormScript = parts[1];
-
-                            if (pluralFormScript.endsWith(";")) {
-                                pluralFormScript = pluralFormScript.substring(0, pluralFormScript.length() - 1);
-                            }
-
-                            // Converts “plural=<script>” to “<script>”
-                            if (pluralFormScript.contains("=")) {
-                                pluralFormScript = pluralFormScript.split("=")[1];
-                            }
-
-                        } catch (NumberFormatException | ArrayIndexOutOfBoundsException ignored) {
-                            // Well, invalid.
-                        }
+                if (metaParts[0].trim().equalsIgnoreCase("plural-forms")) {
+                    String[] parts = value.split(";", 2);
+                    if (parts.length < 2) {
+                        continue;
                     }
-                    default -> {
+                    try {
+                        pluralCount = Integer.valueOf(parts[0].split("=")[1]);
+                        pluralFormScript = parts[1];
+
+                        if (pluralFormScript.endsWith(";")) {
+                            pluralFormScript = pluralFormScript.substring(0, pluralFormScript.length() - 1);
+                        }
+
+                        // Converts “plural=<script>” to “<script>”
+                        if (pluralFormScript.contains("=")) {
+                            pluralFormScript = pluralFormScript.split("=")[1];
+                        }
+
+                    } catch (NumberFormatException | ArrayIndexOutOfBoundsException ignored) {
+                        // Well, invalid.
                     }
                 }
             }
@@ -293,30 +273,6 @@ public class POFile {
     }
 
     /**
-     * Gets the last translator.
-     * @return The last translator.
-     */
-    public String getLastTranslator() {
-        return lastTranslator;
-    }
-
-    /**
-     * Gets the name of the translation team.
-     * @return The name of the translation team.
-     */
-    public String getTranslationTeam() {
-        return translationTeam;
-    }
-
-    /**
-     * Gets the person to contact if there is an error in the translations.
-     * @return The person to contact if there is an error in the translations.
-     */
-    public String getReportErrorsTo() {
-        return reportErrorsTo;
-    }
-
-    /**
      * For a given number, compute the plural index to use for the locale of this file.
      *
      * <p>Some plural scripts are very commons. For them, we hardcode native functions.
@@ -324,7 +280,7 @@ public class POFile {
      * If you can use them, it's always better.
      *
      * <p>This method can only work correctly with Plural-Forms listed at:
-     * http://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html#Plural-forms,
+     * <a href="http://www.gnu.org/software/gettext/manual/html_node/Plural-forms.html#Plural-forms">...</a>,
      * as well as POEdit-generated plural forms.
      *
      * @param count The count to compute plural for.
@@ -339,7 +295,6 @@ public class POFile {
 
         return pluralForms.computePluralForm(count);
     }
-
 
     /**
      * Thrown if the file cannot be parsed.

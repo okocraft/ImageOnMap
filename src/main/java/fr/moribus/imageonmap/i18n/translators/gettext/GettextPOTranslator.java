@@ -41,6 +41,7 @@ import fr.moribus.imageonmap.ImageOnMap;
 import fr.moribus.imageonmap.i18n.translators.Translation;
 import fr.moribus.imageonmap.i18n.translators.Translator;
 import java.io.File;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -62,8 +63,7 @@ public class GettextPOTranslator extends Translator {
 
     @Override
     protected void load() {
-        try {
-            final Reader reader = getReader();
+        try (Reader reader = getReader()) {
             if (reader == null) {
                 return;
             }
@@ -75,7 +75,7 @@ public class GettextPOTranslator extends Translator {
             for (final Translation translation : source.getTranslations()) {
                 registerTranslation(translation);
             }
-        } catch (POFile.CannotParsePOException e) {
+        } catch (POFile.CannotParsePOException | IOException e) {
             ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Cannot parse the " + getFilePath() + " translations file.", e);
             source = null;
         }
@@ -90,18 +90,4 @@ public class GettextPOTranslator extends Translator {
         return source.computePluralForm(count);
     }
 
-    @Override
-    public String getLastTranslator() {
-        return source != null ? source.getLastTranslator() : null;
-    }
-
-    @Override
-    public String getTranslationTeam() {
-        return source != null ? source.getTranslationTeam() : null;
-    }
-
-    @Override
-    public String getReportErrorsTo() {
-        return source != null ? source.getReportErrorsTo() : null;
-    }
 }

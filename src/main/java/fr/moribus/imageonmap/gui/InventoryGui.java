@@ -127,8 +127,7 @@ public abstract class InventoryGui extends GuiBase {
         // InventoryEvent.
         RunTask.nextTick(() -> {
             final InventoryView openInventoryView = getPlayer().getOpenInventory();
-            if (openInventoryView != null
-                    && InventoryUtils.sameInventories(inventory, openInventoryView.getTopInventory())) {
+            if (InventoryUtils.sameInventories(inventory, openInventoryView.getTopInventory())) {
                 getPlayer().closeInventory();
             }
         });
@@ -172,8 +171,7 @@ public abstract class InventoryGui extends GuiBase {
         super.update();
         Player player = getPlayer();
 
-        boolean titleIsStillTheSame = false;
-        titleIsStillTheSame = player.getOpenInventory().getTitle().equals(title);
+        boolean titleIsStillTheSame = player.getOpenInventory().getTitle().equals(title);
 
         // If inventory does not need to be regenerated
         if (inventory != null && titleIsStillTheSame && inventory.getSize() == size) {
@@ -187,9 +185,7 @@ public abstract class InventoryGui extends GuiBase {
             if (isOpen()) {
                 RunTask.nextTick(() -> {
                     player.closeInventory();
-                    RunTask.nextTick(() -> {
-                        player.openInventory(inventory);
-                    });
+                    RunTask.nextTick(() -> player.openInventory(inventory));
                 });
             }
         }
@@ -278,9 +274,6 @@ public abstract class InventoryGui extends GuiBase {
             }
 
             if (isOpen()) {
-                if (checkImmune()) {
-                    return;
-                }
                 close();
             }
         }

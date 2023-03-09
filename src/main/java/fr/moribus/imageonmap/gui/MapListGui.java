@@ -141,11 +141,6 @@ public class MapListGui extends ExplorerGui<ImageMap> {
     }
 
     @Override
-    protected void onClose() {
-        super.onClose();
-    }
-
-    @Override
     protected ItemStack getPickedUpItem(ImageMap map) {
         if (!Permissions.GET.grantedTo(getPlayer())) {
             return null;
@@ -153,9 +148,7 @@ public class MapListGui extends ExplorerGui<ImageMap> {
 
         if (map instanceof SingleMap) {
             return MapItemManager.createMapItem(map.getMapsIDs()[0], map.getName(), false, true);
-        } else if (map instanceof PosterMap) {
-            PosterMap poster = (PosterMap) map;
-
+        } else if (map instanceof PosterMap poster) {
             if (poster.hasColumnData()) {
                 return SplatterMapManager.makeSplatterMap((PosterMap) map);
             }

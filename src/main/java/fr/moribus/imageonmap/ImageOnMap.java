@@ -53,7 +53,6 @@ import fr.moribus.imageonmap.image.MapInitEvent;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.ui.MapItemManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -102,13 +101,26 @@ public final class ImageOnMap extends JavaPlugin {
             checkPluginDirectory(imagesDirectory);
         } catch (final IOException ex) {
             getLogger().log(Level.SEVERE, "FATAL: " + ex.getMessage());
-            this.setEnabled(false);
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
         saveDefaultConfig();
         Gui.clearOpenGuis();
-        I18n.onEnable();
+
+        JarFile jarFile = getJarFile();
+
+        try {
+            I18n.onEnable(jarFile);
+        } finally {
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (IOException e) {
+                    ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to close JAR file " + getFile().getAbsolutePath(), e);
+                }
+            }
+        }
 
         //Init all the things !
         I18n.setPrimaryLocale(PluginConfiguration.LANG.get());
@@ -155,11 +167,7 @@ public final class ImageOnMap extends JavaPlugin {
      */
     public JarFile getJarFile() {
         try {
-            File file = getFile();
-            if (file == null) {
-                return null;
-            }
-            return new JarFile(file);
+            return new JarFile(getFile());
         } catch (IOException e) {
             ImageOnMap.getPlugin().getLogger().log(Level.SEVERE, "Unable to load JAR file " + getFile().getAbsolutePath(), e);
             return null;

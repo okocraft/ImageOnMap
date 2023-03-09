@@ -84,9 +84,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * </pre>
  */
 public class YAMLTranslator extends Translator {
-    private String author = null;
-    private String team = null;
-    private String reports = null;
 
     public YAMLTranslator(Locale locale, File file) {
         super(locale, file);
@@ -106,42 +103,16 @@ public class YAMLTranslator extends Translator {
         }
 
         for (final Map.Entry<String, Object> entry : configuration.getValues(false).entrySet()) {
-            if (entry.getValue() instanceof ConfigurationSection) {
-                final ConfigurationSection context = (ConfigurationSection) entry.getValue();
+            if (entry.getValue() instanceof final ConfigurationSection context) {
                 final String contextName = entry.getKey().equals("keys") ? null : entry.getKey();
 
                 for (Map.Entry<String, Object> translationEntry : context.getValues(true).entrySet()) {
                     if (!(translationEntry.getValue() instanceof ConfigurationSection)) {
-                        registerTranslation(new Translation(contextName, translationEntry.getKey(), null,
+                        registerTranslation(new Translation(contextName, translationEntry.getKey(),
                                 Collections.singletonList(translationEntry.getValue().toString())));
-                    }
-                }
-            } else {
-                final String value = entry.getValue().toString();
-
-                switch (entry.getKey().toLowerCase()) {
-                    case "author" -> author = value;
-                    case "team" -> team = value;
-                    case "reports" -> reports = value;
-                    default -> {
                     }
                 }
             }
         }
-    }
-
-    @Override
-    public String getLastTranslator() {
-        return author;
-    }
-
-    @Override
-    public String getTranslationTeam() {
-        return team != null ? team : author;
-    }
-
-    @Override
-    public String getReportErrorsTo() {
-        return reports != null ? reports : author;
     }
 }

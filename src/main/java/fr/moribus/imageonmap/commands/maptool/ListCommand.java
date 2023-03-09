@@ -37,25 +37,25 @@
 package fr.moribus.imageonmap.commands.maptool;
 
 import fr.moribus.imageonmap.Permissions;
+import fr.moribus.imageonmap.commands.CommandException;
+import fr.moribus.imageonmap.commands.CommandInfo;
+import fr.moribus.imageonmap.commands.Commands;
 import fr.moribus.imageonmap.commands.IoMCommand;
 import fr.moribus.imageonmap.i18n.I;
 import fr.moribus.imageonmap.map.ImageMap;
 import fr.moribus.imageonmap.map.MapManager;
 import fr.moribus.imageonmap.map.PosterMap;
-import fr.moribus.imageonmap.commands.CommandException;
-import fr.moribus.imageonmap.commands.CommandInfo;
-import fr.moribus.imageonmap.commands.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 @CommandInfo(name = "list", usageParameters = "[player name]")
 public class ListCommand extends IoMCommand {
@@ -91,13 +91,12 @@ public class ListCommand extends IoMCommand {
 
             info(sender, I.tn("{white}{bold}{0} map found.", "{white}{bold}{0} maps found.", mapList.size()));
 
-            TextComponent.Builder rawText = Component.text();
-            rawText = addMap(rawText, mapList.get(0));
+            TextComponent.Builder rawText = addMap(Component.text(), mapList.get(0));
 
             //TODO pagination chat
             for (int i = 1, c = mapList.size(); i < c; i++) {
-                rawText = rawText.append(Component.text(", ")).color(NamedTextColor.GRAY);
-                rawText = addMap(rawText, mapList.get(i));
+                rawText.append(Component.text(", ")).color(NamedTextColor.GRAY);
+                addMap(rawText, mapList.get(i));
             }
             sender.sendMessage(rawText.build());
         });
@@ -107,16 +106,13 @@ public class ListCommand extends IoMCommand {
         final String size = map.getType() == ImageMap.Type.SINGLE ? "1 × 1" :
                 ((PosterMap) map).getColumnCount() + " × " + ((PosterMap) map).getRowCount();
 
-        return Component.text().append(Component.text(map.getId()))
+        return rawText.append(Component.text(map.getId()))
                 .color(NamedTextColor.WHITE)
                 .clickEvent(ClickEvent.runCommand(Commands.getCommandInfo(GetCommand.class).build(map.getId())))
                 .hoverEvent(HoverEvent.showText(Component.text()
-                        .append(Component.text(map.getName()))
-                        .decorate(TextDecoration.BOLD)
-                        .color(NamedTextColor.GREEN)
+                        .append(Component.text(map.getName(), NamedTextColor.GREEN, TextDecoration.BOLD))
                         .append(Component.newline())
-                        .append(Component.text(map.getId() + ", " + size))
-                        .color(NamedTextColor.GRAY)
+                        .append(Component.text(map.getId() + ", " + size, NamedTextColor.GRAY))
                         .append(Component.newline())
                         .append(Component.newline())
                         .append(Component.text(I.t("{white}Click{gray} to get this map")))

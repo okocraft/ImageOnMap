@@ -173,15 +173,6 @@ public abstract class Command {
     }
 
     /**
-     * Displays a green success message to the sender.
-     *
-     * @param message The message to display.
-     */
-    protected void success(String message) {
-        success(sender, message);
-    }
-
-    /**
      * Displays a red warning message.
      *
      * @param sender  The receiver of the message.
@@ -478,10 +469,9 @@ public abstract class Command {
      * be left in the {@link #args} parameters like any other arguments. Else,
      * the retrieved flags are removed from the arguments list.</p>
      *
-     * @param flag The flag.
      * @return {@code true} if the flag was passed by the player.
      */
-    protected boolean hasFlag(String flag) {
-        return flags != null && flags.contains(flag.toLowerCase());
+    protected boolean isConfirmed() {
+        return flags != null && flags.contains("confirm");
     }
 }

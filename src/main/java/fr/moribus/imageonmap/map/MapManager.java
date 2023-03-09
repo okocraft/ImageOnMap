@@ -117,6 +117,7 @@ public abstract class MapManager {
      * @param item The item stack
      * @return The map ID, or 0 if invalid.
      */
+    @SuppressWarnings("deprecation")
     public static int getMapIdFromItemStack(final ItemStack item) {
         final ItemMeta meta = item.getItemMeta();
         if (!(meta instanceof MapMeta)) {
@@ -128,10 +129,6 @@ public abstract class MapManager {
 
     public static void addMap(ImageMap map) throws MapManagerException {
         getPlayerMapStore(map.getUserUUID()).addMap(map);
-    }
-
-    public static void insertMap(ImageMap map) {
-        getPlayerMapStore(map.getUserUUID()).insertMap(map);
     }
 
     public static void deleteMap(ImageMap map) throws MapManagerException {
@@ -232,9 +229,8 @@ public abstract class MapManager {
 
     //Loading
     public static void load() {
-        try {
-            Files.list(ImageOnMap.getPlugin().getMapsDirectory())
-                    .map(MapManager::getUUIDFromFile)
+        try (var list = Files.list(ImageOnMap.getPlugin().getMapsDirectory())) {
+            list.map(MapManager::getUUIDFromFile)
                     .filter(Objects::nonNull)
                     .forEach(MapManager::getPlayerMapStore);
         } catch (IOException e) {
@@ -273,20 +269,6 @@ public abstract class MapManager {
             }
         }
         return mapCount;
-    }
-
-    /**
-     * Returns if the given map ID is valid and exists in the current save.
-     *
-     * @param mapId the map ID.
-     * @return true if the given map ID is valid and exists in the current save, false otherwise.
-     */
-    public static boolean mapIdExists(int mapId) {
-        try {
-            return Bukkit.getMap(mapId) != null;
-        } catch (Throwable ex) {
-            return false;
-        }
     }
 
     public static PlayerMapStore getPlayerMapStore(UUID playerUUID) {

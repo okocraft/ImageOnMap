@@ -44,21 +44,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-
 
 public abstract class IoMCommand extends Command {
 
 
     protected void retrieveUUID(String arg, Consumer<UUID> consumer) {
-        UUID uuid;
-        @SuppressWarnings("deprecation")
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(arg);//If it is being removed we may have to use mojang services
-        uuid = offlinePlayer.getUniqueId();
-
-        consumer.accept(uuid);
-
+        consumer.accept(Bukkit.getOfflinePlayer(arg).getUniqueId());
     }
 
     protected ArrayList<String> getArgs() {
@@ -81,7 +73,7 @@ public abstract class IoMCommand extends Command {
             }
             for (char c : arg.toCharArray()) {
                 switch (state) {
-                    case 0:
+                    case 0 -> {
                         if (c == '\"') {
                             state = 1;
                         } else {
@@ -90,31 +82,29 @@ public abstract class IoMCommand extends Command {
                                 arguments.add(s.toString());
                                 s = new StringBuilder();
                             } else {
-                                s = s.append(c);
+                                s.append(c);
                             }
                         }
-                        break;
-                    case 1:
+                    }
+                    case 1 -> {
                         if (c == '\"') {
                             arguments.add(s.toString());
                             s = new StringBuilder();
                             state = 0;
                         } else {
-                            s = s.append(c);
+                            s.append(c);
                         }
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + state);
+                    }
+                    default -> throw new IllegalStateException("Unexpected value: " + state);
                 }
             }
+
             if (s.length() > 0 && state != 1) {
                 arguments.add(s.toString());
             }
-
         }
         return arguments;
     }
-
 
     protected List<String> getMatchingMapNames(Player player, String prefix) {
         return getMatchingMapNames(MapManager.getMapList(player.getUniqueId()), prefix);

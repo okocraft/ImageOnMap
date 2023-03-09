@@ -46,6 +46,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -102,6 +103,7 @@ public abstract class ImageMap implements ConfigurationSerializable {
         };
     }
 
+    @SuppressWarnings("unchecked")
     public static Integer[] getSize(UUID playerUUID, String id) {
 
         ConfigurationSection section =
@@ -132,6 +134,7 @@ public abstract class ImageMap implements ConfigurationSerializable {
         return value;
     }
 
+    @SuppressWarnings("unchecked")
     protected static <T> T getNullableFieldValue(Map<String, Object> map, String fieldName)
             throws InvalidConfigurationException {
         try {
@@ -169,7 +172,7 @@ public abstract class ImageMap implements ConfigurationSerializable {
     protected abstract void postSerialize(Map<String, Object> map);
 
     @Override
-    public Map<String, Object> serialize() {
+    public @NotNull Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", getId());
         map.put("type", mapType.toString());

@@ -45,7 +45,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import org.jetbrains.annotations.NotNull;
 
 public class CommandGroup implements TabCompleter, CommandExecutor {
     private final CommandGroup shortcutCommandGroup;
@@ -159,7 +159,7 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
             return true;
         }
 
-        if (args.length <= 0) {
+        if (args.length == 0) {
             sender.sendMessage(getUsage());
             return false;
         }
@@ -181,13 +181,12 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command cmd, String label,
-                                      String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         return tabComplete(sender, args);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         return executeMatchingCommand(sender, args);
     }
 
@@ -216,7 +215,7 @@ public class CommandGroup implements TabCompleter, CommandExecutor {
      * @return A list of suggestions.
      */
     public List<String> tabComplete(CommandSender sender, String commandName) {
-        ArrayList<String> matchingCommands = new ArrayList<String>();
+        ArrayList<String> matchingCommands = new ArrayList<>();
         for (Command command : commands) {
             if (!command.canExecute(sender)) {
                 continue;

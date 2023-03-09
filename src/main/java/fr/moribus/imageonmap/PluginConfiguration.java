@@ -47,7 +47,7 @@ public final class PluginConfiguration {
 
     private static final ImageOnMap PLUGIN = ImageOnMap.getPlugin();
 
-    public static final Supplier<Locale> LANG = () -> I18n.localeFromString(PLUGIN.getConfig().getString("lang"));
+    public static final Supplier<Locale> LANG = () -> I18n.localeFromString(PLUGIN.getConfig().getString("lang", "en-US"));
 
     public static final Supplier<Integer> MAP_GLOBAL_LIMIT = () -> {
         FileConfiguration config = PLUGIN.getConfig();

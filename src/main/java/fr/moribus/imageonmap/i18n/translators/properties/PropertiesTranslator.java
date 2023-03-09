@@ -82,11 +82,6 @@ public class PropertiesTranslator extends Translator {
     private static final String METADATA_TEAM = "meta-team";
     private static final String METADATA_REPORTS = "meta-reports";
 
-    private String author = null;
-    private String team = null;
-    private String report = null;
-
-
     public PropertiesTranslator(Locale locale, File file) {
         super(locale, file);
     }
@@ -109,51 +104,23 @@ public class PropertiesTranslator extends Translator {
 
             if (disableMetadata) {
                 if (!key.equals(METADATA_DISABLED)) {
-                    registerTranslation(new Translation(null, key, null, Collections.singletonList(value)));
+                    registerTranslation(new Translation(null, key, Collections.singletonList(value)));
                 }
             } else {
                 switch (key) {
-                    case METADATA_AUTHOR:
-                        author = value;
+                    case METADATA_AUTHOR, METADATA_TEAM, METADATA_REPORTS, METADATA_DISABLED:
                         break;
-
-                    case METADATA_TEAM:
-                        team = value;
-                        break;
-
-                    case METADATA_REPORTS:
-                        report = value;
-                        break;
-
-                    case METADATA_DISABLED:
-                        break;
-
                     default:
-                        registerTranslation(new Translation(null, key, null, Collections.singletonList(value)));
+                        registerTranslation(new Translation(null, key, Collections.singletonList(value)));
                         break;
                 }
             }
         }
     }
 
-    @Override
-    public String getLastTranslator() {
-        return author;
-    }
-
-    @Override
-    public String getTranslationTeam() {
-        return team;
-    }
-
-    @Override
-    public String getReportErrorsTo() {
-        return report;
-    }
-
     /**
      * The context should always be ignored.
-     *
+     * <p>
      * {@inheritDoc}
      */
     @Override

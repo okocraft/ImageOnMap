@@ -117,7 +117,7 @@ public class UpdateCommand extends IoMCommand {
             } else {
                 if (arguments.size() == 3) {
                     if (arguments.get(2).equals("covered") || arguments.get(2).equals("stretched")) {
-                        playerName = playerSender.getName();
+                        playerName = sender.getName();
                         mapName = arguments.get(0);
                         url = arguments.get(1);
                         resize = arguments.get(2);
@@ -168,6 +168,11 @@ public class UpdateCommand extends IoMCommand {
                     size = ImageMap.getSize(map.getUserUUID(), map.getId());
                 }
 
+                if (size == null) {
+                    warning(sender, I.t("This map does not exist.")); // fixme: better message?
+                    return;
+                }
+
                 int width = size[0];
                 int height = size[1];
                 try {
@@ -182,7 +187,7 @@ public class UpdateCommand extends IoMCommand {
                                     );
                                 }
                                 ImageOnMap.getPlugin().getLogger()
-                                        .warning("Rendering from " + playerSender.getName() + " failed: "
+                                        .warning("Rendering from " + (playerSender != null ? playerSender.getName() : sender.getName()) + " failed: "
                                                 + exception.getClass().getCanonicalName() + ": "
                                                 + exception.getMessage());
                                 return null;

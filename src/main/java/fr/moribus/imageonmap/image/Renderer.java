@@ -43,16 +43,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+import org.jetbrains.annotations.NotNull;
 
 public class Renderer extends MapRenderer {
-    private BufferedImage image;
+    private BufferedImage image = null;
 
-    protected Renderer() {
-        this(null);
-    }
-
-    protected Renderer(BufferedImage image) {
-        this.image = image;
+    private Renderer() {
     }
 
     public static boolean isHandled(MapView map) {
@@ -97,7 +93,7 @@ public class Renderer extends MapRenderer {
     }
 
     @Override
-    public void render(MapView v, final MapCanvas canvas, Player p) {
+    public void render(@NotNull MapView v, final @NotNull MapCanvas canvas, @NotNull Player p) {
         //Render only once to avoid overloading the server
         if (image == null) {
             return;

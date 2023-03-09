@@ -158,7 +158,7 @@ public abstract class Translator {
                 return null;
             }
 
-            return new InputStreamReader(stream);
+            return new InputStreamReader(stream, StandardCharsets.UTF_8);
         } else {
             return null;
         }
@@ -199,14 +199,12 @@ public abstract class Translator {
      *
      * @param context         The translation context. {@code null} if no context defined.
      * @param messageId       The string to translate.
-     * @param messageIdPlural The plural version of the string to translate. {@code null} if this
-     *                        translation does not have a plural form.
      * @param count           The count of items to use to choose the singular or plural form.
      *                        {@code null} if this translation does not have a plural form.
      * @return The translated sentence. {@code null} if the sentence is not translated into this
      *     locale.
      */
-    public String translate(String context, String messageId, String messageIdPlural, Integer count) {
+    public String translate(String context, String messageId, Integer count) {
         load0();
 
         final Map<String, Translation> contextMap = translations.get(getContextKey(context));
@@ -215,20 +213,20 @@ public abstract class Translator {
         }
 
         Translation translation = contextMap.get(messageId);
-        if (translation == null || translation.getTranslations().size() == 0) {
+        if (translation == null || translation.translations().size() == 0) {
             return null;
         }
 
-        if (count != null && translation.getTranslations().size() != 1) {
+        if (count != null && translation.translations().size() != 1) {
             Integer pluralIndex = getPluralIndex(count);
 
             // Ensures the translation is available
-            if (translation.getTranslations().size() <= pluralIndex) {
+            if (translation.translations().size() <= pluralIndex) {
                 return null;
             }
-            return translation.getTranslations().get(pluralIndex);
+            return translation.translations().get(pluralIndex);
         } else {
-            return translation.getTranslations().get(0);
+            return translation.translations().get(0);
         }
     }
 
@@ -244,24 +242,6 @@ public abstract class Translator {
     public Integer getPluralIndex(Integer count) {
         return 0;
     }
-
-    /**
-     * Gets the last translator.
-     * @return The last translator.
-     */
-    public abstract String getLastTranslator();
-
-    /**
-     * Gets the name of the translation team.
-     * @return The name of the translation team.
-     */
-    public abstract String getTranslationTeam();
-
-    /**
-     * Gets the person to contact if there is an error in the translations.
-     * @return The person to contact if there is an error in the translations.
-     */
-    public abstract String getReportErrorsTo();
 
     /**
      * Gets the locale loaded by this loader.
@@ -296,7 +276,7 @@ public abstract class Translator {
      * @param translation The translation to store.
      */
     protected void registerTranslation(Translation translation) {
-        final String context = getContextKey(translation.getContext());
+        final String context = getContextKey(translation.context());
         Map<String, Translation> contextMap = translations.get(context);
 
         if (contextMap == null) {
@@ -304,7 +284,7 @@ public abstract class Translator {
             translations.put(context, contextMap);
         }
 
-        contextMap.put(translation.getOriginal(), translation);
+        contextMap.put(translation.original(), translation);
     }
 
     /**
