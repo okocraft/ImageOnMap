@@ -106,18 +106,21 @@ public class ListCommand extends IoMCommand {
         final String size = map.getType() == ImageMap.Type.SINGLE ? "1 × 1" :
                 ((PosterMap) map).getColumnCount() + " × " + ((PosterMap) map).getRowCount();
 
-        return rawText.append(Component.text(map.getId()))
-                .color(NamedTextColor.WHITE)
-                .clickEvent(ClickEvent.runCommand(Commands.getCommandInfo(GetCommand.class).build(map.getId())))
-                .hoverEvent(HoverEvent.showText(Component.text()
-                        .append(Component.text(map.getName(), NamedTextColor.GREEN, TextDecoration.BOLD))
-                        .append(Component.newline())
-                        .append(Component.text(map.getId() + ", " + size, NamedTextColor.GRAY))
-                        .append(Component.newline())
-                        .append(Component.newline())
-                        .append(Component.text(I.t("{white}Click{gray} to get this map")))
-                        .build()
-                ));
+        return rawText.append(
+                Component.text()
+                        .content(map.getId())
+                        .color(NamedTextColor.WHITE)
+                        .clickEvent(ClickEvent.runCommand(Commands.getCommandInfo(GetCommand.class).build(map.getId())))
+                        .hoverEvent(HoverEvent.showText(Component.text()
+                                .append(Component.text(map.getName(), NamedTextColor.GREEN, TextDecoration.BOLD))
+                                .append(Component.newline())
+                                .append(Component.text(map.getId() + ", " + size, NamedTextColor.GRAY))
+                                .append(Component.newline())
+                                .append(Component.newline())
+                                .append(Component.text(I.t("{white}Click{gray} to get this map")))
+                                .build()
+                        ))
+        );
     }
 
     @Override
