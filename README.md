@@ -1,16 +1,27 @@
 ImageOnMap
 ==========
 
+## This repository was hard-forked by OKOCRAFT
+
 Repo for ImageOnMap, a paper plugin.
 
-This is okocraft hard forked repository.
-- Migration feature from older than version v3 is removed.
-- Only supports Paper servers.
+This repository was hard-forked by OKOCRAFT to fix bugs and support the latest version.
 
-These are all for normal admin.
+A lot of modifications have been made to the internal code. Make sure to back up your server before use. 
 
+If you are find any bugs, please feel free to report bugs to [issues](https://github.com/okocraft/ImageOnMap/issues).
 
-## Features
+### Limitations
+
+- Only works on [Paper server](https://github.com/PaperMC/Paper) or its forked server.
+- Java 17 or later required.
+- Migration feature from older than version v3 has been removed.
+
+The plugin Jar is available on [releases](https://github.com/okocraft/ImageOnMap/releases).
+
+---
+
+### Features
 
 ImageOnMap allows you to load a picture from the Internet to a Minecraft map.
 
